@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Copilota Papà — La tua guida in gravidanza</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #09090b;
+            background-image: radial-gradient(circle at 50% -10%, rgba(168, 85, 247, 0.16), transparent 55%);
+        }
+        /* Nasconde la scrollbar mantenendo lo scorrimento fluido */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Animazione morbida per il cambio sezione */
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Effetto Neon Viola */
+        .neon-glow {
+            box-shadow: 0 0 22px rgba(168, 85, 247, 0.35);
+        }
+        .neon-glow-sm {
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+        }
+        .neon-text {
+            text-shadow: 0 0 14px rgba(192, 132, 252, 0.55);
+        }
+        /* Pulsazione neon per il timer delle contrazioni attivo */
+        .pulse-ring {
+            animation: pulseRing 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0.7); }
+            70% { box-shadow: 0 0 0 26px rgba(217, 70, 239, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0); }
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col selection:bg-purple-500/40 selection:text-purple-100">
+
+    <!-- Intestazione fissa in alto -->
+    <header class="sticky top-0 z-30 bg-zinc-950/85 backdrop-blur-xl border-b border-purple-500/20">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm border border-purple-400/40">
+                    <i class="fa-solid fa-baby-carriage text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white leading-tight">Copilota Papà</h1>
+                    <p id="header-subtitle" class="text-xs font-semibold text-purple-400">Settimana 20 • Metà percorso</p>
+                </div>
+            </div>
+            <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-zinc-900 hover:bg-purple-950/60 text-purple-300 border border-purple-500/30 hover:border-purple-400/60 transition flex items-center gap-2 text-xs font-semibold" title="Impostazioni Data Parto">
+                <i class="fa-solid fa-sliders"></i>
+                <span class="hidden sm:inline">Data Parto</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenitore Principale -->
+    <main id="app-content" class="flex-1 max-w-3xl w-full mx-auto px-4 pt-5 pb-28">
+        <!-- Il contenuto delle schede viene renderizzato dinamicamente via JS -->
+    </main>
+
+    <!-- Barra di Navigazione Inferiore (stile App Mobile) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 backdrop-blur-xl border-t border-purple-500/20">
+        <div class="max-w-3xl mx-auto px-2 py-2 grid grid-cols-5 gap-1">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-house text-lg mb-1"></i>
+                <span class="text-[11px] font-semibold">Guida</span>
+            </button>
+            <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-calendar-check text-lg mb-1"></i>
+                <span class="text-[11px] font-semibold">Agenda</span>
+            </button>
+            <button onclick="switchTab('checklist')" id="nav-checklist" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-suitcase-medical text-lg mb-1"></i>
+                <span class="text-[11px] font-semibold">Borsa</span>
+            </button>
+            <button onclick="switchTab('giornox')" id="nav-giornox" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-stopwatch text-lg mb-1"></i>
+                <span class="text-[11px] font-semibold">Giorno X</span>
+            </button>
+            <button onclick="switchTab('diario')" id="nav-diario" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-heart text-lg mb-1"></i>
+                <span class="text-[11px] font-semibold">Note</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Toast di Notifica Personalizzato (sostituisce alert) -->
+    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col gap-2 w-[90%] max-w-sm"></div>
+
+    <!-- Modale Impostazioni Data Presunta Parto (DPP) -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Impostazioni Gravidanza</h2>
+                <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Nome della tua compagna</label>
+                    <input type="text" id="input-partner-name" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/25 outline-none text-sm font-medium" placeholder="Es. Giulia">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Data Presunta del Parto (DPP)</label>
+                    <input type="date" id="input-due-date" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/25 outline-none text-sm font-medium">
+                    <p class="text-xs text-zinc-400 mt-1.5">Calcoleremo automaticamente la settimana attuale e il conto alla rovescia.</p>
+                </div>
+
+                <!-- Backup e Ripristino Dati Locali -->
+                <div class="pt-4 border-t border-zinc-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-purple-300/80">Dati & Backup</label>
+                        <span class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+                            <i class="fa-solid fa-floppy-disk"></i> Auto-salvataggio attivo
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" onclick="exportBackup()" class="py-2.5 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-download"></i> Esporta Backup
+                        </button>
+                        <label class="cursor-pointer py-2.5 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-700 hover:border-purple-500/40 text-zinc-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-upload"></i> Ripristina
+                            <input type="file" accept=".json" onchange="importBackup(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-3">
+                <button onclick="closeSettingsModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                <button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">Salva</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Nuovo Appuntamento / Promemoria -->
+    <div id="event-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Nuovo Promemoria</h2>
+                <button onclick="closeEventModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="event-form" onsubmit="addEvent(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Titolo</label>
+                    <input type="text" id="event-title" required placeholder="Es. Ecografia Morfologica" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Data</label>
+                        <input type="date" id="event-date" required class="w-full px-3 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Ora</label>
+                        <input type="time" id="event-time" required value="09:30" class="w-full px-3 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Categoria</label>
+                    <select id="event-category" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                        <option value="Visita">Visita / Ecografia</option>
+                        <option value="Esame">Esami del Sangue / Analisi</option>
+                        <option value="Burocrazia">Burocrazia / Pratiche</option>
+                        <option value="Promemoria">Promemoria Generico</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Cosa portare / Note</label>
+                    <textarea id="event-notes" rows="2" placeholder="Es. Tessera sanitaria, impegnativa, esami precedenti..." class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm"></textarea>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeEventModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">Aggiungi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale Aggiungi Contatto Emergenza -->
+    <div id="contact-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-fuchsia-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Aggiungi Contatto Rapido</h2>
+                <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="addContact(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Ruolo / Nome</label>
+                    <input type="text" id="contact-name" required placeholder="Es. Dott.ssa Rossi (Ginecologa)" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Numero di Telefono</label>
+                    <input type="tel" id="contact-phone" required placeholder="Es. +39 333 1234567" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Tipo</label>
+                    <select id="contact-type" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                        <option value="medico">Emergenza / Medico</option>
+                        <option value="famiglia">Chi avvisare al parto</option>
+                    </select>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeContactModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-semibold text-sm hover:from-fuchsia-500 hover:to-purple-500 transition neon-glow-sm">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATI SETTIMANA PER SETTIMANA (LATO PAPÀ)
+        // ==========================================
+        const weeklyGuides = [
+            {
+                range: [1, 12],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🍋",
+                sizeName: "Un piccolo lime (circa 5 cm)",
+                babyInfo: "Si stanno formando tutti gli organi principali, il cuoricino batte già forte e inizia a muovere le prime dita.",
+                momSymptoms: "Nausee (anche non solo mattutine), stanchezza improvvisa, olfatto ipersensibile e qualche sbalzo d'umore.",
+                dadTips: [
+                    "Gestisci tu la cucina se certi odori le danno fastidio.",
+                    "Tieni sempre in casa snack secchi (cracker, fette biscottate) e acqua fresca.",
+                    "Accompagnala alla prima ecografia: sentire il battito cambia tutto."
+                ]
+            },
+            {
+                range: [13, 19],
+                trimester: "2° Trimestre",
+                sizeEmoji: "🥑",
+                sizeName: "Un avocado (circa 14 cm)",
+                babyInfo: "Il bebè inizia a percepire i suoni esterni, compresa la tua voce! Sviluppa le impronte digitali e si muove molto.",
+                momSymptoms: "Le nausee di solito diminuiscono e torna un po' di energia. La pancia inizia a vedersi e potrebbero comparire i primi crampi o naso chiuso.",
+                dadTips: [
+                    "Inizia a parlare alla pancia la sera: la tua voce diventerà familiare.",
+                    "Organizzate una piccola gita o una cena rilassante: questo è spesso il periodo in cui lei si sente meglio.",
+                    "Iniziate a guardarvi intorno per il corso pre-parto."
+                ]
+            },
+            {
+                range: [20, 27],
+                trimester: "2° Trimestre",
+                sizeEmoji: "🍌",
+                sizeName: "Una banana / pannocchia (25-35 cm)",
+                babyInfo: "A metà strada! Si sente scalciare chiaramente, apre e chiude gli occhi e reagisce alla luce e alla musica.",
+                momSymptoms: "Mal di schiena lombare, bruciore di stomaco dopo i pasti e caviglie un po' gonfie a fine giornata.",
+                dadTips: [
+                    "Un massaggio serale a piedi e zona lombare vale più di mille parole.",
+                    "È il momento perfetto per ordinare passeggino, ovetto e preparare la cameretta senza fretta.",
+                    "Informati in azienda sul congedo di paternità obbligatorio (10 giorni lavorativi)."
+                ]
+            },
+            {
+                range: [28, 35],
+                trimester: "3° Trimestre",
+                sizeEmoji: "🍍",
+                sizeName: "Un ananas (circa 40-45 cm)",
+                babyInfo: "Il bambino mette su peso rapidamente, i polmoni maturano e lo spazio nella pancia inizia a diventare stretto.",
+                momSymptoms: "Fatica a dormire bene, fiato corto facendo le scale, frequenti viaggi in bagno e prime contrazioni preparatorie (Braxton Hicks).",
+                dadTips: [
+                    "Inizia a preparare la Borsa dell'Ospedale (inclusa la tua!) per non arrivare all'ultimo minuto.",
+                    "Fai una prova di montaggio della base Isofix / ovetto in auto.",
+                    "Fai scorta di piatti pronti in freezer per le prime settimane dopo il parto."
+                ]
+            },
+            {
+                range: [36, 42],
+                trimester: "Ultimo Miglio!",
+                sizeEmoji: "🍉",
+                sizeName: "Un'anguria piccola (circa 50 cm)",
+                babyInfo: "Il bebè è praticamente pronto per conoscervi! Si posiziona verso il basso in attesa del grande giorno.",
+                momSymptoms: "Senso di pesantezza, stanchezza, tanta voglia di incontrare il bimbo e magari un po' di ansia per il parto.",
+                dadTips: [
+                    "Tieni il serbatoio dell'auto sempre sopra la metà e il telefono sempre carico.",
+                    "Ripassa il percorso più veloce per l'ospedale e dove parcheggiare.",
+                    "Sii la sua roccia: trasmetti calma e usa la scheda 'Giorno X' per le contrazioni."
+                ]
+            }
+        ];
+
+        // ==========================================
+        // STATO DELL'APPLICAZIONE
+        // ==========================================
+        const defaultDueDate = new Date();
+        defaultDueDate.setDate(defaultDueDate.getDate() + (20 * 7));
+        const defaultDueDateStr = defaultDueDate.toISOString().split('T')[0];
+
+        function getOffsetDate(days) {
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        }
+
+        const state = {
+            activeTab: 'home',
+            activeChecklistCat: 'lei',
+            activeNoteTab: 'voglie',
+            partnerName: 'La tua compagna',
+            dueDate: defaultDueDateStr,
+            viewedWeek: null,
+
+            events: [
+                {
+                    id: 1,
+                    title: "Ecografia Morfologica",
+                    date: getOffsetDate(5),
+                    time: "10:30",
+                    category: "Visita",
+                    notes: "Portare tessera sanitaria, impegnativa, cartella gravidanza e chiavetta USB.",
+                    done: false
+                },
+                {
+                    id: 2,
+                    title: "Esami sangue + Toxotest",
+                    date: getOffsetDate(12),
+                    time: "08:00",
+                    category: "Esame",
+                    notes: "A digiuno dalla mezzanotte. Portare bottiglietta d'acqua e snack per dopo.",
+                    done: false
+                },
+                {
+                    id: 3,
+                    title: "Richiesta Congedo di Paternità",
+                    date: getOffsetDate(45),
+                    time: "09:00",
+                    category: "Burocrazia",
+                    notes: "Avvisare il datore di lavoro almeno 5 giorni prima (meglio muoversi in anticipo).",
+                    done: false
+                }
+            ],
+
+            checklists: {
+                lei: [
+                    { id: 101, text: "Cartella clinica completa e ultimi esami", done: true },
+                    { id: 102, text: "Documento d'identità e Tessera Sanitaria", done: true },
+                    { id: 103, text: "3 Camicie da notte aperte davanti", done: false },
+                    { id: 104, text: "Assorbenti post-parto e mutande a rete", done: false },
+                    { id: 105, text: "Ciabatte comode + ciabatte da doccia", done: false },
+                    { id: 106, text: "Burrocacao e elastico per capelli (fondamentali in sala parto!)", done: false }
+                ],
+                bebe: [
+                    { id: 201, text: "4-5 sacchetti con cambi completi etichettati", done: false },
+                    { id: 202, text: "Body in cotone e tutine (taglia 0-1 mese)", done: false },
+                    { id: 203, text: "Cappellino e calzini per la nascita", done: false },
+                    { id: 204, text: "Copertina morbida e pannolini taglia 1", done: false }
+                ],
+                papa: [
+                    { id: 301, text: "Caricabatterie con cavo lungo + Powerbank", done: true },
+                    { id: 302, text: "Snack energetici e bottiglia d'acqua", done: false },
+                    { id: 303, text: "Felpa comoda e t-shirt di ricambio", done: false },
+                    { id: 304, text: "Monetine per le macchinette del caffè", done: false }
+                ],
+                casa: [
+                    { id: 401, text: "Installare base Isofix / ovetto in auto", done: false },
+                    { id: 402, text: "Montare culla / fasciatoio", done: false },
+                    { id: 403, text: "Preparare scorta pasti pronti in freezer", done: false },
+                    { id: 404, text: "Scegliere il pediatra di base", done: false }
+                ]
+            },
+
+            contractionActive: false,
+            contractionStartTime: null,
+            contractionIntervalId: null,
+            contractions: [],
+
+            contacts: [
+                { id: 1, name: "Reparto Maternità / Ospedale", phone: "112", type: "medico" },
+                { id: 2, name: "Ginecologo / Ostetrica", phone: "+39 333 0000000", type: "medico" },
+                { id: 3, name: "Futuri Nonni", phone: "+39 339 0000000", type: "famiglia" }
+            ],
+
+            cravings: [
+                { id: 1, text: "Fragole fresche con panna", type: "voglia" },
+                { id: 2, text: "Odore di caffè la mattina presto", type: "fastidio" },
+                { id: 3, text: "Evitare salumi crudi, pesce crudo e formaggi non pastorizzati", type: "promemoria" }
+            ],
+
+            names: [
+                { id: 1, name: "Leonardo", gender: "M", votes: 3 },
+                { id: 2, name: "Sofia", gender: "F", votes: 4 },
+                { id: 3, name: "Edoardo", gender: "M", votes: 2 },
+                { id: 4, name: "Matilde", gender: "F", votes: 3 }
+            ],
+
+            doctorQuestions: [
+                { id: 1, text: "Quali integratori (ferro, acido folico, vitamine) continuare questo mese?", asked: false, answer: "" },
+                { id: 2, text: "Ci sono limiti per viaggi in auto o aereo nelle prossime settimane?", asked: false, answer: "" }
+            ],
+
+            budgetItems: [
+                { id: 1, name: "Passeggino Trio", price: 650, status: "da_comprare" },
+                { id: 2, name: "Ovetto / Seggiolino Auto + Isofix", price: 280, status: "comprato" },
+                { id: 3, name: "Culla Next-to-Me", price: 190, status: "regalato" },
+                { id: 4, name: "Fasciatoio & Bagnetto", price: 120, status: "da_comprare" }
+            ]
+        };
+
+        // ==========================================
+        // PERSISTENZA DATI (LOCALSTORAGE & BACKUP)
+        // ==========================================
+        const STORAGE_KEY = 'copilota_papa_data_v1';
+
+        function saveState() {
+            try {
+                const dataToSave = {
+                    partnerName: state.partnerName,
+                    dueDate: state.dueDate,
+                    events: state.events,
+                    checklists: state.checklists,
+                    contractions: state.contractions,
+                    contacts: state.contacts,
+                    cravings: state.cravings,
+                    names: state.names,
+                    doctorQuestions: state.doctorQuestions,
+                    budgetItems: state.budgetItems
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            } catch (err) {
+                console.warn('Impossibile salvare in localStorage:', err);
+            }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                if (saved && typeof saved === 'object') {
+                    if (saved.partnerName) state.partnerName = saved.partnerName;
+                    if (saved.dueDate) state.dueDate = saved.dueDate;
+                    if (Array.isArray(saved.events)) state.events = saved.events;
+                    if (saved.checklists) state.checklists = { ...state.checklists, ...saved.checklists };
+                    if (Array.isArray(saved.contractions)) state.contractions = saved.contractions;
+                    if (Array.isArray(saved.contacts)) state.contacts = saved.contacts;
+                    if (Array.isArray(saved.cravings)) state.cravings = saved.cravings;
+                    if (Array.isArray(saved.names)) state.names = saved.names;
+                    if (Array.isArray(saved.doctorQuestions)) state.doctorQuestions = saved.doctorQuestions;
+                    if (Array.isArray(saved.budgetItems)) state.budgetItems = saved.budgetItems;
+                }
+            } catch (err) {
+                console.warn('Impossibile caricare da localStorage:', err);
+            }
+        }
+
+        function exportBackup() {
+            try {
+                saveState();
+                const raw = localStorage.getItem(STORAGE_KEY) || JSON.stringify(state);
+                const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().split('T')[0];
+                a.href = url;
+                a.download = `copilota_papa_backup_${today}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Backup esportato con successo!');
+            } catch (err) {
+                showToast('Errore durante l\'esportazione del backup', 'warning');
+            }
+        }
+
+        function importBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || typeof parsed !== 'object') throw new Error('Formato non valido');
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+                    loadState();
+                    closeSettingsModal();
+                    renderApp();
+                    showToast('Backup ripristinato correttamente!');
+                } catch (err) {
+                    showToast('File di backup non valido', 'warning');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ==========================================
+        // FUNZIONI DI UTILITÀ & CALCOLO SETTIMANE
+        // ==========================================
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getPregnancyStats() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(state.dueDate + 'T00:00:00');
+            const diffMs = due - today;
+            const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const totalDays = 280; // 40 settimane
+            const daysElapsed = totalDays - daysRemaining;
+            let currentWeek = Math.floor(daysElapsed / 7) + 1;
+            currentWeek = Math.max(1, Math.min(42, currentWeek));
+            const progressPct = Math.max(2, Math.min(100, Math.round((daysElapsed / totalDays) * 100)));
+            return { currentWeek, daysRemaining, progressPct };
+        }
+
+        function getGuideForWeek(week) {
+            return weeklyGuides.find(g => week >= g.range[0] && week <= g.range[1]) || weeklyGuides[2];
+        }
+
+        function formatSeconds(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function formatItalianDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const styles = {
+                success: 'bg-zinc-900/95 border-purple-500/60 text-purple-100 neon-glow-sm',
+                info: 'bg-zinc-900/95 border-fuchsia-500/50 text-fuchsia-100',
+                warning: 'bg-rose-950/95 border-rose-500/60 text-rose-100'
+            };
+            const icons = {
+                success: 'fa-circle-check text-purple-400',
+                info: 'fa-circle-info text-fuchsia-400',
+                warning: 'fa-triangle-exclamation text-rose-400'
+            };
+            toast.className = `px-4 py-3 rounded-2xl border shadow-xl text-xs font-semibold flex items-center gap-2.5 fade-in backdrop-blur-md ${styles[type] || styles.success}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.success} text-sm"></i><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-6px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 260);
+            }, 2600);
+        }
+
+        // ==========================================
+        // NAVIGAZIONE & RENDERING PRINCIPALE
+        // ==========================================
+        function switchTab(tab) {
+            state.activeTab = tab;
+            updateNavUI();
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavUI() {
+            const tabs = ['home', 'agenda', 'checklist', 'giornox', 'diario'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (!btn) return;
+                if (t === state.activeTab) {
+                    btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition bg-purple-600/20 text-purple-300 border border-purple-500/40 neon-glow-sm';
+                } else {
+                    btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition text-zinc-500 hover:text-zinc-300 border border-transparent';
+                }
+            });
+        }
+
+        function renderApp() {
+            const { currentWeek, daysRemaining } = getPregnancyStats();
+            const guide = getGuideForWeek(currentWeek);
+            const subtitle = document.getElementById('header-subtitle');
+            if (subtitle) {
+                const daysLabel = daysRemaining > 0
+                    ? `-${daysRemaining} giorni al parto`
+                    : daysRemaining === 0
+                        ? 'È il grande giorno!'
+                        : 'Ci siamo quasi!';
+                subtitle.textContent = `Settimana ${currentWeek} • ${daysLabel}`;
+            }
+
+            const main = document.getElementById('app-content');
+            if (!main) return;
+
+            if (state.activeTab === 'home') {
+                main.innerHTML = renderHome();
+            } else if (state.activeTab === 'agenda') {
+                main.innerHTML = renderAgenda();
+            } else if (state.activeTab === 'checklist') {
+                main.innerHTML = renderChecklist();
+            } else if (state.activeTab === 'giornox') {
+                main.innerHTML = renderGiornoX();
+            } else if (state.activeTab === 'diario') {
+                main.innerHTML = renderDiario();
+            }
+        }
+
+        // ==========================================
+        // 1. SEZIONE HOME (GUIDA SETTIMANA PER SETTIMANA)
+        // ==========================================
+        function changeViewedWeek(delta) {
+            const { currentWeek } = getPregnancyStats();
+            const base = state.viewedWeek !== null ? state.viewedWeek : currentWeek;
+            state.viewedWeek = Math.max(1, Math.min(42, base + delta));
+            renderApp();
+        }
+
+        function resetViewedWeek() {
+            state.viewedWeek = null;
+            renderApp();
+        }
+
+        function renderHome() {
+            const { currentWeek, daysRemaining, progressPct } = getPregnancyStats();
+            const displayWeek = state.viewedWeek !== null ? state.viewedWeek : currentWeek;
+            const guide = getGuideForWeek(displayWeek);
+            const isCurrent = displayWeek === currentWeek;
+
+            const upcomingEvents = state.events
+                .filter(e => !e.done)
+                .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+            const nextEvent = upcomingEvents[0];
+
+            return `
+            <div class="space-y-5 fade-in">
+                <!-- Card Hero Settimana & Progresso -->
+                <div class="bg-gradient-to-br from-zinc-900 via-purple-950/40 to-zinc-900 rounded-3xl p-5 border border-purple-500/35 neon-glow relative overflow-hidden">
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-400/30">
+                            ${guide.trimester}
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="changeViewedWeek(-1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 flex items-center justify-center transition" title="Settimana precedente">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button onclick="changeViewedWeek(1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 flex items-center justify-center transition" title="Settimana successiva">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight neon-text">Settimana ${displayWeek}</h2>
+                            <p class="text-xs sm:text-sm text-purple-200/80 mt-1 font-medium">${guide.sizeName}</p>
+                            ${!isCurrent ? `
+                                <button onclick="resetViewedWeek()" class="mt-2 text-[11px] font-bold text-fuchsia-300 hover:underline flex items-center gap-1">
+                                    <i class="fa-solid fa-rotate-left"></i> Torna alla tua settimana (${currentWeek})
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zinc-950/80 border border-purple-500/30 flex items-center justify-center text-4xl sm:text-5xl shrink-0">
+                            ${guide.sizeEmoji}
+                        </div>
+                    </div>
+
+                    <!-- Barra di Avanzamento -->
+                    <div class="mt-5">
+                        <div class="flex justify-between text-xs font-semibold mb-1.5">
+                            <span class="text-zinc-300">Percorso completato: <strong class="text-purple-300">${progressPct}%</strong></span>
+                            <span class="text-zinc-400">${daysRemaining > 0 ? `Mancano ${daysRemaining} giorni` : 'In arrivo!'}</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
+                            <div class="h-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-purple-400 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(192,132,252,0.8)]" style="width: ${progressPct}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prossimo Appuntamento in Agenda -->
+                ${nextEvent ? `
+                <div onclick="switchTab('agenda')" class="cursor-pointer bg-zinc-900/90 hover:bg-zinc-900 rounded-3xl p-4 border border-zinc-800 hover:border-purple-500/40 transition flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-11 h-11 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-calendar-day text-lg"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-400">Prossimo Impegno</p>
+                            <p class="text-sm font-bold text-white truncate">${escapeHtml(nextEvent.title)}</p>
+                            <p class="text-xs text-zinc-400">${formatItalianDate(nextEvent.date)} • ${escapeHtml(nextEvent.time)}</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-zinc-500 text-xs shrink-0"></i>
+                </div>
+                ` : ''}
+
+                <!-- Cosa succede al Bebè -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
+                    <div class="flex items-center gap-2.5 mb-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center">
+                            <i class="fa-solid fa-baby text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Sviluppo del Bebè</h3>
+                    </div>
+                    <p class="text-sm text-zinc-300 leading-relaxed">${guide.babyInfo}</p>
+                </div>
+
+                <!-- Come si sente lei -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
+                    <div class="flex items-center gap-2.5 mb-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-fuchsia-500/20 text-fuchsia-300 flex items-center justify-center">
+                            <i class="fa-solid fa-heart-pulse text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Radar Sintomi • ${escapeHtml(state.partnerName)}</h3>
+                    </div>
+                    <p class="text-sm text-zinc-300 leading-relaxed">${guide.momSymptoms}</p>
+                </div>
+
+                <!-- Consigli Pratici per il Papà -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-purple-500/25">
+                    <div class="flex items-center gap-2.5 mb-3">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm">
+                            <i class="fa-solid fa-bolt text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Missioni del Papà questa settimana</h3>
+                    </div>
+                    <ul class="space-y-2.5">
+                        ${guide.dadTips.map(tip => `
+                            <li class="flex items-start gap-2.5 text-sm text-zinc-200">
+                                <i class="fa-solid fa-circle-check text-purple-400 mt-1 text-xs shrink-0"></i>
+                                <span>${tip}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>`;
+        }
+
+        // ==========================================
+        // 2. SEZIONE AGENDA & PROMEMORIA
+        // ==========================================
+        function renderAgenda() {
+            const sortedEvents = [...state.events].sort((a, b) => {
+                if (a.done !== b.done) return a.done ? 1 : -1;
+                return (a.date + a.time).localeCompare(b.date + b.time);
+            });
+
+            const catColors = {
+                Visita: 'bg-purple-500/20 text-purple-300 border-purple-500/35',
+                Esame: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35',
+                Burocrazia: 'bg-amber-500/20 text-amber-300 border-amber-500/35',
+                Promemoria: 'bg-sky-500/20 text-sky-300 border-sky-500/35'
+            };
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white">Agenda & Promemoria</h2>
+                        <p class="text-xs text-zinc-400">Visite, esami e notifiche sul tuo calendario</p>
+                    </div>
+                    <button onclick="openEventModal()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold flex items-center gap-1.5 transition neon-glow-sm shrink-0">
+                        <i class="fa-solid fa-plus"></i> Nuovo
+                    </button>
+                </div>
+
+                ${sortedEvents.length === 0 ? `
+                    <div class="bg-zinc-900/90 rounded-3xl p-8 text-center border border-zinc-800">
+                        <i class="fa-regular fa-calendar-xmark text-3xl text-zinc-600 mb-2"></i>
+                        <p class="text-sm text-zinc-400">Nessun appuntamento in programma. Aggiungi la prossima visita!</p>
+                    </div>
+                ` : `
+                    <div class="space-y-3">
+                        ${sortedEvents.map(ev => `
+                            <div class="bg-zinc-900/90 rounded-3xl p-4 border ${ev.done ? 'border-zinc-800/60 opacity-65' : 'border-zinc-800 hover:border-purple-500/40'} transition">
+                                <div class="flex items-start gap-3">
+                                    <button onclick="toggleEventDone(${ev.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${ev.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                        ${ev.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                    </button>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${catColors[ev.category] || catColors.Promemoria}">
+                                                ${escapeHtml(ev.category)}
+                                            </span>
+                                            <span class="text-xs font-semibold text-zinc-400">
+                                                <i class="fa-regular fa-clock mr-1 text-purple-400"></i>${formatItalianDate(ev.date)} • ${escapeHtml(ev.time)}
+                                            </span>
+                                        </div>
+                                        <h3 class="text-sm font-bold ${ev.done ? 'line-through text-zinc-500' : 'text-white'}">${escapeHtml(ev.title)}</h3>
+                                        ${ev.notes ? `<p class="text-xs text-zinc-400 mt-1 leading-relaxed">${escapeHtml(ev.notes)}</p>` : ''}
+
+                                        <div class="mt-3 pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                                            <button onclick="downloadICS(${ev.id})" class="px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[11px] font-bold flex items-center gap-1.5 transition">
+                                                <i class="fa-solid fa-bell"></i> Avviso Calendario (.ics)
+                                            </button>
+                                            <button onclick="deleteEvent(${ev.id})" class="text-zinc-500 hover:text-rose-400 text-xs p-1.5 transition" title="Elimina">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `}
+            </div>`;
+        }
+
+        function openEventModal() {
+            document.getElementById('event-date').value = getOffsetDate(1);
+            document.getElementById('event-modal').classList.remove('hidden');
+            document.getElementById('event-modal').classList.add('flex');
+        }
+
+        function closeEventModal() {
+            document.getElementById('event-modal').classList.add('hidden');
+            document.getElementById('event-modal').classList.remove('flex');
+        }
+
+        function addEvent(e) {
+            e.preventDefault();
+            const newEv = {
+                id: Date.now(),
+                title: document.getElementById('event-title').value.trim(),
+                date: document.getElementById('event-date').value,
+                time: document.getElementById('event-time').value,
+                category: document.getElementById('event-category').value,
+                notes: document.getElementById('event-notes').value.trim(),
+                done: false
+            };
+            if (!newEv.title) return;
+            state.events.push(newEv);
+            document.getElementById('event-form').reset();
+            saveState();
+            closeEventModal();
+            renderApp();
+            showToast('Appuntamento aggiunto in agenda!');
+        }
+
+        function toggleEventDone(id) {
+            const ev = state.events.find(e => e.id === id);
+            if (ev) {
+                ev.done = !ev.done;
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteEvent(id) {
+            state.events = state.events.filter(e => e.id !== id);
+            saveState();
+            renderApp();
+            showToast('Promemoria rimosso', 'info');
+        }
+
+        function downloadICS(id) {
+            const ev = state.events.find(e => e.id === id);
+            if (!ev) return;
+            const dtStart = ev.date.replace(/-/g, '') + 'T' + ev.time.replace(':', '') + '00';
+            const [hh, mm] = ev.time.split(':').map(Number);
+            const endH = String((hh + 1) % 24).padStart(2, '0');
+            const dtEnd = ev.date.replace(/-/g, '') + 'T' + endH + String(mm).padStart(2, '0') + '00';
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//CopilotaPapa//IT',
+                'BEGIN:VEVENT',
+                `SUMMARY:${ev.title} (${ev.category})`,
+                `DTSTART:${dtStart}`,
+                `DTEND:${dtEnd}`,
+                `DESCRIPTION:${(ev.notes || 'Promemoria Copilota Papà').replace(/\n/g, '\\n')}`,
+                'BEGIN:VALARM',
+                'TRIGGER:-P1D',
+                'ACTION:DISPLAY',
+                'DESCRIPTION:Domani: ' + ev.title,
+                'END:VALARM',
+                'BEGIN:VALARM',
+                'TRIGGER:-PT2H',
+                'ACTION:DISPLAY',
+                'DESCRIPTION:Tra 2 ore: ' + ev.title,
+                'END:VALARM',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${ev.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('File calendario scaricato! Aprilo per impostare la notifica.', 'info');
+        }
+
+        // ==========================================
+        // 3. SEZIONE CHECKLIST (BORSA OSPEDALE, CASA & BUDGET)
+        // ==========================================
+        function renderChecklist() {
+            const categories = [
+                { key: 'lei', label: 'Lei', icon: 'fa-person-pregnant' },
+                { key: 'bebe', label: 'Bebè', icon: 'fa-baby' },
+                { key: 'papa', label: 'Papà', icon: 'fa-suitcase' },
+                { key: 'casa', label: 'Casa', icon: 'fa-house-chimney' },
+                { key: 'spese', label: 'Spese', icon: 'fa-wallet' }
+            ];
+
+            const isBudget = state.activeChecklistCat === 'spese';
+            const items = state.checklists[state.activeChecklistCat] || [];
+            const doneCount = items.filter(i => i.done).length;
+            const pct = items.length ? Math.round((doneCount / items.length) * 100) : 0;
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Borsa, Casa & Acquisti</h2>
+                    <p class="text-xs text-zinc-400">Liste pronte per l'ospedale e tracker del budget</p>
+                </div>
+
+                <!-- Selettore Categorie -->
+                <div class="grid grid-cols-5 gap-1.5 sm:gap-2">
+                    ${categories.map(cat => `
+                        <button onclick="switchChecklistCat('${cat.key}')" class="py-2.5 px-1 sm:px-2 rounded-2xl text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1.5 transition border ${state.activeChecklistCat === cat.key ? 'bg-purple-600/25 text-purple-300 border-purple-500 neon-glow-sm' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'}">
+                            <i class="fa-solid ${cat.icon} text-sm"></i>
+                            <span>${cat.label}</span>
+                        </button>
+                    `).join('')}
+                </div>
+
+                ${isBudget ? renderBudgetSection() : `
+                <!-- Progresso Categoria -->
+                <div class="bg-zinc-900/90 rounded-3xl p-4 border border-zinc-800">
+                    <div class="flex justify-between items-center text-xs font-bold mb-2">
+                        <span class="text-zinc-300">Completamento lista</span>
+                        <span class="text-purple-400">${doneCount} / ${items.length} (${pct}%)</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
+                        <div class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(168,85,247,0.7)]" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+
+                <!-- Aggiungi nuovo elemento -->
+                <form onsubmit="addChecklistItem(event)" class="flex gap-2">
+                    <input type="text" id="new-checklist-input" placeholder="Aggiungi qualcosa alla lista..." class="flex-1 px-4 py-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <button type="submit" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-semibold text-sm transition neon-glow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+
+                <!-- Lista elementi -->
+                <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
+                    ${items.map(item => `
+                        <div class="p-4 flex items-center gap-3 hover:bg-purple-500/5 transition">
+                            <button onclick="toggleChecklistItem(${item.id})" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${item.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                ${item.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                            </button>
+                            <span onclick="toggleChecklistItem(${item.id})" class="flex-1 text-sm cursor-pointer ${item.done ? 'line-through text-zinc-500' : 'text-zinc-200 font-medium'}">${escapeHtml(item.text)}</span>
+                            <button onclick="deleteChecklistItem(${item.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                `}
+            </div>`;
+        }
+
+        function renderBudgetSection() {
+            const totalEstimated = state.budgetItems.reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalSpent = state.budgetItems.filter(i => i.status === 'comprato').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalToBuy = state.budgetItems.filter(i => i.status === 'da_comprare').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalGifted = state.budgetItems.filter(i => i.status === 'regalato').reduce((sum, i) => sum + Number(i.price || 0), 0);
+
+            const statusConfig = {
+                da_comprare: { label: 'Da comprare', cls: 'bg-amber-500/15 text-amber-300 border-amber-500/35' },
+                comprato: { label: 'Comprato ✓', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35' },
+                regalato: { label: 'Regalato 🎁', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' }
+            };
+
+            return `
+            <div class="space-y-4">
+                <!-- Riepilogo Budget -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="bg-zinc-900/90 p-3.5 rounded-2xl border border-zinc-800">
+                        <p class="text-[11px] font-semibold text-zinc-400">Totale Stimato</p>
+                        <p class="text-lg font-extrabold text-white mt-0.5">€ ${totalEstimated}</p>
+                    </div>
+                    <div class="bg-emerald-950/30 p-3.5 rounded-2xl border border-emerald-500/25">
+                        <p class="text-[11px] font-semibold text-emerald-300/80">Già Speso</p>
+                        <p class="text-lg font-extrabold text-emerald-300 mt-0.5">€ ${totalSpent}</p>
+                    </div>
+                    <div class="bg-amber-950/30 p-3.5 rounded-2xl border border-amber-500/25">
+                        <p class="text-[11px] font-semibold text-amber-300/80">Restante</p>
+                        <p class="text-lg font-extrabold text-amber-300 mt-0.5">€ ${totalToBuy}</p>
+                    </div>
+                    <div class="bg-fuchsia-950/30 p-3.5 rounded-2xl border border-fuchsia-500/25">
+                        <p class="text-[11px] font-semibold text-fuchsia-300/80">Da Regali</p>
+                        <p class="text-lg font-extrabold text-fuchsia-300 mt-0.5">€ ${totalGifted}</p>
+                    </div>
+                </div>
+
+                <!-- Form Aggiungi Spesa -->
+                <form onsubmit="addBudgetItem(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
+                    <div class="flex gap-2">
+                        <input type="text" id="budget-name-input" required placeholder="Es. Lettino, sterilizzatore, marsupio..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                        <input type="number" id="budget-price-input" required min="0" step="1" placeholder="€" class="w-24 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm font-semibold">
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="budget-status-input" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                            <option value="da_comprare">Da comprare</option>
+                            <option value="comprato">Già comprato</option>
+                            <option value="regalato">Regalato</option>
+                        </select>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                            + Aggiungi
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Lista Acquisti -->
+                <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
+                    ${state.budgetItems.length === 0 ? `
+                        <div class="p-6 text-center text-xs text-zinc-400">Nessun acquisto inserito. Aggiungi la prima spesa sopra!</div>
+                    ` : state.budgetItems.map(item => {
+                        const st = statusConfig[item.status] || statusConfig.da_comprare;
+                        return `
+                        <div class="p-4 flex items-center justify-between gap-3 hover:bg-purple-500/5 transition">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-bold text-zinc-100 truncate">${escapeHtml(item.name)}</p>
+                                <p class="text-xs font-semibold text-purple-300 mt-0.5">€ ${item.price}</p>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button onclick="cycleBudgetStatus(${item.id})" title="Tocca per cambiare stato" class="px-3 py-1.5 rounded-xl border text-[11px] font-bold transition ${st.cls}">
+                                    ${st.label}
+                                </button>
+                                <button onclick="deleteBudgetItem(${item.id})" class="text-zinc-600 hover:text-rose-400 p-1 transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <p class="text-[11px] text-center text-zinc-500">Suggerimento: tocca lo stato di un articolo per cambiarlo velocemente tra <em>Da comprare</em>, <em>Comprato</em> e <em>Regalato</em>.</p>
+            </div>`;
+        }
+
+        function addBudgetItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('budget-name-input').value.trim();
+            const price = Math.max(0, Number(document.getElementById('budget-price-input').value) || 0);
+            const status = document.getElementById('budget-status-input').value;
+            if (!name) return;
+            state.budgetItems.unshift({ id: Date.now(), name, price, status });
+            saveState();
+            renderApp();
+            showToast('Articolo aggiunto al budget!');
+        }
+
+        function cycleBudgetStatus(id) {
+            const order = ['da_comprare', 'comprato', 'regalato'];
+            const item = state.budgetItems.find(i => i.id === id);
+            if (item) {
+                const nextIdx = (order.indexOf(item.status) + 1) % order.length;
+                item.status = order[nextIdx];
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteBudgetItem(id) {
+            state.budgetItems = state.budgetItems.filter(i => i.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function switchChecklistCat(cat) {
+            state.activeChecklistCat = cat;
+            renderApp();
+        }
+
+        function toggleChecklistItem(id) {
+            const list = state.checklists[state.activeChecklistCat];
+            const item = list.find(i => i.id === id);
+            if (item) {
+                item.done = !item.done;
+                saveState();
+                renderApp();
+            }
+        }
+
+        function addChecklistItem(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-checklist-input');
+            const text = input.value.trim();
+            if (!text) return;
+            state.checklists[state.activeChecklistCat].unshift({
+                id: Date.now(),
+                text,
+                done: false
+            });
+            saveState();
+            renderApp();
+            showToast('Elemento aggiunto alla lista!');
+        }
+
+        function deleteChecklistItem(id) {
+            state.checklists[state.activeChecklistCat] = state.checklists[state.activeChecklistCat].filter(i => i.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // 4. SEZIONE GIORNO X (TIMER CONTRAZIONI & SOS)
+        // ==========================================
+        function renderGiornoX() {
+            const elapsedSec = state.contractionActive
+                ? Math.floor((Date.now() - state.contractionStartTime) / 1000)
+                : 0;
+
+            let hospitalAlert = false;
+            if (state.contractions.length >= 3) {
+                const recent = state.contractions.slice(0, 3);
+                const avgDur = recent.reduce((acc, c) => acc + c.duration, 0) / recent.length;
+                const intervals = recent.filter(c => c.interval !== null).map(c => c.interval);
+                const avgInt = intervals.length ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 9999;
+                if (avgDur >= 45 && avgInt <= 360) {
+                    hospitalAlert = true;
+                }
+            }
+
+            return `
+            <div class="space-y-6 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Modalità Giorno X</h2>
+                    <p class="text-xs text-zinc-400">Timer contrazioni e numeri di emergenza sempre pronti</p>
+                </div>
+
+                ${hospitalAlert ? `
+                    <div class="bg-fuchsia-950/80 border border-fuchsia-400 text-white rounded-3xl p-4 neon-glow flex items-start gap-3 animate-pulse">
+                        <i class="fa-solid fa-hospital text-2xl text-fuchsia-300 mt-0.5"></i>
+                        <div>
+                            <h3 class="font-extrabold text-sm text-fuchsia-200">Contrazioni regolari e ravvicinate!</h3>
+                            <p class="text-xs text-zinc-200 mt-0.5">La frequenza e la durata indicano che potrebbe essere il momento di chiamare l'ostetrica o andare in ospedale.</p>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Card Timer Contrazioni -->
+                <div class="bg-zinc-900/90 rounded-3xl p-6 border border-purple-500/25 text-center">
+                    <p class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Timer Contrazioni</p>
+                    <div id="live-timer-display" class="text-5xl font-extrabold tracking-tight font-mono mb-6 ${state.contractionActive ? 'text-fuchsia-400 neon-text' : 'text-white'}">
+                        ${formatSeconds(elapsedSec)}
+                    </div>
+
+                    <button onclick="toggleContraction()" class="w-40 h-40 rounded-full mx-auto flex flex-col items-center justify-center text-white font-bold transition transform active:scale-95 border-2 ${state.contractionActive ? 'bg-gradient-to-br from-fuchsia-600 to-rose-600 border-fuchsia-300 pulse-ring' : 'bg-gradient-to-br from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 border-purple-400/60 neon-glow'}">
+                        <i class="fa-solid ${state.contractionActive ? 'fa-stop' : 'fa-play'} text-3xl mb-2"></i>
+                        <span class="text-sm uppercase tracking-wider">${state.contractionActive ? 'Stop' : 'Inizia'}</span>
+                    </button>
+
+                    <p class="text-xs text-zinc-400 mt-5">
+                        Premi <strong class="text-purple-300">Inizia</strong> appena parte la contrazione e <strong class="text-fuchsia-300">Stop</strong> quando finisce.
+                    </p>
+
+                    <!-- Storico Contrazioni -->
+                    ${state.contractions.length > 0 ? `
+                        <div class="mt-6 pt-5 border-t border-zinc-800 text-left">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400">Storico (${state.contractions.length})</h3>
+                                <button onclick="clearContractions()" class="text-xs font-semibold text-fuchsia-400 hover:underline">Azzera</button>
+                            </div>
+                            <div class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                                ${state.contractions.map((c, idx) => `
+                                    <div class="flex items-center justify-between bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-xl text-xs">
+                                        <span class="font-bold text-zinc-200">#${state.contractions.length - idx} • ${c.startTimeLabel}</span>
+                                        <span class="text-purple-400 font-bold">Durata: ${formatSeconds(c.duration)}</span>
+                                        <span class="text-zinc-400">${c.interval !== null ? 'Ogni ' + Math.round(c.interval / 60) + ' min' : 'Prima'}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Contatti Rapidi & Emergenze -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center">
+                                <i class="fa-solid fa-phone-volume text-sm"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm">Contatti Rapidi & Chi Avvisare</h3>
+                        </div>
+                        <button onclick="openContactModal()" class="text-xs font-bold text-purple-300 bg-purple-500/15 border border-purple-500/30 px-3 py-1.5 rounded-xl hover:bg-purple-500/25 transition">
+                            + Aggiungi
+                        </button>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        ${state.contacts.map(c => `
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800/90">
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${c.type === 'medico' ? 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'}">
+                                        ${c.type === 'medico' ? 'Emergenza' : 'Famiglia'}
+                                    </span>
+                                    <p class="font-bold text-sm text-zinc-100 mt-1">${escapeHtml(c.name)}</p>
+                                    <p class="text-xs text-zinc-400">${escapeHtml(c.phone)}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <a href="tel:${encodeURIComponent(c.phone.replace(/\s+/g, ''))}" class="w-10 h-10 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 flex items-center justify-center transition" title="Chiama">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </a>
+                                    <button onclick="deleteContact(${c.id})" class="w-8 h-8 rounded-xl text-zinc-500 hover:text-rose-400 flex items-center justify-center transition">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function toggleContraction() {
+            if (!state.contractionActive) {
+                state.contractionActive = true;
+                state.contractionStartTime = Date.now();
+                state.contractionIntervalId = setInterval(() => {
+                    const display = document.getElementById('live-timer-display');
+                    if (display) {
+                        const sec = Math.floor((Date.now() - state.contractionStartTime) / 1000);
+                        display.textContent = formatSeconds(sec);
+                    }
+                }, 500);
+                renderApp();
+            } else {
+                clearInterval(state.contractionIntervalId);
+                const endTime = Date.now();
+                const duration = Math.max(1, Math.floor((endTime - state.contractionStartTime) / 1000));
+                const startDate = new Date(state.contractionStartTime);
+                const startTimeLabel = startDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                let interval = null;
+                if (state.contractions.length > 0) {
+                    const prevStart = state.contractions[0].timestamp;
+                    interval = Math.floor((state.contractionStartTime - prevStart) / 1000);
+                }
+
+                state.contractions.unshift({
+                    timestamp: state.contractionStartTime,
+                    startTimeLabel,
+                    duration,
+                    interval
+                });
+
+                state.contractionActive = false;
+                state.contractionStartTime = null;
+                saveState();
+                renderApp();
+                showToast('Contrazione registrata!');
+            }
+        }
+
+        function clearContractions() {
+            state.contractions = [];
+            saveState();
+            renderApp();
+            showToast('Storico contrazioni azzerato', 'info');
+        }
+
+        function openContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+            document.getElementById('contact-modal').classList.add('flex');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+            document.getElementById('contact-modal').classList.remove('flex');
+        }
+
+        function addContact(e) {
+            e.preventDefault();
+            state.contacts.push({
+                id: Date.now(),
+                name: document.getElementById('contact-name').value.trim(),
+                phone: document.getElementById('contact-phone').value.trim(),
+                type: document.getElementById('contact-type').value
+            });
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            saveState();
+            closeContactModal();
+            renderApp();
+            showToast('Contatto salvato!');
+        }
+
+        function deleteContact(id) {
+            state.contacts = state.contacts.filter(c => c.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // 5. SEZIONE DIARIO (VOGLIE, NOMI & GINECOLOGO)
+        // ==========================================
+        function renderDiario() {
+            return `
+            <div class="space-y-5 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Note, Nomi & Ginecologo</h2>
+                    <p class="text-xs text-zinc-400">Voglie, idee per il nome e domande per le visite</p>
+                </div>
+
+                <!-- Switch Sotto-sezione -->
+                <div class="bg-zinc-900 border border-zinc-800 p-1 rounded-2xl grid grid-cols-3 gap-1">
+                    <button onclick="switchNoteTab('voglie')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'voglie' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
+                        <i class="fa-solid fa-ice-cream mr-1"></i> Voglie
+                    </button>
+                    <button onclick="switchNoteTab('nomi')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'nomi' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
+                        <i class="fa-solid fa-star mr-1"></i> Nomi
+                    </button>
+                    <button onclick="switchNoteTab('ginecologo')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'ginecologo' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
+                        <i class="fa-solid fa-user-doctor mr-1"></i> Medico
+                    </button>
+                </div>
+
+                ${state.activeNoteTab === 'voglie' ? renderVoglieSection() : state.activeNoteTab === 'nomi' ? renderNomiSection() : renderGinecologoSection()}
+            </div>`;
+        }
+
+        function renderVoglieSection() {
+            const typeStyle = {
+                voglia: { label: 'Voglia', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35' },
+                fastidio: { label: 'Fastidio', cls: 'bg-rose-500/20 text-rose-300 border-rose-500/35' },
+                promemoria: { label: 'Divieto / Info', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/35' }
+            };
+
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addCraving(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
+                    <input type="text" id="craving-input" required placeholder="Es. Gelato al pistacchio, odore di fritto..." class="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <div class="flex gap-2">
+                        <select id="craving-type" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                            <option value="voglia">Voglia da soddisfare</option>
+                            <option value="fastidio">Odore / Cibo che dà fastidio</option>
+                            <option value="promemoria">Promemoria / Divieto alimentare</option>
+                        </select>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                            Salva
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-2.5">
+                    ${state.cravings.map(c => {
+                        const st = typeStyle[c.type] || typeStyle.voglia;
+                        return `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border mb-1.5 ${st.cls}">${st.label}</span>
+                                <p class="text-sm text-zinc-100 font-medium">${escapeHtml(c.text)}</p>
+                            </div>
+                            <button onclick="deleteCraving(${c.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition shrink-0">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }
+
+        function renderNomiSection() {
+            const sortedNames = [...state.names].sort((a, b) => b.votes - a.votes);
+            const genderBadge = {
+                M: 'bg-sky-500/20 text-sky-300 border-sky-500/35',
+                F: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35',
+                N: 'bg-purple-500/20 text-purple-300 border-purple-500/35'
+            };
+
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addBabyName(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex flex-wrap sm:flex-nowrap gap-2">
+                    <input type="text" id="baby-name-input" required placeholder="Aggiungi un'idea per il nome..." class="flex-1 min-w-[160px] px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <select id="baby-name-gender" class="px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                        <option value="M">Maschio</option>
+                        <option value="F">Femmina</option>
+                        <option value="N">Unisex</option>
+                    </select>
+                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                        + Aggiungi
+                    </button>
+                </form>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${sortedNames.map(n => `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-7 h-7 rounded-xl border text-[11px] font-extrabold flex items-center justify-center shrink-0 ${genderBadge[n.gender] || genderBadge.N}">
+                                    ${n.gender}
+                                </span>
+                                <span class="font-bold text-sm text-white truncate">${escapeHtml(n.name)}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="voteName(${n.id})" class="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/30 border border-purple-500/35 text-purple-200 text-xs font-bold flex items-center gap-1 transition">
+                                    <i class="fa-solid fa-heart text-fuchsia-400"></i> ${n.votes}
+                                </button>
+                                <button onclick="deleteBabyName(${n.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+        }
+
+        function renderGinecologoSection() {
+            const sortedQuestions = [...state.doctorQuestions].sort((a, b) => Number(a.asked) - Number(b.asked));
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addDoctorQuestion(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex gap-2">
+                    <input type="text" id="doctor-question-input" required placeholder="Scrivi una domanda per la prossima visita..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+
+                <div class="space-y-3">
+                    ${sortedQuestions.length === 0 ? `
+                        <div class="bg-zinc-900 rounded-3xl p-8 text-center border border-zinc-800">
+                            <i class="fa-solid fa-stethoscope text-3xl text-zinc-600 mb-2"></i>
+                            <p class="text-sm text-zinc-400">Nessuna domanda salvata. Appunta qui ogni dubbio appena ti viene in mente!</p>
+                        </div>
+                    ` : sortedQuestions.map(q => `
+                        <div class="bg-zinc-900/90 p-4 rounded-3xl border ${q.asked ? 'border-zinc-800/70 opacity-70' : 'border-zinc-800 hover:border-purple-500/40'} transition space-y-3">
+                            <div class="flex items-start gap-3">
+                                <button onclick="toggleDoctorQuestion(${q.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${q.asked ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                    ${q.asked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                </button>
+                                <p class="flex-1 text-sm font-semibold ${q.asked ? 'line-through text-zinc-500' : 'text-zinc-100'}">${escapeHtml(q.text)}</p>
+                                <button onclick="deleteDoctorQuestion(${q.id})" class="text-zinc-600 hover:text-rose-400 p-1 transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="pl-9">
+                                <input type="text" value="${escapeHtml(q.answer)}" onchange="updateDoctorAnswer(${q.id}, this.value)" placeholder="Appunta qui la risposta del ginecologo..." class="w-full px-3 py-2 rounded-xl bg-zinc-950/90 border border-zinc-800/90 text-xs text-purple-200 placeholder-zinc-600 focus:border-purple-500 outline-none">
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+        }
+
+        function addDoctorQuestion(e) {
+            e.preventDefault();
+            const input = document.getElementById('doctor-question-input');
+            const text = input.value.trim();
+            if (!text) return;
+            state.doctorQuestions.unshift({ id: Date.now(), text, asked: false, answer: '' });
+            saveState();
+            renderApp();
+            showToast('Domanda salvata per la visita!');
+        }
+
+        function toggleDoctorQuestion(id) {
+            const q = state.doctorQuestions.find(item => item.id === id);
+            if (q) {
+                q.asked = !q.asked;
+                saveState();
+                renderApp();
+            }
+        }
+
+        function updateDoctorAnswer(id, val) {
+            const q = state.doctorQuestions.find(item => item.id === id);
+            if (q) {
+                q.answer = val.trim();
+                saveState();
+                showToast('Risposta salvata!', 'info');
+            }
+        }
+
+        function deleteDoctorQuestion(id) {
+            state.doctorQuestions = state.doctorQuestions.filter(item => item.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function switchNoteTab(tab) {
+            state.activeNoteTab = tab;
+            renderApp();
+        }
+
+        function addCraving(e) {
+            e.preventDefault();
+            const text = document.getElementById('craving-input').value.trim();
+            const type = document.getElementById('craving-type').value;
+            if (!text) return;
+            state.cravings.unshift({ id: Date.now(), text, type });
+            saveState();
+            renderApp();
+            showToast('Nota salvata!');
+        }
+
+        function deleteCraving(id) {
+            state.cravings = state.cravings.filter(c => c.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function addBabyName(e) {
+            e.preventDefault();
+            const name = document.getElementById('baby-name-input').value.trim();
+            const gender = document.getElementById('baby-name-gender').value;
+            if (!name) return;
+            state.names.push({ id: Date.now(), name, gender, votes: 1 });
+            saveState();
+            renderApp();
+            showToast(`"${name}" aggiunto alla bacheca!`);
+        }
+
+        function voteName(id) {
+            const item = state.names.find(n => n.id === id);
+            if (item) {
+                item.votes += 1;
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteBabyName(id) {
+            state.names = state.names.filter(n => n.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // IMPOSTAZIONI DATA PARTO
+        // ==========================================
+        function openSettingsModal() {
+            document.getElementById('input-partner-name').value = state.partnerName;
+            document.getElementById('input-due-date').value = state.dueDate;
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.getElementById('settings-modal').classList.add('flex');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+            document.getElementById('settings-modal').classList.remove('flex');
+        }
+
+        function saveSettings() {
+            const name = document.getElementById('input-partner-name').value.trim();
+            const date = document.getElementById('input-due-date').value;
+            if (name) state.partnerName = name;
+            if (date) {
+                state.dueDate = date;
+                state.viewedWeek = null;
+            }
+            saveState();
+            closeSettingsModal();
+            renderApp();
+            showToast('Impostazioni aggiornate!');
+        }
+
+        // ==========================================
+        // AVVIO INIZIALE
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            updateNavUI();
+            renderApp();
+        });
+    </script>
+</body>
+</html>
