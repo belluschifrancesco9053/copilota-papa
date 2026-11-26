@@ -22,7 +22,6 @@
             background-color: #09090b;
             background-image: radial-gradient(circle at 50% -10%, rgba(168, 85, 247, 0.16), transparent 55%);
         }
-        /* Nasconde la scrollbar mantenendo lo scorrimento fluido */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -30,7 +29,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Animazione morbida per il cambio sezione */
         .fade-in {
             animation: fadeIn 0.25s ease-out forwards;
         }
@@ -38,7 +36,6 @@
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Effetto Neon Viola */
         .neon-glow {
             box-shadow: 0 0 22px rgba(168, 85, 247, 0.35);
         }
@@ -48,7 +45,6 @@
         .neon-text {
             text-shadow: 0 0 14px rgba(192, 132, 252, 0.55);
         }
-        /* Pulsazione neon per il timer delle contrazioni attivo */
         .pulse-ring {
             animation: pulseRing 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
         }
@@ -70,53 +66,51 @@
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white leading-tight">Copilota Papà</h1>
-                    <p id="header-subtitle" class="text-xs font-semibold text-purple-400">Settimana 20 • Metà percorso</p>
+                    <p id="header-subtitle" class="text-xs font-semibold text-purple-400">Caricamento...</p>
                 </div>
             </div>
-            <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-zinc-900 hover:bg-purple-950/60 text-purple-300 border border-purple-500/30 hover:border-purple-400/60 transition flex items-center gap-2 text-xs font-semibold" title="Impostazioni Data Parto">
+            <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-zinc-900 hover:bg-purple-950/60 text-purple-300 border border-purple-500/30 hover:border-purple-400/60 transition flex items-center gap-2 text-xs font-semibold" title="Impostazioni Gravidanza">
                 <i class="fa-solid fa-sliders"></i>
-                <span class="hidden sm:inline">Data Parto</span>
+                <span class="hidden sm:inline">Settimana & Data</span>
             </button>
         </div>
     </header>
 
-    <!-- Contenitore Principale -->
-    <main id="app-content" class="flex-1 max-w-3xl w-full mx-auto px-4 pt-5 pb-28">
-        <!-- Il contenuto delle schede viene renderizzato dinamicamente via JS -->
-    </main>
+    <!-- Notifiche Toast -->
+    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
-    <!-- Barra di Navigazione Inferiore (stile App Mobile) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 backdrop-blur-xl border-t border-purple-500/20">
-        <div class="max-w-3xl mx-auto px-2 py-2 grid grid-cols-5 gap-1">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-house text-lg mb-1"></i>
-                <span class="text-[11px] font-semibold">Guida</span>
+    <!-- Contenuto Principale Dinamico -->
+    <main id="app-content" class="flex-1 max-w-3xl w-full mx-auto px-4 pt-5 pb-28"></main>
+
+    <!-- Barra di Navigazione Fissa in Basso -->
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-zinc-950/90 backdrop-blur-xl border-t border-purple-500/20 px-2 py-2">
+        <div class="max-w-3xl mx-auto grid grid-cols-5 gap-1.5">
+            <button id="nav-home" onclick="switchTab('home')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-compass text-base mb-0.5"></i>
+                <span class="text-[10px] font-bold">Guida</span>
             </button>
-            <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-calendar-check text-lg mb-1"></i>
-                <span class="text-[11px] font-semibold">Agenda</span>
+            <button id="nav-agenda" onclick="switchTab('agenda')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-calendar-check text-base mb-0.5"></i>
+                <span class="text-[10px] font-bold">Agenda</span>
             </button>
-            <button onclick="switchTab('checklist')" id="nav-checklist" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-suitcase-medical text-lg mb-1"></i>
-                <span class="text-[11px] font-semibold">Borsa</span>
+            <button id="nav-checklist" onclick="switchTab('checklist')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-suitcase-rolling text-base mb-0.5"></i>
+                <span class="text-[10px] font-bold">Borsa</span>
             </button>
-            <button onclick="switchTab('giornox')" id="nav-giornox" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-stopwatch text-lg mb-1"></i>
-                <span class="text-[11px] font-semibold">Giorno X</span>
+            <button id="nav-giornox" onclick="switchTab('giornox')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-stopwatch text-base mb-0.5"></i>
+                <span class="text-[10px] font-bold">Giorno X</span>
             </button>
-            <button onclick="switchTab('diario')" id="nav-diario" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-heart text-lg mb-1"></i>
-                <span class="text-[11px] font-semibold">Note</span>
+            <button id="nav-diario" onclick="switchTab('diario')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i class="fa-solid fa-book-open text-base mb-0.5"></i>
+                <span class="text-[10px] font-bold">Note</span>
             </button>
         </div>
     </nav>
 
-    <!-- Toast di Notifica Personalizzato (sostituisce alert) -->
-    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col gap-2 w-[90%] max-w-sm"></div>
-
-    <!-- Modale Impostazioni Data Presunta Parto (DPP) -->
+    <!-- Modale Impostazioni Gravidanza -->
     <div id="settings-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in">
+        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold text-white">Impostazioni Gravidanza</h2>
                 <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
@@ -128,10 +122,56 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Nome della tua compagna</label>
                     <input type="text" id="input-partner-name" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/25 outline-none text-sm font-medium" placeholder="Es. Giulia">
                 </div>
+
+                <!-- Selettore Metodo di Calcolo -->
                 <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Come vuoi calcolare le settimane?</label>
+                    <div class="grid grid-cols-3 gap-1.5 bg-zinc-950 p-1 rounded-2xl border border-zinc-800">
+                        <button type="button" id="mode-btn-lmp" onclick="setSettingsCalcMode('lmp')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Ultima Mestr.
+                        </button>
+                        <button type="button" id="mode-btn-week" onclick="setSettingsCalcMode('week')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Settimana Oggi
+                        </button>
+                        <button type="button" id="mode-btn-dpp" onclick="setSettingsCalcMode('dpp')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Data Parto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campo 1: Ultima Mestruazione -->
+                <div id="calc-box-lmp" class="hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">1° giorno dell'ultima mestruazione</label>
+                    <input type="date" id="input-lmp-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-medium">
+                    <p class="text-xs text-zinc-400 mt-1.5">È il metodo standard dei ginecologi: aggiungiamo 40 settimane (280 giorni) e aggiorniamo in automatico ogni giorno.</p>
+                </div>
+
+                <!-- Campo 2: Settimana e Giorni Attuali -->
+                <div id="calc-box-week" class="hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">A che settimana siete oggi?</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <span class="block text-[11px] text-zinc-400 mb-1">Settimana (1–40)</span>
+                            <input type="number" id="input-current-week" min="1" max="42" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-bold">
+                        </div>
+                        <div>
+                            <span class="block text-[11px] text-zinc-400 mb-1">+ Giorni (0–6)</span>
+                            <input type="number" id="input-current-days" min="0" max="6" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-bold">
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1.5">Es. se siete a <strong>5+2</strong>, inserisci 5 e 2. Da domani avanzerà da sola!</p>
+                </div>
+
+                <!-- Campo 3: Data Presunta del Parto (DPP) -->
+                <div id="calc-box-dpp" class="hidden">
                     <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Data Presunta del Parto (DPP)</label>
-                    <input type="date" id="input-due-date" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/25 outline-none text-sm font-medium">
-                    <p class="text-xs text-zinc-400 mt-1.5">Calcoleremo automaticamente la settimana attuale e il conto alla rovescia.</p>
+                    <input type="date" id="input-due-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-medium">
+                    <p class="text-xs text-zinc-400 mt-1.5">Utile dopo l'ecografia di datazione se il ginecologo vi ha dato una data precisa.</p>
+                </div>
+
+                <!-- Anteprima Calcolo Live -->
+                <div id="settings-calc-preview" class="p-3.5 rounded-2xl bg-purple-950/35 border border-purple-500/30 text-xs text-purple-200 flex items-center justify-between gap-2">
+                    <span>Calcolo attuale...</span>
                 </div>
 
                 <!-- Backup e Ripristino Dati Locali -->
@@ -240,153 +280,191 @@
 
     <script>
         // ==========================================
+        // UTILITY DATE & SICUREZZA HTML
+        // ==========================================
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatDateISO(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function parseLocalISODate(isoStr) {
+            if (!isoStr || typeof isoStr !== 'string') return null;
+            const parts = isoStr.split('-').map(Number);
+            if (parts.length !== 3 || parts.some(isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function getOffsetDate(daysOffset) {
+            const d = new Date();
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + daysOffset);
+            return formatDateISO(d);
+        }
+
+        function formatDateIT(isoStr) {
+            const d = parseLocalISODate(isoStr);
+            if (!d) return isoStr || '';
+            return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        const defaultDueDateStr = getOffsetDate(140);
+
+        // ==========================================
         // DATI SETTIMANA PER SETTIMANA (LATO PAPÀ)
         // ==========================================
         const weeklyGuides = [
             {
-                range: [1, 12],
+                range: [1, 4],
+                trimester: "1° Trimestre • Inizio",
+                sizeEmoji: "🌱",
+                sizeName: "Un semino di papavero (circa 1-2 mm)",
+                babyInfo: "L'avventura è appena iniziata! L'embrione si sta impiantando e le prime cellule si dividono a ritmo velocissimo.",
+                momSymptoms: "Ritardo del ciclo, test positivo, possibile tensione al seno, leggeri crampetti simili al ciclo e tanta emozione.",
+                dadTips: [
+                    "Festeggiate questo momento (anche in segreto tra voi due) e godetevi la notizia.",
+                    "Ricorda l'acido folico se non lo sta già prendendo e prenotate la prima visita dal ginecologo.",
+                    "Inizia a dare un'occhiata ai cibi da evitare in gravidanza quando fai la spesa."
+                ]
+            },
+            {
+                range: [5, 6],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🫐",
+                sizeName: "Una lenticchia / piccolo mirtillo (4-6 mm)",
+                babyInfo: "Si sta formando il tubicino che diventerà il cuoricino e inizia già a battere! Si abbozzano cervello e colonna vertebrale.",
+                momSymptoms: "Stanchezza improvvisa (molto sonno), olfatto super sensibile, prime nausee e bisogno frequente di andare in bagno.",
+                dadTips: [
+                    "Gestisci tu la cucina se certi odori iniziano a darle fastidio.",
+                    "Tieni sempre in casa snack secchi (cracker, grissini, fette biscottate) e acqua fresca.",
+                    "Non sottovalutare la sua stanchezza: il suo corpo sta lavorando al massimo anche se da fuori non si vede."
+                ]
+            },
+            {
+                range: [7, 8],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🍇",
+                sizeName: "Un lampone / acino d'uva (1,5 cm)",
+                babyInfo: "Spuntano i piccoli abbozzi di braccia, gambe e orecchie. Il cuore batte fortissimo, quasi il doppio del nostro!",
+                momSymptoms: "Le nausee possono raggiungere il picco, possibili sbalzi d'umore e digestione più lenta.",
+                dadTips: [
+                    "Accompagnala alla prima ecografia: vedere quel puntino e sentire il battito cambia tutto.",
+                    "Prepara pasti leggeri e frequenti invece di cene pesanti.",
+                    "Un po' di pazienza extra con gli sbalzi ormonali fa miracoli."
+                ]
+            },
+            {
+                range: [9, 12],
                 trimester: "1° Trimestre",
                 sizeEmoji: "🍋",
-                sizeName: "Un piccolo lime (circa 5 cm)",
-                babyInfo: "Si stanno formando tutti gli organi principali, il cuoricino batte già forte e inizia a muovere le prime dita.",
-                momSymptoms: "Nausee (anche non solo mattutine), stanchezza improvvisa, olfatto ipersensibile e qualche sbalzo d'umore.",
+                sizeName: "Una fragola / piccolo lime (3-5 cm)",
+                babyInfo: "Ora è ufficialmente un feto! Ha già tutte le dita di mani e piedi, si muove tantissimo (anche se lei ancora non lo sente) e gli organi principali sono formati.",
+                momSymptoms: "Verso la 12ª settimana le nausee iniziano spesso a calmarsi e torna un po' di energia. Si avvicina l'ecografia del primo trimestre.",
                 dadTips: [
-                    "Gestisci tu la cucina se certi odori le danno fastidio.",
-                    "Tieni sempre in casa snack secchi (cracker, fette biscottate) e acqua fresca.",
-                    "Accompagnala alla prima ecografia: sentire il battito cambia tutto."
+                    "Segnate in Agenda gli esami del primo trimestre (es. traslucenza nucale / DNA fetale).",
+                    "Iniziate a decidere quando e come dare la bella notizia a parenti e amici.",
+                    "Scrivete nella sezione 'Medico' tutte le domande per la prossima visita."
                 ]
             },
             {
                 range: [13, 19],
-                trimester: "2° Trimestre",
+                trimester: "2° Trimestre • Energia",
                 sizeEmoji: "🥑",
-                sizeName: "Un avocado (circa 14 cm)",
-                babyInfo: "Il bebè inizia a percepire i suoni esterni, compresa la tua voce! Sviluppa le impronte digitali e si muove molto.",
-                momSymptoms: "Le nausee di solito diminuiscono e torna un po' di energia. La pancia inizia a vedersi e potrebbero comparire i primi crampi o naso chiuso.",
+                sizeName: "Un avocado / mango (10-15 cm)",
+                babyInfo: "Le ossa si rafforzano, inizia a fare smorfie e presto sentirà la tua voce! Verso la 18ª-19ª settimana lei potrebbe avvertire i primi 'sfarfallii' nella pancia.",
+                momSymptoms: "Spesso è il periodo migliore: meno nausea, più energia, ma potrebbero iniziare piccoli dolori ai legamenti o bruciore di stomaco.",
                 dadTips: [
-                    "Inizia a parlare alla pancia la sera: la tua voce diventerà familiare.",
-                    "Organizzate una piccola gita o una cena rilassante: questo è spesso il periodo in cui lei si sente meglio.",
-                    "Iniziate a guardarvi intorno per il corso pre-parto."
+                    "Parla vicino al pancione: il bebè inizierà a riconoscere la tua voce.",
+                    "È il momento ideale per una breve vacanza o un weekend di coppia prima dell'ultimo trimestre.",
+                    "Iniziate a guardarvi intorno per passeggino, ovetto e culla senza fretta (usando la scheda Spese)."
                 ]
             },
             {
                 range: [20, 27],
-                trimester: "2° Trimestre",
+                trimester: "2° Trimestre • Metà Percorso",
                 sizeEmoji: "🍌",
-                sizeName: "Una banana / pannocchia (25-35 cm)",
-                babyInfo: "A metà strada! Si sente scalciare chiaramente, apre e chiude gli occhi e reagisce alla luce e alla musica.",
-                momSymptoms: "Mal di schiena lombare, bruciore di stomaco dopo i pasti e caviglie un po' gonfie a fine giornata.",
+                sizeName: "Una banana / melanzana (25-35 cm)",
+                babyInfo: "Siete a metà strada! Con l'ecografia morfologica controllate tutti gli organi. Il bebè ora scalcia con decisione e alterna fasi di sonno e veglia.",
+                momSymptoms: "La pancia cresce a vista d'occhio: possibili mal di schiena, crampi ai polpacci di notte e gambe gonfie a fine giornata.",
                 dadTips: [
-                    "Un massaggio serale a piedi e zona lombare vale più di mille parole.",
-                    "È il momento perfetto per ordinare passeggino, ovetto e preparare la cameretta senza fretta.",
-                    "Informati in azienda sul congedo di paternità obbligatorio (10 giorni lavorativi)."
+                    "Un massaggio serale a piedi, polpacci e zona lombare ti farà guadagnare 1000 punti.",
+                    "Appoggia la mano sulla pancia la sera quando lei è rilassata: presto sentirai i calcetti anche tu!",
+                    "Informatevi sul corso preparto (molti prevedono incontri dedicati anche ai papà)."
                 ]
             },
             {
                 range: [28, 35],
-                trimester: "3° Trimestre",
+                trimester: "3° Trimestre • Preparazione",
                 sizeEmoji: "🍍",
-                sizeName: "Un ananas (circa 40-45 cm)",
-                babyInfo: "Il bambino mette su peso rapidamente, i polmoni maturano e lo spazio nella pancia inizia a diventare stretto.",
-                momSymptoms: "Fatica a dormire bene, fiato corto facendo le scale, frequenti viaggi in bagno e prime contrazioni preparatorie (Braxton Hicks).",
+                sizeName: "Un ananas / melone (38-45 cm)",
+                babyInfo: "Il bebè mette su peso velocemente, apre gli occhi, fa le prove di respirazione e inizia a posizionarsi a testa in giù per il parto.",
+                momSymptoms: "Stanchezza di ritorno, difficoltà a trovare una posizione comoda per dormire, fiato corto e prime contrazioni preparatorie (Braxton Hicks).",
                 dadTips: [
-                    "Inizia a preparare la Borsa dell'Ospedale (inclusa la tua!) per non arrivare all'ultimo minuto.",
-                    "Fai una prova di montaggio della base Isofix / ovetto in auto.",
-                    "Fai scorta di piatti pronti in freezer per le prime settimane dopo il parto."
+                    "Prenditi carico dei lavori pesanti in casa, della spesa e del montaggio di culla e fasciatoio.",
+                    "Inizia a preparare con lei la Borsa dell'Ospedale (e non dimenticare la tua!).",
+                    "Sbriga la burocrazia in anticipo: congedo di paternità, scelta del pediatra e documenti."
                 ]
             },
             {
                 range: [36, 42],
-                trimester: "Ultimo Miglio!",
+                trimester: "3° Trimestre • Conto alla rovescia!",
                 sizeEmoji: "🍉",
-                sizeName: "Un'anguria piccola (circa 50 cm)",
-                babyInfo: "Il bebè è praticamente pronto per conoscervi! Si posiziona verso il basso in attesa del grande giorno.",
-                momSymptoms: "Senso di pesantezza, stanchezza, tanta voglia di incontrare il bimbo e magari un po' di ansia per il parto.",
+                sizeName: "Una piccola anguria (48-52 cm)",
+                babyInfo: "Il bebè è pronto per conoscervi! Ogni giorno può essere quello giusto. I polmoni sono maturi e sta solo accumulando le ultime riserve.",
+                momSymptoms: "Pressione pelvica, insonnia, voglia irrefrenabile di sistemare casa ('sindrome del nido') e tanta impazienza.",
                 dadTips: [
-                    "Tieni il serbatoio dell'auto sempre sopra la metà e il telefono sempre carico.",
-                    "Ripassa il percorso più veloce per l'ospedale e dove parcheggiare.",
-                    "Sii la sua roccia: trasmetti calma e usa la scheda 'Giorno X' per le contrazioni."
+                    "Tieni sempre il serbatoio dell'auto pieno e la base Isofix / ovetto già installati.",
+                    "Salva i numeri del reparto e del ginecologo nella scheda 'Giorno X' e fai una prova del percorso verso l'ospedale.",
+                    "Resta calmo, rassicurala e tieni il telefono sempre carico: sei il suo punto di riferimento!"
                 ]
             }
         ];
 
         // ==========================================
-        // STATO DELL'APPLICAZIONE
+        // STATO APPLICAZIONE
         // ==========================================
-        const defaultDueDate = new Date();
-        defaultDueDate.setDate(defaultDueDate.getDate() + (20 * 7));
-        const defaultDueDateStr = defaultDueDate.toISOString().split('T')[0];
-
-        function getOffsetDate(days) {
-            const d = new Date();
-            d.setDate(d.getDate() + days);
-            return d.toISOString().split('T')[0];
-        }
-
         const state = {
             activeTab: 'home',
             activeChecklistCat: 'lei',
             activeNoteTab: 'voglie',
             partnerName: 'La tua compagna',
             dueDate: defaultDueDateStr,
+            calcMode: 'lmp',
             viewedWeek: null,
 
-            events: [
-                {
-                    id: 1,
-                    title: "Ecografia Morfologica",
-                    date: getOffsetDate(5),
-                    time: "10:30",
-                    category: "Visita",
-                    notes: "Portare tessera sanitaria, impegnativa, cartella gravidanza e chiavetta USB.",
-                    done: false
-                },
-                {
-                    id: 2,
-                    title: "Esami sangue + Toxotest",
-                    date: getOffsetDate(12),
-                    time: "08:00",
-                    category: "Esame",
-                    notes: "A digiuno dalla mezzanotte. Portare bottiglietta d'acqua e snack per dopo.",
-                    done: false
-                },
-                {
-                    id: 3,
-                    title: "Richiesta Congedo di Paternità",
-                    date: getOffsetDate(45),
-                    time: "09:00",
-                    category: "Burocrazia",
-                    notes: "Avvisare il datore di lavoro almeno 5 giorni prima (meglio muoversi in anticipo).",
-                    done: false
-                }
-            ],
+            events: [],
 
             checklists: {
-                lei: [
-                    { id: 101, text: "Cartella clinica completa e ultimi esami", done: true },
-                    { id: 102, text: "Documento d'identità e Tessera Sanitaria", done: true },
-                    { id: 103, text: "3 Camicie da notte aperte davanti", done: false },
-                    { id: 104, text: "Assorbenti post-parto e mutande a rete", done: false },
-                    { id: 105, text: "Ciabatte comode + ciabatte da doccia", done: false },
-                    { id: 106, text: "Burrocacao e elastico per capelli (fondamentali in sala parto!)", done: false }
-                ],
-                bebe: [
-                    { id: 201, text: "4-5 sacchetti con cambi completi etichettati", done: false },
-                    { id: 202, text: "Body in cotone e tutine (taglia 0-1 mese)", done: false },
-                    { id: 203, text: "Cappellino e calzini per la nascita", done: false },
-                    { id: 204, text: "Copertina morbida e pannolini taglia 1", done: false }
-                ],
-                papa: [
-                    { id: 301, text: "Caricabatterie con cavo lungo + Powerbank", done: true },
-                    { id: 302, text: "Snack energetici e bottiglia d'acqua", done: false },
-                    { id: 303, text: "Felpa comoda e t-shirt di ricambio", done: false },
-                    { id: 304, text: "Monetine per le macchinette del caffè", done: false }
-                ],
+                lei: [],
+                bebe: [],
+                papa: [],
                 casa: [
-                    { id: 401, text: "Installare base Isofix / ovetto in auto", done: false },
-                    { id: 402, text: "Montare culla / fasciatoio", done: false },
-                    { id: 403, text: "Preparare scorta pasti pronti in freezer", done: false },
-                    { id: 404, text: "Scegliere il pediatra di base", done: false }
+                    { id: 401, text: "Installare base Isofix / ovetto in auto e fare una prova di aggancio", done: false },
+                    { id: 402, text: "Montare culla / lettino e preparare materasso con lenzuolini lavati", done: false },
+                    { id: 403, text: "Allestire angolo cambio (fasciatoio, pannolini taglia 1, salviette, crema, mangiapannolini)", done: false },
+                    { id: 404, text: "Lavare tutti i vestitini, body, lenzuola e copertine con detersivo delicato", done: false },
+                    { id: 405, text: "Preparare scorta di pasti pronti in freezer per le prime 2 settimane", done: false },
+                    { id: 406, text: "Fare spesa grossa di scorte casa (acqua, carta igienica, detersivi, snack veloci)", done: false },
+                    { id: 407, text: "Preparare vaschetta bagnetto, termometro acqua, asciugamani morbidi e detergente", done: false },
+                    { id: 408, text: "Kit salute neonato (soluzione fisiologica, garze sterili ombelico, termometro, forbicine)", done: false },
+                    { id: 409, text: "Allestire zona comoda per allattamento / biberon con luce soffusa notturna", done: false },
+                    { id: 410, text: "Montare passeggino / navicella e verificare che entri bene nel bagagliaio", done: false },
+                    { id: 411, text: "Scegliere il pediatra di base e verificare i documenti per l'iscrizione", done: false },
+                    { id: 412, text: "Informarsi su pratiche post-nascita (registrazione, codice fiscale, Assegno Unico, congedo)", done: false },
+                    { id: 413, text: "Pulizia profonda di casa nelle ultime settimane prima della data presunta", done: false },
+                    { id: 414, text: "Fare una prova del percorso verso l'ospedale e controllare dove parcheggiare", done: false },
+                    { id: 415, text: "Tenere il serbatoio dell'auto sempre almeno a metà nell'ultimo mese", done: false }
                 ]
             },
 
@@ -395,48 +473,25 @@
             contractionIntervalId: null,
             contractions: [],
 
-            contacts: [
-                { id: 1, name: "Reparto Maternità / Ospedale", phone: "112", type: "medico" },
-                { id: 2, name: "Ginecologo / Ostetrica", phone: "+39 333 0000000", type: "medico" },
-                { id: 3, name: "Futuri Nonni", phone: "+39 339 0000000", type: "famiglia" }
-            ],
-
-            cravings: [
-                { id: 1, text: "Fragole fresche con panna", type: "voglia" },
-                { id: 2, text: "Odore di caffè la mattina presto", type: "fastidio" },
-                { id: 3, text: "Evitare salumi crudi, pesce crudo e formaggi non pastorizzati", type: "promemoria" }
-            ],
-
-            names: [
-                { id: 1, name: "Leonardo", gender: "M", votes: 3 },
-                { id: 2, name: "Sofia", gender: "F", votes: 4 },
-                { id: 3, name: "Edoardo", gender: "M", votes: 2 },
-                { id: 4, name: "Matilde", gender: "F", votes: 3 }
-            ],
-
-            doctorQuestions: [
-                { id: 1, text: "Quali integratori (ferro, acido folico, vitamine) continuare questo mese?", asked: false, answer: "" },
-                { id: 2, text: "Ci sono limiti per viaggi in auto o aereo nelle prossime settimane?", asked: false, answer: "" }
-            ],
-
-            budgetItems: [
-                { id: 1, name: "Passeggino Trio", price: 650, status: "da_comprare" },
-                { id: 2, name: "Ovetto / Seggiolino Auto + Isofix", price: 280, status: "comprato" },
-                { id: 3, name: "Culla Next-to-Me", price: 190, status: "regalato" },
-                { id: 4, name: "Fasciatoio & Bagnetto", price: 120, status: "da_comprare" }
-            ]
+            contacts: [],
+            cravings: [],
+            names: [],
+            doctorQuestions: [],
+            budgetItems: []
         };
 
         // ==========================================
         // PERSISTENZA DATI (LOCALSTORAGE & BACKUP)
         // ==========================================
-        const STORAGE_KEY = 'copilota_papa_data_v1';
+        const STORAGE_KEY = 'copilota_papa_data_v2';
+        const LEGACY_STORAGE_KEY = 'copilota_papa_data_v1';
 
         function saveState() {
             try {
                 const dataToSave = {
                     partnerName: state.partnerName,
                     dueDate: state.dueDate,
+                    calcMode: state.calcMode,
                     events: state.events,
                     checklists: state.checklists,
                     contractions: state.contractions,
@@ -448,20 +503,40 @@
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
             } catch (err) {
-                console.warn('Impossibile salvare in localStorage:', err);
+                console.error('Errore salvataggio locale:', err);
             }
         }
 
         function loadState() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return;
+                if (!raw) {
+                    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+                    if (legacyRaw) {
+                        const legacy = JSON.parse(legacyRaw);
+                        if (legacy && typeof legacy === 'object') {
+                            if (legacy.partnerName) state.partnerName = legacy.partnerName;
+                            if (legacy.dueDate) state.dueDate = legacy.dueDate;
+                            if (legacy.calcMode) state.calcMode = legacy.calcMode;
+                        }
+                    }
+                    saveState();
+                    return;
+                }
                 const saved = JSON.parse(raw);
                 if (saved && typeof saved === 'object') {
-                    if (saved.partnerName) state.partnerName = saved.partnerName;
-                    if (saved.dueDate) state.dueDate = saved.dueDate;
+                    if (typeof saved.partnerName === 'string') state.partnerName = saved.partnerName;
+                    if (typeof saved.dueDate === 'string' && saved.dueDate) state.dueDate = saved.dueDate;
+                    if (typeof saved.calcMode === 'string') state.calcMode = saved.calcMode;
                     if (Array.isArray(saved.events)) state.events = saved.events;
-                    if (saved.checklists) state.checklists = { ...state.checklists, ...saved.checklists };
+                    if (saved.checklists && typeof saved.checklists === 'object') {
+                        state.checklists = {
+                            lei: Array.isArray(saved.checklists.lei) ? saved.checklists.lei : [],
+                            bebe: Array.isArray(saved.checklists.bebe) ? saved.checklists.bebe : [],
+                            papa: Array.isArray(saved.checklists.papa) ? saved.checklists.papa : [],
+                            casa: Array.isArray(saved.checklists.casa) ? saved.checklists.casa : state.checklists.casa
+                        };
+                    }
                     if (Array.isArray(saved.contractions)) state.contractions = saved.contractions;
                     if (Array.isArray(saved.contacts)) state.contacts = saved.contacts;
                     if (Array.isArray(saved.cravings)) state.cravings = saved.cravings;
@@ -470,122 +545,122 @@
                     if (Array.isArray(saved.budgetItems)) state.budgetItems = saved.budgetItems;
                 }
             } catch (err) {
-                console.warn('Impossibile caricare da localStorage:', err);
+                console.error('Errore caricamento dati:', err);
             }
         }
 
         function exportBackup() {
-            try {
-                saveState();
-                const raw = localStorage.getItem(STORAGE_KEY) || JSON.stringify(state);
-                const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                const today = new Date().toISOString().split('T')[0];
-                a.href = url;
-                a.download = `copilota_papa_backup_${today}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('Backup esportato con successo!');
-            } catch (err) {
-                showToast('Errore durante l\'esportazione del backup', 'warning');
-            }
+            const payload = {
+                version: 2,
+                exportedAt: new Date().toISOString(),
+                partnerName: state.partnerName,
+                dueDate: state.dueDate,
+                calcMode: state.calcMode,
+                events: state.events,
+                checklists: state.checklists,
+                contractions: state.contractions,
+                contacts: state.contacts,
+                cravings: state.cravings,
+                names: state.names,
+                doctorQuestions: state.doctorQuestions,
+                budgetItems: state.budgetItems
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `copilota-papa-backup-${formatDateISO(new Date())}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup scaricato!');
         }
 
         function importBackup(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (!parsed || typeof parsed !== 'object') throw new Error('Formato non valido');
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-                    loadState();
+                    const data = JSON.parse(e.target.result);
+                    if (!data || typeof data !== 'object') throw new Error('Formato non valido');
+                    if (data.partnerName) state.partnerName = data.partnerName;
+                    if (data.dueDate) state.dueDate = data.dueDate;
+                    if (data.calcMode) state.calcMode = data.calcMode;
+                    if (Array.isArray(data.events)) state.events = data.events;
+                    if (data.checklists) state.checklists = data.checklists;
+                    if (Array.isArray(data.contractions)) state.contractions = data.contractions;
+                    if (Array.isArray(data.contacts)) state.contacts = data.contacts;
+                    if (Array.isArray(data.cravings)) state.cravings = data.cravings;
+                    if (Array.isArray(data.names)) state.names = data.names;
+                    if (Array.isArray(data.doctorQuestions)) state.doctorQuestions = data.doctorQuestions;
+                    if (Array.isArray(data.budgetItems)) state.budgetItems = data.budgetItems;
+                    state.viewedWeek = null;
+                    saveState();
                     closeSettingsModal();
                     renderApp();
-                    showToast('Backup ripristinato correttamente!');
+                    showToast('Backup ripristinato con successo!');
                 } catch (err) {
-                    showToast('File di backup non valido', 'warning');
-                } finally {
-                    event.target.value = '';
+                    showToast('File di backup non valido.');
                 }
+                event.target.value = '';
             };
             reader.readAsText(file);
         }
 
         // ==========================================
-        // FUNZIONI DI UTILITÀ & CALCOLO SETTIMANE
+        // CALCOLO SETTIMANE GRAVIDANZA (AUTOMATICO)
         // ==========================================
-        function escapeHtml(str) {
-            return String(str || '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-
-        function getPregnancyStats() {
+        function getPregnancyProgress() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const due = new Date(state.dueDate + 'T00:00:00');
-            const diffMs = due - today;
-            const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-            const totalDays = 280; // 40 settimane
-            const daysElapsed = totalDays - daysRemaining;
-            let currentWeek = Math.floor(daysElapsed / 7) + 1;
-            currentWeek = Math.max(1, Math.min(42, currentWeek));
-            const progressPct = Math.max(2, Math.min(100, Math.round((daysElapsed / totalDays) * 100)));
-            return { currentWeek, daysRemaining, progressPct };
+
+            let due = parseLocalISODate(state.dueDate);
+            if (!due) {
+                due = new Date(today);
+                due.setDate(due.getDate() + 140);
+            }
+            due.setHours(0, 0, 0, 0);
+
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const daysRemaining = Math.round((due - today) / msPerDay);
+            const totalDaysElapsed = Math.max(0, 280 - daysRemaining);
+            const rawWeek = Math.floor(totalDaysElapsed / 7);
+            const extraDays = totalDaysElapsed % 7;
+
+            const currentWeek = Math.min(42, Math.max(1, rawWeek === 0 ? 1 : rawWeek));
+            const progressPct = Math.min(100, Math.max(0, Math.round((totalDaysElapsed / 280) * 100)));
+
+            return {
+                currentWeek,
+                rawWeek,
+                extraDays,
+                daysRemaining,
+                progressPct,
+                dueDateObj: due
+            };
         }
 
         function getGuideForWeek(week) {
-            return weeklyGuides.find(g => week >= g.range[0] && week <= g.range[1]) || weeklyGuides[2];
+            return weeklyGuides.find(g => week >= g.range[0] && week <= g.range[1]) || weeklyGuides[weeklyGuides.length - 1];
         }
 
-        function formatSeconds(sec) {
-            const m = Math.floor(sec / 60);
-            const s = sec % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        function formatItalianDate(dateStr) {
-            if (!dateStr) return '';
-            const d = new Date(dateStr + 'T00:00:00');
-            return d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
-        }
-
-        function showToast(message, type = 'success') {
+        // ==========================================
+        // NOTIFICHE TOAST & NAVIGAZIONE
+        // ==========================================
+        function showToast(message) {
             const container = document.getElementById('toast-container');
-            if (!container) return;
             const toast = document.createElement('div');
-            const styles = {
-                success: 'bg-zinc-900/95 border-purple-500/60 text-purple-100 neon-glow-sm',
-                info: 'bg-zinc-900/95 border-fuchsia-500/50 text-fuchsia-100',
-                warning: 'bg-rose-950/95 border-rose-500/60 text-rose-100'
-            };
-            const icons = {
-                success: 'fa-circle-check text-purple-400',
-                info: 'fa-circle-info text-fuchsia-400',
-                warning: 'fa-triangle-exclamation text-rose-400'
-            };
-            toast.className = `px-4 py-3 rounded-2xl border shadow-xl text-xs font-semibold flex items-center gap-2.5 fade-in backdrop-blur-md ${styles[type] || styles.success}`;
-            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.success} text-sm"></i><span>${escapeHtml(message)}</span>`;
+            toast.className = 'pointer-events-auto bg-zinc-900 border border-purple-500/50 text-purple-100 px-4 py-3 rounded-2xl shadow-xl neon-glow-sm text-xs font-semibold flex items-center gap-2.5 fade-in';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-purple-400"></i><span>${escapeHtml(message)}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(-6px)';
                 toast.style.transition = 'all 0.25s ease';
-                setTimeout(() => toast.remove(), 260);
+                setTimeout(() => toast.remove(), 250);
             }, 2600);
         }
 
-        // ==========================================
-        // NAVIGAZIONE & RENDERING PRINCIPALE
-        // ==========================================
         function switchTab(tab) {
             state.activeTab = tab;
             updateNavUI();
@@ -606,19 +681,19 @@
             });
         }
 
-        function renderApp() {
-            const { currentWeek, daysRemaining } = getPregnancyStats();
-            const guide = getGuideForWeek(currentWeek);
-            const subtitle = document.getElementById('header-subtitle');
-            if (subtitle) {
-                const daysLabel = daysRemaining > 0
-                    ? `-${daysRemaining} giorni al parto`
-                    : daysRemaining === 0
-                        ? 'È il grande giorno!'
-                        : 'Ci siamo quasi!';
-                subtitle.textContent = `Settimana ${currentWeek} • ${daysLabel}`;
-            }
+        function updateHeader() {
+            const p = getPregnancyProgress();
+            const sub = document.getElementById('header-subtitle');
+            if (!sub) return;
+            const weekLabel = p.rawWeek > 0 ? `Settimana ${p.rawWeek}+${p.extraDays}` : `Settimana 1`;
+            const daysText = p.daysRemaining > 0
+                ? `-${p.daysRemaining} giorni al parto`
+                : (p.daysRemaining === 0 ? 'È il giorno presunto!' : `+${Math.abs(p.daysRemaining)} giorni oltre il termine`);
+            sub.textContent = `${weekLabel} • ${daysText}`;
+        }
 
+        function renderApp() {
+            updateHeader();
             const main = document.getElementById('app-content');
             if (!main) return;
 
@@ -630,18 +705,152 @@
                 main.innerHTML = renderChecklist();
             } else if (state.activeTab === 'giornox') {
                 main.innerHTML = renderGiornoX();
+                if (state.contractionActive) updateContractionTimerDisplay();
             } else if (state.activeTab === 'diario') {
                 main.innerHTML = renderDiario();
             }
         }
 
         // ==========================================
-        // 1. SEZIONE HOME (GUIDA SETTIMANA PER SETTIMANA)
+        // 1. SEZIONE GUIDA (HOME)
         // ==========================================
+        function renderHome() {
+            const p = getPregnancyProgress();
+            const activeWeek = state.viewedWeek !== null ? state.viewedWeek : p.currentWeek;
+            const guide = getGuideForWeek(activeWeek);
+            const isCurrent = activeWeek === p.currentWeek;
+
+            const upcomingEvents = state.events
+                .filter(e => !e.done)
+                .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+                .slice(0, 2);
+
+            return `
+            <div class="space-y-5 fade-in">
+                <!-- Hero Card Settimana -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-950/80 via-zinc-900 to-zinc-950 border border-purple-500/35 p-5 sm:p-6 neon-glow">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-[11px] font-bold uppercase tracking-wider text-purple-300">
+                                ${guide.trimester}
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2.5 tracking-tight neon-text">
+                                Settimana ${activeWeek}${isCurrent && p.rawWeek > 0 ? `<span class="text-lg font-bold text-purple-300">+${p.extraDays}</span>` : ''}
+                            </h2>
+                            <p class="text-xs sm:text-sm text-purple-200/80 mt-1">${guide.sizeName}</p>
+                            ${!isCurrent ? `
+                                <button onclick="resetViewedWeek()" class="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-fuchsia-300 hover:text-fuchsia-200 transition">
+                                    <i class="fa-solid fa-rotate-left"></i> Torna alla tua settimana (${p.currentWeek})
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col items-end gap-2.5 shrink-0">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="changeViewedWeek(-1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 hover:text-white flex items-center justify-center transition" title="Settimana precedente">
+                                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                                </button>
+                                <button onclick="changeViewedWeek(1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 hover:text-white flex items-center justify-center transition" title="Settimana successiva">
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-zinc-950/80 border border-purple-500/30 flex items-center justify-center text-4xl shadow-inner">
+                                ${guide.sizeEmoji}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra di Avanzamento -->
+                    <div class="mt-5 pt-4 border-t border-purple-500/20">
+                        <div class="flex justify-between items-center text-xs font-semibold mb-2">
+                            <span class="text-zinc-300">Percorso completato: <strong class="text-purple-300">${p.progressPct}%</strong></span>
+                            <span class="text-zinc-400">${p.daysRemaining > 0 ? `Mancano ${p.daysRemaining} giorni` : `DPP: ${formatDateIT(state.dueDate)}`}</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
+                            <div class="h-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-purple-400 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(192,132,252,0.8)]" style="width: ${p.progressPct}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cosa succede al bebè e a lei -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 hover:border-purple-500/30 transition">
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center">
+                                <i class="fa-solid fa-baby text-sm"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Il Bebè questa settimana</h3>
+                        </div>
+                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">${guide.babyInfo}</p>
+                    </div>
+
+                    <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 hover:border-fuchsia-500/30 transition">
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-fuchsia-500/15 text-fuchsia-400 flex items-center justify-center">
+                                <i class="fa-solid fa-heart-pulse text-sm"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Come può sentirsi ${escapeHtml(state.partnerName)}</h3>
+                        </div>
+                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">${guide.momSymptoms}</p>
+                    </div>
+                </div>
+
+                <!-- Missioni Pratiche per il Papà -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-purple-500/25">
+                    <div class="flex items-center gap-2.5 mb-3.5">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm">
+                            <i class="fa-solid fa-bolt text-xs"></i>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-white">Consigli Pratici per Te (Papà)</h3>
+                    </div>
+                    <ul class="space-y-2.5">
+                        ${guide.dadTips.map(tip => `
+                            <li class="flex items-start gap-3 text-xs sm:text-sm text-zinc-200 bg-zinc-950/70 p-3 rounded-2xl border border-zinc-800/80">
+                                <i class="fa-solid fa-check text-purple-400 mt-1 shrink-0 text-xs"></i>
+                                <span class="leading-relaxed">${tip}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <!-- Prossimi Appuntamenti (Anteprima rapida) -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-day text-purple-400"></i> Prossimi Promemoria
+                        </h3>
+                        <button onclick="switchTab('agenda')" class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition">
+                            Vedi Agenda →
+                        </button>
+                    </div>
+                    ${upcomingEvents.length === 0 ? `
+                        <div class="p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 text-center">
+                            <p class="text-xs text-zinc-400">Nessun appuntamento in agenda.</p>
+                            <button onclick="switchTab('agenda'); openEventModal();" class="mt-2 px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 border border-purple-500/30 text-xs font-bold hover:bg-purple-600/30 transition">
+                                + Aggiungi la prima visita
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="space-y-2">
+                            ${upcomingEvents.map(ev => `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 border border-zinc-800/80">
+                                    <div class="min-w-0">
+                                        <p class="text-xs sm:text-sm font-bold text-zinc-100 truncate">${escapeHtml(ev.title)}</p>
+                                        <p class="text-[11px] text-purple-300 mt-0.5">${formatDateIT(ev.date)} • ore ${escapeHtml(ev.time)}</p>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 text-[10px] font-bold border border-purple-500/30 shrink-0">${escapeHtml(ev.category)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            </div>`;
+        }
+
         function changeViewedWeek(delta) {
-            const { currentWeek } = getPregnancyStats();
-            const base = state.viewedWeek !== null ? state.viewedWeek : currentWeek;
-            state.viewedWeek = Math.max(1, Math.min(42, base + delta));
+            const p = getPregnancyProgress();
+            const current = state.viewedWeek !== null ? state.viewedWeek : p.currentWeek;
+            const next = Math.min(42, Math.max(1, current + delta));
+            state.viewedWeek = next;
             renderApp();
         }
 
@@ -650,126 +859,11 @@
             renderApp();
         }
 
-        function renderHome() {
-            const { currentWeek, daysRemaining, progressPct } = getPregnancyStats();
-            const displayWeek = state.viewedWeek !== null ? state.viewedWeek : currentWeek;
-            const guide = getGuideForWeek(displayWeek);
-            const isCurrent = displayWeek === currentWeek;
-
-            const upcomingEvents = state.events
-                .filter(e => !e.done)
-                .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-            const nextEvent = upcomingEvents[0];
-
-            return `
-            <div class="space-y-5 fade-in">
-                <!-- Card Hero Settimana & Progresso -->
-                <div class="bg-gradient-to-br from-zinc-900 via-purple-950/40 to-zinc-900 rounded-3xl p-5 border border-purple-500/35 neon-glow relative overflow-hidden">
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-400/30">
-                            ${guide.trimester}
-                        </span>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="changeViewedWeek(-1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 flex items-center justify-center transition" title="Settimana precedente">
-                                <i class="fa-solid fa-chevron-left text-xs"></i>
-                            </button>
-                            <button onclick="changeViewedWeek(1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 flex items-center justify-center transition" title="Settimana successiva">
-                                <i class="fa-solid fa-chevron-right text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight neon-text">Settimana ${displayWeek}</h2>
-                            <p class="text-xs sm:text-sm text-purple-200/80 mt-1 font-medium">${guide.sizeName}</p>
-                            ${!isCurrent ? `
-                                <button onclick="resetViewedWeek()" class="mt-2 text-[11px] font-bold text-fuchsia-300 hover:underline flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate-left"></i> Torna alla tua settimana (${currentWeek})
-                                </button>
-                            ` : ''}
-                        </div>
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zinc-950/80 border border-purple-500/30 flex items-center justify-center text-4xl sm:text-5xl shrink-0">
-                            ${guide.sizeEmoji}
-                        </div>
-                    </div>
-
-                    <!-- Barra di Avanzamento -->
-                    <div class="mt-5">
-                        <div class="flex justify-between text-xs font-semibold mb-1.5">
-                            <span class="text-zinc-300">Percorso completato: <strong class="text-purple-300">${progressPct}%</strong></span>
-                            <span class="text-zinc-400">${daysRemaining > 0 ? `Mancano ${daysRemaining} giorni` : 'In arrivo!'}</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
-                            <div class="h-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-purple-400 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(192,132,252,0.8)]" style="width: ${progressPct}%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Prossimo Appuntamento in Agenda -->
-                ${nextEvent ? `
-                <div onclick="switchTab('agenda')" class="cursor-pointer bg-zinc-900/90 hover:bg-zinc-900 rounded-3xl p-4 border border-zinc-800 hover:border-purple-500/40 transition flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-11 h-11 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-calendar-day text-lg"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-400">Prossimo Impegno</p>
-                            <p class="text-sm font-bold text-white truncate">${escapeHtml(nextEvent.title)}</p>
-                            <p class="text-xs text-zinc-400">${formatItalianDate(nextEvent.date)} • ${escapeHtml(nextEvent.time)}</p>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-zinc-500 text-xs shrink-0"></i>
-                </div>
-                ` : ''}
-
-                <!-- Cosa succede al Bebè -->
-                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
-                    <div class="flex items-center gap-2.5 mb-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center">
-                            <i class="fa-solid fa-baby text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-sm">Sviluppo del Bebè</h3>
-                    </div>
-                    <p class="text-sm text-zinc-300 leading-relaxed">${guide.babyInfo}</p>
-                </div>
-
-                <!-- Come si sente lei -->
-                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
-                    <div class="flex items-center gap-2.5 mb-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-fuchsia-500/20 text-fuchsia-300 flex items-center justify-center">
-                            <i class="fa-solid fa-heart-pulse text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-sm">Radar Sintomi • ${escapeHtml(state.partnerName)}</h3>
-                    </div>
-                    <p class="text-sm text-zinc-300 leading-relaxed">${guide.momSymptoms}</p>
-                </div>
-
-                <!-- Consigli Pratici per il Papà -->
-                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-purple-500/25">
-                    <div class="flex items-center gap-2.5 mb-3">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm">
-                            <i class="fa-solid fa-bolt text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-sm">Missioni del Papà questa settimana</h3>
-                    </div>
-                    <ul class="space-y-2.5">
-                        ${guide.dadTips.map(tip => `
-                            <li class="flex items-start gap-2.5 text-sm text-zinc-200">
-                                <i class="fa-solid fa-circle-check text-purple-400 mt-1 text-xs shrink-0"></i>
-                                <span>${tip}</span>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            </div>`;
-        }
-
         // ==========================================
-        // 2. SEZIONE AGENDA & PROMEMORIA
+        // 2. SEZIONE AGENDA & PROMEMORIA (.ICS)
         // ==========================================
         function renderAgenda() {
-            const sortedEvents = [...state.events].sort((a, b) => {
+            const sorted = [...state.events].sort((a, b) => {
                 if (a.done !== b.done) return a.done ? 1 : -1;
                 return (a.date + a.time).localeCompare(b.date + b.time);
             });
@@ -778,7 +872,7 @@
                 Visita: 'bg-purple-500/20 text-purple-300 border-purple-500/35',
                 Esame: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35',
                 Burocrazia: 'bg-amber-500/20 text-amber-300 border-amber-500/35',
-                Promemoria: 'bg-sky-500/20 text-sky-300 border-sky-500/35'
+                Promemoria: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/35'
             };
 
             return `
@@ -786,88 +880,104 @@
                 <div class="flex items-center justify-between gap-3">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Agenda & Promemoria</h2>
-                        <p class="text-xs text-zinc-400">Visite, esami e notifiche sul tuo calendario</p>
+                        <p class="text-xs text-zinc-400">Visite, esami e scadenze con esportazione calendario</p>
                     </div>
                     <button onclick="openEventModal()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold flex items-center gap-1.5 transition neon-glow-sm shrink-0">
                         <i class="fa-solid fa-plus"></i> Nuovo
                     </button>
                 </div>
 
-                ${sortedEvents.length === 0 ? `
-                    <div class="bg-zinc-900/90 rounded-3xl p-8 text-center border border-zinc-800">
-                        <i class="fa-regular fa-calendar-xmark text-3xl text-zinc-600 mb-2"></i>
-                        <p class="text-sm text-zinc-400">Nessun appuntamento in programma. Aggiungi la prossima visita!</p>
+                ${sorted.length === 0 ? `
+                    <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 p-10 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-regular fa-calendar-plus"></i>
+                        </div>
+                        <p class="text-sm font-bold text-white">Agenda vuota</p>
+                        <p class="text-xs text-zinc-400 max-w-xs mx-auto">Aggiungi visite ginecologiche, ecografie, analisi del sangue o scadenze burocratiche. Potrai esportarle sul calendario del telefono con un tocco.</p>
+                        <button onclick="openEventModal()" class="px-5 py-2.5 rounded-xl bg-purple-600/25 hover:bg-purple-600/40 border border-purple-500/40 text-purple-200 text-xs font-bold transition">
+                            + Aggiungi Primo Appuntamento
+                        </button>
                     </div>
                 ` : `
                     <div class="space-y-3">
-                        ${sortedEvents.map(ev => `
-                            <div class="bg-zinc-900/90 rounded-3xl p-4 border ${ev.done ? 'border-zinc-800/60 opacity-65' : 'border-zinc-800 hover:border-purple-500/40'} transition">
+                        ${sorted.map(ev => {
+                            const badge = catColors[ev.category] || catColors.Promemoria;
+                            return `
+                            <div class="bg-zinc-900/90 rounded-3xl p-4 border ${ev.done ? 'border-zinc-800/60 opacity-60' : 'border-zinc-800 hover:border-purple-500/35'} transition">
                                 <div class="flex items-start gap-3">
                                     <button onclick="toggleEventDone(${ev.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${ev.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
                                         ${ev.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
                                     </button>
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex flex-wrap items-center gap-2 mb-1">
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${catColors[ev.category] || catColors.Promemoria}">
-                                                ${escapeHtml(ev.category)}
-                                            </span>
-                                            <span class="text-xs font-semibold text-zinc-400">
-                                                <i class="fa-regular fa-clock mr-1 text-purple-400"></i>${formatItalianDate(ev.date)} • ${escapeHtml(ev.time)}
-                                            </span>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-sm font-bold ${ev.done ? 'line-through text-zinc-500' : 'text-white'}">${escapeHtml(ev.title)}</h3>
+                                            <span class="px-2 py-0.5 rounded-lg border text-[10px] font-bold ${badge}">${escapeHtml(ev.category)}</span>
                                         </div>
-                                        <h3 class="text-sm font-bold ${ev.done ? 'line-through text-zinc-500' : 'text-white'}">${escapeHtml(ev.title)}</h3>
-                                        ${ev.notes ? `<p class="text-xs text-zinc-400 mt-1 leading-relaxed">${escapeHtml(ev.notes)}</p>` : ''}
-
-                                        <div class="mt-3 pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
-                                            <button onclick="downloadICS(${ev.id})" class="px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[11px] font-bold flex items-center gap-1.5 transition">
-                                                <i class="fa-solid fa-bell"></i> Avviso Calendario (.ics)
+                                        <p class="text-xs font-semibold text-purple-300 mt-1 flex items-center gap-2">
+                                            <span><i class="fa-regular fa-calendar mr-1"></i>${formatDateIT(ev.date)}</span>
+                                            <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(ev.time)}</span>
+                                        </p>
+                                        ${ev.notes ? `<p class="text-xs text-zinc-400 mt-2 bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-800/80">${escapeHtml(ev.notes)}</p>` : ''}
+                                        <div class="mt-3 flex items-center gap-2">
+                                            <button onclick="downloadICS(${ev.id})" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 border border-purple-500/35 text-purple-200 text-[11px] font-bold flex items-center gap-1.5 transition">
+                                                <i class="fa-solid fa-bell"></i> Avviso (.ics)
                                             </button>
-                                            <button onclick="deleteEvent(${ev.id})" class="text-zinc-500 hover:text-rose-400 text-xs p-1.5 transition" title="Elimina">
-                                                <i class="fa-solid fa-trash-can"></i>
+                                            <button onclick="deleteEvent(${ev.id})" class="px-3 py-1.5 rounded-xl bg-zinc-950 hover:bg-rose-950/50 border border-zinc-800 hover:border-rose-500/40 text-zinc-400 hover:text-rose-300 text-[11px] font-semibold transition">
+                                                <i class="fa-solid fa-trash-can"></i> Elimina
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            </div>`;
+                        }).join('')}
                     </div>
                 `}
             </div>`;
         }
 
         function openEventModal() {
-            document.getElementById('event-date').value = getOffsetDate(1);
-            document.getElementById('event-modal').classList.remove('hidden');
-            document.getElementById('event-modal').classList.add('flex');
+            const modal = document.getElementById('event-modal');
+            const dateInput = document.getElementById('event-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = formatDateISO(new Date());
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeEventModal() {
-            document.getElementById('event-modal').classList.add('hidden');
-            document.getElementById('event-modal').classList.remove('flex');
+            const modal = document.getElementById('event-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function addEvent(e) {
             e.preventDefault();
-            const newEv = {
+            const title = document.getElementById('event-title').value.trim();
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value || '09:00';
+            const category = document.getElementById('event-category').value;
+            const notes = document.getElementById('event-notes').value.trim();
+            if (!title || !date) return;
+
+            state.events.push({
                 id: Date.now(),
-                title: document.getElementById('event-title').value.trim(),
-                date: document.getElementById('event-date').value,
-                time: document.getElementById('event-time').value,
-                category: document.getElementById('event-category').value,
-                notes: document.getElementById('event-notes').value.trim(),
+                title,
+                date,
+                time,
+                category,
+                notes,
                 done: false
-            };
-            if (!newEv.title) return;
-            state.events.push(newEv);
+            });
             document.getElementById('event-form').reset();
             saveState();
             closeEventModal();
             renderApp();
-            showToast('Appuntamento aggiunto in agenda!');
+            showToast('Appuntamento aggiunto in Agenda!');
         }
 
         function toggleEventDone(id) {
-            const ev = state.events.find(e => e.id === id);
+            const ev = state.events.find(x => x.id === id);
             if (ev) {
                 ev.done = !ev.done;
                 saveState();
@@ -876,38 +986,41 @@
         }
 
         function deleteEvent(id) {
-            state.events = state.events.filter(e => e.id !== id);
+            state.events = state.events.filter(x => x.id !== id);
             saveState();
             renderApp();
-            showToast('Promemoria rimosso', 'info');
+            showToast('Appuntamento rimosso.');
         }
 
         function downloadICS(id) {
-            const ev = state.events.find(e => e.id === id);
+            const ev = state.events.find(x => x.id === id);
             if (!ev) return;
-            const dtStart = ev.date.replace(/-/g, '') + 'T' + ev.time.replace(':', '') + '00';
-            const [hh, mm] = ev.time.split(':').map(Number);
-            const endH = String((hh + 1) % 24).padStart(2, '0');
-            const dtEnd = ev.date.replace(/-/g, '') + 'T' + endH + String(mm).padStart(2, '0') + '00';
+
+            const dtParts = ev.date.split('-');
+            const tmParts = (ev.time || '09:00').split(':');
+            const start = `${dtParts[0]}${dtParts[1]}${dtParts[2]}T${tmParts[0]}${tmParts[1]}00`;
+            const endHour = String((parseInt(tmParts[0], 10) + 1) % 24).padStart(2, '0');
+            const end = `${dtParts[0]}${dtParts[1]}${dtParts[2]}T${endHour}${tmParts[1]}00`;
 
             const icsContent = [
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
-                'PRODID:-//CopilotaPapa//IT',
+                'PRODID:-//Copilota Papa//IT',
                 'BEGIN:VEVENT',
+                `UID:${ev.id}@copilota-papa`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
                 `SUMMARY:${ev.title} (${ev.category})`,
-                `DTSTART:${dtStart}`,
-                `DTEND:${dtEnd}`,
                 `DESCRIPTION:${(ev.notes || 'Promemoria Copilota Papà').replace(/\n/g, '\\n')}`,
-                'BEGIN:VALARM',
-                'TRIGGER:-P1D',
-                'ACTION:DISPLAY',
-                'DESCRIPTION:Domani: ' + ev.title,
-                'END:VALARM',
                 'BEGIN:VALARM',
                 'TRIGGER:-PT2H',
                 'ACTION:DISPLAY',
-                'DESCRIPTION:Tra 2 ore: ' + ev.title,
+                `DESCRIPTION:Promemoria: ${ev.title}`,
+                'END:VALARM',
+                'BEGIN:VALARM',
+                'TRIGGER:-P1D',
+                'ACTION:DISPLAY',
+                `DESCRIPTION:Domani: ${ev.title}`,
                 'END:VALARM',
                 'END:VEVENT',
                 'END:VCALENDAR'
@@ -915,14 +1028,12 @@
 
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${ev.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.ics`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${ev.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.ics`;
+            a.click();
             URL.revokeObjectURL(url);
-            showToast('File calendario scaricato! Aprilo per impostare la notifica.', 'info');
+            showToast('File calendario (.ics) scaricato!');
         }
 
         // ==========================================
@@ -930,13 +1041,14 @@
         // ==========================================
         function renderChecklist() {
             const categories = [
-                { key: 'lei', label: 'Lei', icon: 'fa-person-pregnant' },
-                { key: 'bebe', label: 'Bebè', icon: 'fa-baby' },
-                { key: 'papa', label: 'Papà', icon: 'fa-suitcase' },
-                { key: 'casa', label: 'Casa', icon: 'fa-house-chimney' },
-                { key: 'spese', label: 'Spese', icon: 'fa-wallet' }
+                { key: 'lei', label: 'Lei', icon: 'fa-person-pregnant', title: 'Borsa Ospedale • Per Lei', desc: 'Tutto ciò che serve alla mamma per il travaglio, il parto e i giorni di ricovero.' },
+                { key: 'bebe', label: 'Bebè', icon: 'fa-baby', title: 'Borsa Ospedale • Bebè (per quando nasce)', desc: 'I primi cambi, body, tutine, cappellino e pannolini da portare in ospedale per la nascita.' },
+                { key: 'papa', label: 'Papà', icon: 'fa-suitcase', title: 'Borsa Ospedale • Per il Papà', desc: 'Caricabatterie lungo, snack, acqua, cambio comodo e l\'occorrente per stare con lei.' },
+                { key: 'casa', label: 'Casa', icon: 'fa-house-chimney', title: 'Preparazione Casa (prima e dopo la nascita)', desc: 'Tutte le cose pratiche da montare, sistemare e preparare prima dell\'arrivo del bebè.' },
+                { key: 'spese', label: 'Spese', icon: 'fa-wallet', title: 'Acquisti & Budget', desc: 'Tieni traccia di cosa comprare, quanto hai speso e cosa hai trovato gratis o in regalo.' }
             ];
 
+            const activeCatInfo = categories.find(c => c.key === state.activeChecklistCat) || categories[0];
             const isBudget = state.activeChecklistCat === 'spese';
             const items = state.checklists[state.activeChecklistCat] || [];
             const doneCount = items.filter(i => i.done).length;
@@ -946,7 +1058,7 @@
             <div class="space-y-5 fade-in">
                 <div>
                     <h2 class="text-xl font-extrabold text-white">Borsa, Casa & Acquisti</h2>
-                    <p class="text-xs text-zinc-400">Liste pronte per l'ospedale e tracker del budget</p>
+                    <p class="text-xs text-zinc-400">Liste per l'ospedale, preparazione casa e tracker spese</p>
                 </div>
 
                 <!-- Selettore Categorie -->
@@ -957,6 +1069,17 @@
                             <span>${cat.label}</span>
                         </button>
                     `).join('')}
+                </div>
+
+                <!-- Spiegazione Categoria Attiva -->
+                <div class="bg-purple-950/25 border border-purple-500/25 rounded-2xl px-4 py-3 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid ${activeCatInfo.icon} text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-purple-200">${activeCatInfo.title}</p>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">${activeCatInfo.desc}</p>
+                    </div>
                 </div>
 
                 ${isBudget ? renderBudgetSection() : `
@@ -981,7 +1104,11 @@
 
                 <!-- Lista elementi -->
                 <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
-                    ${items.map(item => `
+                    ${items.length === 0 ? `
+                        <div class="p-8 text-center text-xs text-zinc-400">
+                            Lista vuota. Scrivi sopra il primo elemento da aggiungere!
+                        </div>
+                    ` : items.map(item => `
                         <div class="p-4 flex items-center gap-3 hover:bg-purple-500/5 transition">
                             <button onclick="toggleChecklistItem(${item.id})" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${item.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
                                 ${item.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
@@ -997,16 +1124,53 @@
             </div>`;
         }
 
+        function switchChecklistCat(cat) {
+            state.activeChecklistCat = cat;
+            renderApp();
+        }
+
+        function addChecklistItem(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-checklist-input');
+            const text = input.value.trim();
+            if (!text) return;
+            if (!state.checklists[state.activeChecklistCat]) {
+                state.checklists[state.activeChecklistCat] = [];
+            }
+            state.checklists[state.activeChecklistCat].unshift({ id: Date.now(), text, done: false });
+            saveState();
+            renderApp();
+        }
+
+        function toggleChecklistItem(id) {
+            const list = state.checklists[state.activeChecklistCat] || [];
+            const item = list.find(i => i.id === id);
+            if (item) {
+                item.done = !item.done;
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteChecklistItem(id) {
+            if (!state.checklists[state.activeChecklistCat]) return;
+            state.checklists[state.activeChecklistCat] = state.checklists[state.activeChecklistCat].filter(i => i.id !== id);
+            saveState();
+            renderApp();
+        }
+
         function renderBudgetSection() {
-            const totalEstimated = state.budgetItems.reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalEstimated = state.budgetItems.filter(i => i.status === 'da_comprare' || i.status === 'comprato').reduce((sum, i) => sum + Number(i.price || 0), 0);
             const totalSpent = state.budgetItems.filter(i => i.status === 'comprato').reduce((sum, i) => sum + Number(i.price || 0), 0);
             const totalToBuy = state.budgetItems.filter(i => i.status === 'da_comprare').reduce((sum, i) => sum + Number(i.price || 0), 0);
-            const totalGifted = state.budgetItems.filter(i => i.status === 'regalato').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const freeAndGiftedItems = state.budgetItems.filter(i => i.status === 'regalato' || i.status === 'gratis');
+            const totalSavedValue = freeAndGiftedItems.reduce((sum, i) => sum + Number(i.price || 0), 0);
 
             const statusConfig = {
                 da_comprare: { label: 'Da comprare', cls: 'bg-amber-500/15 text-amber-300 border-amber-500/35' },
                 comprato: { label: 'Comprato ✓', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35' },
-                regalato: { label: 'Regalato 🎁', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' }
+                regalato: { label: 'Regalato 🎁', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' },
+                gratis: { label: 'Gratis 🎉', cls: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' }
             };
 
             return `
@@ -1014,7 +1178,7 @@
                 <!-- Riepilogo Budget -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <div class="bg-zinc-900/90 p-3.5 rounded-2xl border border-zinc-800">
-                        <p class="text-[11px] font-semibold text-zinc-400">Totale Stimato</p>
+                        <p class="text-[11px] font-semibold text-zinc-400">Budget Spese</p>
                         <p class="text-lg font-extrabold text-white mt-0.5">€ ${totalEstimated}</p>
                     </div>
                     <div class="bg-emerald-950/30 p-3.5 rounded-2xl border border-emerald-500/25">
@@ -1025,23 +1189,24 @@
                         <p class="text-[11px] font-semibold text-amber-300/80">Restante</p>
                         <p class="text-lg font-extrabold text-amber-300 mt-0.5">€ ${totalToBuy}</p>
                     </div>
-                    <div class="bg-fuchsia-950/30 p-3.5 rounded-2xl border border-fuchsia-500/25">
-                        <p class="text-[11px] font-semibold text-fuchsia-300/80">Da Regali</p>
-                        <p class="text-lg font-extrabold text-fuchsia-300 mt-0.5">€ ${totalGifted}</p>
+                    <div class="bg-cyan-950/30 p-3.5 rounded-2xl border border-cyan-500/25">
+                        <p class="text-[11px] font-semibold text-cyan-300/80">Gratis & Regali</p>
+                        <p class="text-lg font-extrabold text-cyan-300 mt-0.5">${freeAndGiftedItems.length} pz${totalSavedValue > 0 ? ` <span class="text-xs font-semibold text-cyan-200/80">(€ ${totalSavedValue})</span>` : ''}</p>
                     </div>
                 </div>
 
                 <!-- Form Aggiungi Spesa -->
                 <form onsubmit="addBudgetItem(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
                     <div class="flex gap-2">
-                        <input type="text" id="budget-name-input" required placeholder="Es. Lettino, sterilizzatore, marsupio..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
-                        <input type="number" id="budget-price-input" required min="0" step="1" placeholder="€" class="w-24 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm font-semibold">
+                        <input type="text" id="budget-name-input" required placeholder="Es. Passeggino, culla, vestiti FB..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                        <input type="number" id="budget-price-input" min="0" step="1" placeholder="€ (opz.)" class="w-28 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm font-semibold">
                     </div>
                     <div class="flex gap-2">
                         <select id="budget-status-input" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
                             <option value="da_comprare">Da comprare</option>
                             <option value="comprato">Già comprato</option>
                             <option value="regalato">Regalato</option>
+                            <option value="gratis">Gratis (FB, parenti, siti...)</option>
                         </select>
                         <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
                             + Aggiungi
@@ -1052,14 +1217,17 @@
                 <!-- Lista Acquisti -->
                 <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
                     ${state.budgetItems.length === 0 ? `
-                        <div class="p-6 text-center text-xs text-zinc-400">Nessun acquisto inserito. Aggiungi la prima spesa sopra!</div>
+                        <div class="p-8 text-center text-xs text-zinc-400">Nessun articolo inserito. Aggiungi sopra una spesa o qualcosa preso gratis!</div>
                     ` : state.budgetItems.map(item => {
                         const st = statusConfig[item.status] || statusConfig.da_comprare;
+                        const priceText = item.status === 'gratis'
+                            ? (item.price > 0 ? `Gratis (valore € ${item.price})` : '€ 0 • Preso gratis')
+                            : `€ ${item.price}`;
                         return `
                         <div class="p-4 flex items-center justify-between gap-3 hover:bg-purple-500/5 transition">
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-bold text-zinc-100 truncate">${escapeHtml(item.name)}</p>
-                                <p class="text-xs font-semibold text-purple-300 mt-0.5">€ ${item.price}</p>
+                                <p class="text-xs font-semibold ${item.status === 'gratis' ? 'text-cyan-300' : 'text-purple-300'} mt-0.5">${priceText}</p>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
                                 <button onclick="cycleBudgetStatus(${item.id})" title="Tocca per cambiare stato" class="px-3 py-1.5 rounded-xl border text-[11px] font-bold transition ${st.cls}">
@@ -1072,24 +1240,25 @@
                         </div>`;
                     }).join('')}
                 </div>
-                <p class="text-[11px] text-center text-zinc-500">Suggerimento: tocca lo stato di un articolo per cambiarlo velocemente tra <em>Da comprare</em>, <em>Comprato</em> e <em>Regalato</em>.</p>
+                <p class="text-[11px] text-center text-zinc-500">Suggerimento: tocca lo stato di un articolo per cambiarlo tra <em>Da comprare</em>, <em>Comprato</em>, <em>Regalato</em> e <em>Gratis</em>.</p>
             </div>`;
         }
 
         function addBudgetItem(e) {
             e.preventDefault();
             const name = document.getElementById('budget-name-input').value.trim();
-            const price = Math.max(0, Number(document.getElementById('budget-price-input').value) || 0);
+            const rawPrice = document.getElementById('budget-price-input').value;
+            const price = rawPrice === '' ? 0 : Math.max(0, Number(rawPrice) || 0);
             const status = document.getElementById('budget-status-input').value;
             if (!name) return;
             state.budgetItems.unshift({ id: Date.now(), name, price, status });
             saveState();
             renderApp();
-            showToast('Articolo aggiunto al budget!');
+            showToast(status === 'gratis' ? 'Articolo gratis aggiunto!' : 'Articolo aggiunto al budget!');
         }
 
         function cycleBudgetStatus(id) {
-            const order = ['da_comprare', 'comprato', 'regalato'];
+            const order = ['da_comprare', 'comprato', 'regalato', 'gratis'];
             const item = state.budgetItems.find(i => i.id === id);
             if (item) {
                 const nextIdx = (order.indexOf(item.status) + 1) % order.length;
@@ -1105,144 +1274,123 @@
             renderApp();
         }
 
-        function switchChecklistCat(cat) {
-            state.activeChecklistCat = cat;
-            renderApp();
-        }
-
-        function toggleChecklistItem(id) {
-            const list = state.checklists[state.activeChecklistCat];
-            const item = list.find(i => i.id === id);
-            if (item) {
-                item.done = !item.done;
-                saveState();
-                renderApp();
-            }
-        }
-
-        function addChecklistItem(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-checklist-input');
-            const text = input.value.trim();
-            if (!text) return;
-            state.checklists[state.activeChecklistCat].unshift({
-                id: Date.now(),
-                text,
-                done: false
-            });
-            saveState();
-            renderApp();
-            showToast('Elemento aggiunto alla lista!');
-        }
-
-        function deleteChecklistItem(id) {
-            state.checklists[state.activeChecklistCat] = state.checklists[state.activeChecklistCat].filter(i => i.id !== id);
-            saveState();
-            renderApp();
-        }
-
         // ==========================================
-        // 4. SEZIONE GIORNO X (TIMER CONTRAZIONI & SOS)
+        // 4. SEZIONE GIORNO X (TIMER CONTRAZIONI & EMERGENZE)
         // ==========================================
+        function formatSeconds(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
         function renderGiornoX() {
-            const elapsedSec = state.contractionActive
-                ? Math.floor((Date.now() - state.contractionStartTime) / 1000)
-                : 0;
-
-            let hospitalAlert = false;
+            let showHospitalAlert = false;
             if (state.contractions.length >= 3) {
                 const recent = state.contractions.slice(0, 3);
-                const avgDur = recent.reduce((acc, c) => acc + c.duration, 0) / recent.length;
-                const intervals = recent.filter(c => c.interval !== null).map(c => c.interval);
-                const avgInt = intervals.length ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 9999;
-                if (avgDur >= 45 && avgInt <= 360) {
-                    hospitalAlert = true;
+                const avgDur = recent.reduce((acc, c) => acc + c.durationSec, 0) / recent.length;
+                const intervals = [];
+                for (let i = 0; i < recent.length - 1; i++) {
+                    intervals.push((recent[i].startMs - recent[i + 1].startMs) / 60000);
+                }
+                const avgInt = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                if (avgDur >= 45 && avgInt <= 6) {
+                    showHospitalAlert = true;
                 }
             }
 
             return `
-            <div class="space-y-6 fade-in">
+            <div class="space-y-5 fade-in">
                 <div>
-                    <h2 class="text-xl font-extrabold text-white">Modalità Giorno X</h2>
-                    <p class="text-xs text-zinc-400">Timer contrazioni e numeri di emergenza sempre pronti</p>
+                    <h2 class="text-xl font-extrabold text-white">Strumenti Giorno X</h2>
+                    <p class="text-xs text-zinc-400">Timer contrazioni e contatti rapidi per il parto</p>
                 </div>
 
-                ${hospitalAlert ? `
-                    <div class="bg-fuchsia-950/80 border border-fuchsia-400 text-white rounded-3xl p-4 neon-glow flex items-start gap-3 animate-pulse">
-                        <i class="fa-solid fa-hospital text-2xl text-fuchsia-300 mt-0.5"></i>
+                ${showHospitalAlert ? `
+                    <div class="p-4 rounded-3xl bg-fuchsia-950/60 border border-fuchsia-500 text-fuchsia-100 flex items-start gap-3 neon-glow">
+                        <i class="fa-solid fa-triangle-exclamation text-fuchsia-400 text-lg mt-0.5"></i>
                         <div>
-                            <h3 class="font-extrabold text-sm text-fuchsia-200">Contrazioni regolari e ravvicinate!</h3>
-                            <p class="text-xs text-zinc-200 mt-0.5">La frequenza e la durata indicano che potrebbe essere il momento di chiamare l'ostetrica o andare in ospedale.</p>
+                            <p class="text-sm font-extrabold">Contrazioni frequenti e regolari!</p>
+                            <p class="text-xs text-fuchsia-200/90 mt-0.5">Le ultime contrazioni sono ravvicinate (≤ 6 min) e durano almeno 45 secondi. Valutate di chiamare l'ostetrica o andare in ospedale!</p>
                         </div>
                     </div>
                 ` : ''}
 
-                <!-- Card Timer Contrazioni -->
-                <div class="bg-zinc-900/90 rounded-3xl p-6 border border-purple-500/25 text-center">
-                    <p class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Timer Contrazioni</p>
-                    <div id="live-timer-display" class="text-5xl font-extrabold tracking-tight font-mono mb-6 ${state.contractionActive ? 'text-fuchsia-400 neon-text' : 'text-white'}">
-                        ${formatSeconds(elapsedSec)}
+                <!-- Timer Contrazioni -->
+                <div class="bg-zinc-900/90 rounded-3xl p-6 border border-purple-500/30 text-center space-y-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-purple-300 uppercase tracking-wider">Timer Contrazioni</span>
+                        ${state.contractions.length > 0 ? `
+                            <button onclick="clearContractions()" class="text-zinc-500 hover:text-rose-400 font-semibold transition">
+                                <i class="fa-solid fa-trash-can mr-1"></i>Azzera storico
+                            </button>
+                        ` : ''}
                     </div>
 
-                    <button onclick="toggleContraction()" class="w-40 h-40 rounded-full mx-auto flex flex-col items-center justify-center text-white font-bold transition transform active:scale-95 border-2 ${state.contractionActive ? 'bg-gradient-to-br from-fuchsia-600 to-rose-600 border-fuchsia-300 pulse-ring' : 'bg-gradient-to-br from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 border-purple-400/60 neon-glow'}">
-                        <i class="fa-solid ${state.contractionActive ? 'fa-stop' : 'fa-play'} text-3xl mb-2"></i>
-                        <span class="text-sm uppercase tracking-wider">${state.contractionActive ? 'Stop' : 'Inizia'}</span>
-                    </button>
+                    <div id="contraction-timer-display" class="text-5xl font-extrabold tracking-tight font-mono ${state.contractionActive ? 'text-fuchsia-400 neon-text' : 'text-zinc-200'}">
+                        00:00
+                    </div>
 
-                    <p class="text-xs text-zinc-400 mt-5">
-                        Premi <strong class="text-purple-300">Inizia</strong> appena parte la contrazione e <strong class="text-fuchsia-300">Stop</strong> quando finisce.
-                    </p>
+                    <div class="py-2 flex justify-center">
+                        <button onclick="toggleContraction()" class="w-36 h-36 rounded-full font-extrabold text-sm tracking-wide uppercase flex flex-col items-center justify-center gap-1.5 transition ${state.contractionActive ? 'bg-gradient-to-br from-fuchsia-600 to-rose-600 text-white pulse-ring' : 'bg-gradient-to-br from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white neon-glow'}">
+                            <i class="fa-solid ${state.contractionActive ? 'fa-stop' : 'fa-play'} text-2xl"></i>
+                            <span>${state.contractionActive ? 'Stop' : 'Inizia'}</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-zinc-400">Premi <strong>Inizia</strong> appena parte una contrazione e <strong>Stop</strong> quando finisce.</p>
 
-                    <!-- Storico Contrazioni -->
                     ${state.contractions.length > 0 ? `
-                        <div class="mt-6 pt-5 border-t border-zinc-800 text-left">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400">Storico (${state.contractions.length})</h3>
-                                <button onclick="clearContractions()" class="text-xs font-semibold text-fuchsia-400 hover:underline">Azzera</button>
-                            </div>
-                            <div class="space-y-2 max-h-52 overflow-y-auto pr-1">
-                                ${state.contractions.map((c, idx) => `
-                                    <div class="flex items-center justify-between bg-zinc-950/80 border border-zinc-800 px-3.5 py-2.5 rounded-xl text-xs">
-                                        <span class="font-bold text-zinc-200">#${state.contractions.length - idx} • ${c.startTimeLabel}</span>
-                                        <span class="text-purple-400 font-bold">Durata: ${formatSeconds(c.duration)}</span>
-                                        <span class="text-zinc-400">${c.interval !== null ? 'Ogni ' + Math.round(c.interval / 60) + ' min' : 'Prima'}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
+                        <div class="pt-4 border-t border-zinc-800 text-left space-y-2 max-h-60 overflow-y-auto">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Ultime contrazioni (${state.contractions.length})</p>
+                            ${state.contractions.map((c, idx) => {
+                                const prev = state.contractions[idx + 1];
+                                let intervalTxt = '—';
+                                if (prev) {
+                                    const diffMin = Math.round((c.startMs - prev.startMs) / 60000);
+                                    intervalTxt = `ogni ${diffMin} min`;
+                                }
+                                return `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800 text-xs">
+                                    <span class="font-semibold text-zinc-400">${escapeHtml(c.timeStr)}</span>
+                                    <span class="font-bold text-purple-300">Durata: ${formatSeconds(c.durationSec)}</span>
+                                    <span class="font-semibold text-fuchsia-300">${intervalTxt}</span>
+                                </div>`;
+                            }).join('')}
                         </div>
                     ` : ''}
                 </div>
 
-                <!-- Contatti Rapidi & Emergenze -->
-                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center">
-                                <i class="fa-solid fa-phone-volume text-sm"></i>
-                            </div>
-                            <h3 class="font-bold text-white text-sm">Contatti Rapidi & Chi Avvisare</h3>
+                <!-- Contatti Rapidi -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-white">Contatti Emergenza & Famiglia</h3>
+                            <p class="text-[11px] text-zinc-400">Chiamata rapida con un tocco</p>
                         </div>
-                        <button onclick="openContactModal()" class="text-xs font-bold text-purple-300 bg-purple-500/15 border border-purple-500/30 px-3 py-1.5 rounded-xl hover:bg-purple-500/25 transition">
+                        <button onclick="openContactModal()" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 border border-purple-500/35 text-purple-200 text-xs font-bold transition">
                             + Aggiungi
                         </button>
                     </div>
 
                     <div class="space-y-2.5">
-                        ${state.contacts.map(c => `
-                            <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800/90">
-                                <div>
-                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${c.type === 'medico' ? 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'}">
-                                        ${c.type === 'medico' ? 'Emergenza' : 'Famiglia'}
-                                    </span>
-                                    <p class="font-bold text-sm text-zinc-100 mt-1">${escapeHtml(c.name)}</p>
-                                    <p class="text-xs text-zinc-400">${escapeHtml(c.phone)}</p>
+                        ${state.contacts.length === 0 ? `
+                            <div class="p-6 text-center text-xs text-zinc-400 bg-zinc-950/60 rounded-2xl border border-zinc-800/80">
+                                Nessun contatto salvato. Tocca <strong>+ Aggiungi</strong> per inserire ospedale, ginecologo e familiari.
+                            </div>
+                        ` : state.contacts.map(c => `
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800/90 gap-3">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full ${c.type === 'medico' ? 'bg-fuchsia-500' : 'bg-purple-400'}"></span>
+                                        <p class="text-sm font-bold text-zinc-100 truncate">${escapeHtml(c.name)}</p>
+                                    </div>
+                                    <p class="text-xs text-zinc-400 mt-0.5 pl-4">${escapeHtml(c.phone)}</p>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <a href="tel:${encodeURIComponent(c.phone.replace(/\s+/g, ''))}" class="w-10 h-10 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 flex items-center justify-center transition" title="Chiama">
-                                        <i class="fa-solid fa-phone"></i>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <a href="tel:${encodeURIComponent(c.phone)}" class="w-10 h-10 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-500/40 text-emerald-300 flex items-center justify-center transition" title="Chiama">
+                                        <i class="fa-solid fa-phone text-sm"></i>
                                     </a>
-                                    <button onclick="deleteContact(${c.id})" class="w-8 h-8 rounded-xl text-zinc-500 hover:text-rose-400 flex items-center justify-center transition">
-                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    <button onclick="deleteContact(${c.id})" class="w-8 h-8 rounded-xl text-zinc-600 hover:text-rose-400 flex items-center justify-center transition">
+                                        <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
                             </div>
@@ -1252,43 +1400,38 @@
             </div>`;
         }
 
+        function updateContractionTimerDisplay() {
+            const el = document.getElementById('contraction-timer-display');
+            if (!el || !state.contractionStartTime) return;
+            const elapsedSec = Math.max(0, Math.floor((Date.now() - state.contractionStartTime) / 1000));
+            el.textContent = formatSeconds(elapsedSec);
+        }
+
         function toggleContraction() {
             if (!state.contractionActive) {
                 state.contractionActive = true;
                 state.contractionStartTime = Date.now();
-                state.contractionIntervalId = setInterval(() => {
-                    const display = document.getElementById('live-timer-display');
-                    if (display) {
-                        const sec = Math.floor((Date.now() - state.contractionStartTime) / 1000);
-                        display.textContent = formatSeconds(sec);
-                    }
-                }, 500);
+                state.contractionIntervalId = setInterval(updateContractionTimerDisplay, 500);
                 renderApp();
             } else {
-                clearInterval(state.contractionIntervalId);
-                const endTime = Date.now();
-                const duration = Math.max(1, Math.floor((endTime - state.contractionStartTime) / 1000));
+                const durationSec = Math.max(1, Math.round((Date.now() - state.contractionStartTime) / 1000));
                 const startDate = new Date(state.contractionStartTime);
-                const startTimeLabel = startDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-
-                let interval = null;
-                if (state.contractions.length > 0) {
-                    const prevStart = state.contractions[0].timestamp;
-                    interval = Math.floor((state.contractionStartTime - prevStart) / 1000);
-                }
+                const timeStr = startDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
                 state.contractions.unshift({
-                    timestamp: state.contractionStartTime,
-                    startTimeLabel,
-                    duration,
-                    interval
+                    id: Date.now(),
+                    startMs: state.contractionStartTime,
+                    timeStr,
+                    durationSec
                 });
 
+                clearInterval(state.contractionIntervalId);
+                state.contractionIntervalId = null;
                 state.contractionActive = false;
                 state.contractionStartTime = null;
                 saveState();
                 renderApp();
-                showToast('Contrazione registrata!');
+                showToast(`Contrazione registrata (${formatSeconds(durationSec)})`);
             }
         }
 
@@ -1296,27 +1439,28 @@
             state.contractions = [];
             saveState();
             renderApp();
-            showToast('Storico contrazioni azzerato', 'info');
+            showToast('Storico contrazioni azzerato.');
         }
 
         function openContactModal() {
-            document.getElementById('contact-modal').classList.remove('hidden');
-            document.getElementById('contact-modal').classList.add('flex');
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeContactModal() {
-            document.getElementById('contact-modal').classList.add('hidden');
-            document.getElementById('contact-modal').classList.remove('flex');
+            const modal = document.getElementById('contact-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function addContact(e) {
             e.preventDefault();
-            state.contacts.push({
-                id: Date.now(),
-                name: document.getElementById('contact-name').value.trim(),
-                phone: document.getElementById('contact-phone').value.trim(),
-                type: document.getElementById('contact-type').value
-            });
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const type = document.getElementById('contact-type').value;
+            if (!name || !phone) return;
+            state.contacts.push({ id: Date.now(), name, phone, type });
             document.getElementById('contact-name').value = '';
             document.getElementById('contact-phone').value = '';
             saveState();
@@ -1332,64 +1476,76 @@
         }
 
         // ==========================================
-        // 5. SEZIONE DIARIO (VOGLIE, NOMI & GINECOLOGO)
+        // 5. SEZIONE NOTE (VOGLIE, NOMI & DOMANDE MEDICO)
         // ==========================================
         function renderDiario() {
+            const tabs = [
+                { key: 'voglie', label: 'Voglie & Divieti', icon: 'fa-utensils' },
+                { key: 'nomi', label: 'Nomi', icon: 'fa-star' },
+                { key: 'medico', label: 'Medico', icon: 'fa-stethoscope' }
+            ];
+
             return `
             <div class="space-y-5 fade-in">
                 <div>
                     <h2 class="text-xl font-extrabold text-white">Note, Nomi & Ginecologo</h2>
-                    <p class="text-xs text-zinc-400">Voglie, idee per il nome e domande per le visite</p>
+                    <p class="text-xs text-zinc-400">Voglie alimentari, bacheca nomi e domande per le visite</p>
                 </div>
 
-                <!-- Switch Sotto-sezione -->
-                <div class="bg-zinc-900 border border-zinc-800 p-1 rounded-2xl grid grid-cols-3 gap-1">
-                    <button onclick="switchNoteTab('voglie')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'voglie' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
-                        <i class="fa-solid fa-ice-cream mr-1"></i> Voglie
-                    </button>
-                    <button onclick="switchNoteTab('nomi')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'nomi' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
-                        <i class="fa-solid fa-star mr-1"></i> Nomi
-                    </button>
-                    <button onclick="switchNoteTab('ginecologo')" class="py-2.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition ${state.activeNoteTab === 'ginecologo' ? 'bg-purple-600/25 text-purple-300 border border-purple-500/40 neon-glow-sm' : 'text-zinc-400 hover:text-zinc-200'}">
-                        <i class="fa-solid fa-user-doctor mr-1"></i> Medico
-                    </button>
+                <!-- Sub-tab -->
+                <div class="grid grid-cols-3 gap-2">
+                    ${tabs.map(t => `
+                        <button onclick="switchNoteTab('${t.key}')" class="py-2.5 px-2 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 transition border ${state.activeNoteTab === t.key ? 'bg-purple-600/25 text-purple-300 border-purple-500 neon-glow-sm' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'}">
+                            <i class="fa-solid ${t.icon}"></i>
+                            <span>${t.label}</span>
+                        </button>
+                    `).join('')}
                 </div>
 
-                ${state.activeNoteTab === 'voglie' ? renderVoglieSection() : state.activeNoteTab === 'nomi' ? renderNomiSection() : renderGinecologoSection()}
+                ${state.activeNoteTab === 'voglie' ? renderCravingsTab() : ''}
+                ${state.activeNoteTab === 'nomi' ? renderNamesTab() : ''}
+                ${state.activeNoteTab === 'medico' ? renderDoctorTab() : ''}
             </div>`;
         }
 
-        function renderVoglieSection() {
+        function switchNoteTab(tab) {
+            state.activeNoteTab = tab;
+            renderApp();
+        }
+
+        function renderCravingsTab() {
             const typeStyle = {
-                voglia: { label: 'Voglia', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35' },
-                fastidio: { label: 'Fastidio', cls: 'bg-rose-500/20 text-rose-300 border-rose-500/35' },
-                promemoria: { label: 'Divieto / Info', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/35' }
+                voglia: { label: 'Voglia 😍', cls: 'bg-purple-500/20 text-purple-300 border-purple-500/35' },
+                fastidio: { label: 'Fastidio / Odore 🤢', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/35' },
+                divieto: { label: 'Da Evitare 🚫', cls: 'bg-rose-500/20 text-rose-300 border-rose-500/35' }
             };
 
             return `
             <div class="space-y-4">
                 <form onsubmit="addCraving(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
-                    <input type="text" id="craving-input" required placeholder="Es. Gelato al pistacchio, odore di fritto..." class="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <input type="text" id="craving-text" required placeholder="Es. Gelato al pistacchio, odore di caffè, pesce crudo..." class="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
                     <div class="flex gap-2">
                         <select id="craving-type" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
-                            <option value="voglia">Voglia da soddisfare</option>
-                            <option value="fastidio">Odore / Cibo che dà fastidio</option>
-                            <option value="promemoria">Promemoria / Divieto alimentare</option>
+                            <option value="voglia">Voglia 😍 (cosa le piace)</option>
+                            <option value="fastidio">Fastidio 🤢 (odori / cibi no)</option>
+                            <option value="divieto">Divieto 🚫 (alimenti da evitare)</option>
                         </select>
-                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
-                            Salva
-                        </button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">Salva</button>
                     </div>
                 </form>
 
                 <div class="space-y-2.5">
-                    ${state.cravings.map(c => {
+                    ${state.cravings.length === 0 ? `
+                        <div class="bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Nessuna nota salvata. Segna qui voglie, odori fastidiosi o divieti alimentari!
+                        </div>
+                    ` : state.cravings.map(c => {
                         const st = typeStyle[c.type] || typeStyle.voglia;
                         return `
                         <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border mb-1.5 ${st.cls}">${st.label}</span>
-                                <p class="text-sm text-zinc-100 font-medium">${escapeHtml(c.text)}</p>
+                            <div class="space-y-1">
+                                <span class="inline-block px-2 py-0.5 rounded-lg border text-[10px] font-bold ${st.cls}">${st.label}</span>
+                                <p class="text-sm font-medium text-zinc-100">${escapeHtml(c.text)}</p>
                             </div>
                             <button onclick="deleteCraving(${c.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition shrink-0">
                                 <i class="fa-solid fa-xmark"></i>
@@ -1400,7 +1556,24 @@
             </div>`;
         }
 
-        function renderNomiSection() {
+        function addCraving(e) {
+            e.preventDefault();
+            const text = document.getElementById('craving-text').value.trim();
+            const type = document.getElementById('craving-type').value;
+            if (!text) return;
+            state.cravings.unshift({ id: Date.now(), text, type });
+            saveState();
+            renderApp();
+            showToast('Nota aggiunta!');
+        }
+
+        function deleteCraving(id) {
+            state.cravings = state.cravings.filter(c => c.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function renderNamesTab() {
             const sortedNames = [...state.names].sort((a, b) => b.votes - a.votes);
             const genderBadge = {
                 M: 'bg-sky-500/20 text-sky-300 border-sky-500/35',
@@ -1410,32 +1583,32 @@
 
             return `
             <div class="space-y-4">
-                <form onsubmit="addBabyName(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex flex-wrap sm:flex-nowrap gap-2">
-                    <input type="text" id="baby-name-input" required placeholder="Aggiungi un'idea per il nome..." class="flex-1 min-w-[160px] px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
-                    <select id="baby-name-gender" class="px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                <form onsubmit="addName(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex flex-wrap sm:flex-nowrap gap-2">
+                    <input type="text" id="name-input" required placeholder="Proponi un nome..." class="flex-1 min-w-[140px] px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <select id="name-gender" class="px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
                         <option value="M">Maschio</option>
                         <option value="F">Femmina</option>
                         <option value="N">Unisex</option>
                     </select>
-                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
-                        + Aggiungi
-                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">Aggiungi</button>
                 </form>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    ${sortedNames.map(n => `
+                    ${sortedNames.length === 0 ? `
+                        <div class="sm:col-span-2 bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Bacheca nomi vuota. Aggiungi sopra le vostre prime idee e votatele insieme!
+                        </div>
+                    ` : sortedNames.map(n => `
                         <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between gap-2">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="w-7 h-7 rounded-xl border text-[11px] font-extrabold flex items-center justify-center shrink-0 ${genderBadge[n.gender] || genderBadge.N}">
-                                    ${n.gender}
-                                </span>
-                                <span class="font-bold text-sm text-white truncate">${escapeHtml(n.name)}</span>
+                                <span class="px-2 py-0.5 rounded-lg border text-[10px] font-bold ${genderBadge[n.gender] || genderBadge.N}">${escapeHtml(n.gender)}</span>
+                                <span class="text-sm font-extrabold text-white truncate">${escapeHtml(n.name)}</span>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <button onclick="voteName(${n.id})" class="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/30 border border-purple-500/35 text-purple-200 text-xs font-bold flex items-center gap-1 transition">
-                                    <i class="fa-solid fa-heart text-fuchsia-400"></i> ${n.votes}
-                                </button>
-                                <button onclick="deleteBabyName(${n.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition">
+                                <button onclick="voteName(${n.id}, -1)" class="w-7 h-7 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center text-xs">-</button>
+                                <span class="w-6 text-center text-xs font-extrabold text-purple-300">${n.votes}</span>
+                                <button onclick="voteName(${n.id}, 1)" class="w-7 h-7 rounded-lg bg-purple-600/25 border border-purple-500/40 text-purple-200 hover:bg-purple-600/40 flex items-center justify-center text-xs">+</button>
+                                <button onclick="deleteName(${n.id})" class="ml-1 text-zinc-600 hover:text-rose-400 p-1 text-xs">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
@@ -1445,36 +1618,60 @@
             </div>`;
         }
 
-        function renderGinecologoSection() {
-            const sortedQuestions = [...state.doctorQuestions].sort((a, b) => Number(a.asked) - Number(b.asked));
+        function addName(e) {
+            e.preventDefault();
+            const name = document.getElementById('name-input').value.trim();
+            const gender = document.getElementById('name-gender').value;
+            if (!name) return;
+            state.names.push({ id: Date.now(), name, gender, votes: 1 });
+            saveState();
+            renderApp();
+            showToast(`"${name}" aggiunto alla bacheca!`);
+        }
+
+        function voteName(id, delta) {
+            const item = state.names.find(n => n.id === id);
+            if (item) {
+                item.votes = Math.max(0, item.votes + delta);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteName(id) {
+            state.names = state.names.filter(n => n.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function renderDoctorTab() {
             return `
             <div class="space-y-4">
                 <form onsubmit="addDoctorQuestion(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex gap-2">
-                    <input type="text" id="doctor-question-input" required placeholder="Scrivi una domanda per la prossima visita..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
-                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                    <input type="text" id="doctor-q-input" required placeholder="Scrivi una domanda per il ginecologo..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </form>
 
                 <div class="space-y-3">
-                    ${sortedQuestions.length === 0 ? `
-                        <div class="bg-zinc-900 rounded-3xl p-8 text-center border border-zinc-800">
-                            <i class="fa-solid fa-stethoscope text-3xl text-zinc-600 mb-2"></i>
-                            <p class="text-sm text-zinc-400">Nessuna domanda salvata. Appunta qui ogni dubbio appena ti viene in mente!</p>
+                    ${state.doctorQuestions.length === 0 ? `
+                        <div class="bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Nessuna domanda salvata. Segna qui i dubbi che vi vengono tra una visita e l'altra per non dimenticarli davanti al medico!
                         </div>
-                    ` : sortedQuestions.map(q => `
-                        <div class="bg-zinc-900/90 p-4 rounded-3xl border ${q.asked ? 'border-zinc-800/70 opacity-70' : 'border-zinc-800 hover:border-purple-500/40'} transition space-y-3">
+                    ` : state.doctorQuestions.map(q => `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border ${q.asked ? 'border-emerald-500/25 opacity-80' : 'border-zinc-800'} space-y-2.5">
                             <div class="flex items-start gap-3">
-                                <button onclick="toggleDoctorQuestion(${q.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${q.asked ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                <button onclick="toggleDoctorQuestion(${q.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${q.asked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-600 hover:border-purple-400'}">
                                     ${q.asked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
                                 </button>
-                                <p class="flex-1 text-sm font-semibold ${q.asked ? 'line-through text-zinc-500' : 'text-zinc-100'}">${escapeHtml(q.text)}</p>
+                                <p class="flex-1 text-sm font-semibold ${q.asked ? 'line-through text-zinc-400' : 'text-zinc-100'}">${escapeHtml(q.question)}</p>
                                 <button onclick="deleteDoctorQuestion(${q.id})" class="text-zinc-600 hover:text-rose-400 p-1 transition">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
                             <div class="pl-9">
-                                <input type="text" value="${escapeHtml(q.answer)}" onchange="updateDoctorAnswer(${q.id}, this.value)" placeholder="Appunta qui la risposta del ginecologo..." class="w-full px-3 py-2 rounded-xl bg-zinc-950/90 border border-zinc-800/90 text-xs text-purple-200 placeholder-zinc-600 focus:border-purple-500 outline-none">
+                                <input type="text" id="answer-input-${q.id}" value="${escapeHtml(q.answer || '')}" onchange="saveDoctorAnswer(${q.id})" placeholder="Appunta qui la risposta del medico..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-purple-200 placeholder-zinc-600 focus:border-purple-500 outline-none">
                             </div>
                         </div>
                     `).join('')}
@@ -1484,17 +1681,17 @@
 
         function addDoctorQuestion(e) {
             e.preventDefault();
-            const input = document.getElementById('doctor-question-input');
-            const text = input.value.trim();
-            if (!text) return;
-            state.doctorQuestions.unshift({ id: Date.now(), text, asked: false, answer: '' });
+            const input = document.getElementById('doctor-q-input');
+            const question = input.value.trim();
+            if (!question) return;
+            state.doctorQuestions.unshift({ id: Date.now(), question, answer: '', asked: false });
             saveState();
             renderApp();
-            showToast('Domanda salvata per la visita!');
+            showToast('Domanda salvata!');
         }
 
         function toggleDoctorQuestion(id) {
-            const q = state.doctorQuestions.find(item => item.id === id);
+            const q = state.doctorQuestions.find(x => x.id === id);
             if (q) {
                 q.asked = !q.asked;
                 saveState();
@@ -1502,100 +1699,139 @@
             }
         }
 
-        function updateDoctorAnswer(id, val) {
-            const q = state.doctorQuestions.find(item => item.id === id);
-            if (q) {
-                q.answer = val.trim();
+        function saveDoctorAnswer(id) {
+            const q = state.doctorQuestions.find(x => x.id === id);
+            const inp = document.getElementById(`answer-input-${id}`);
+            if (q && inp) {
+                q.answer = inp.value.trim();
                 saveState();
-                showToast('Risposta salvata!', 'info');
             }
         }
 
         function deleteDoctorQuestion(id) {
-            state.doctorQuestions = state.doctorQuestions.filter(item => item.id !== id);
-            saveState();
-            renderApp();
-        }
-
-        function switchNoteTab(tab) {
-            state.activeNoteTab = tab;
-            renderApp();
-        }
-
-        function addCraving(e) {
-            e.preventDefault();
-            const text = document.getElementById('craving-input').value.trim();
-            const type = document.getElementById('craving-type').value;
-            if (!text) return;
-            state.cravings.unshift({ id: Date.now(), text, type });
-            saveState();
-            renderApp();
-            showToast('Nota salvata!');
-        }
-
-        function deleteCraving(id) {
-            state.cravings = state.cravings.filter(c => c.id !== id);
-            saveState();
-            renderApp();
-        }
-
-        function addBabyName(e) {
-            e.preventDefault();
-            const name = document.getElementById('baby-name-input').value.trim();
-            const gender = document.getElementById('baby-name-gender').value;
-            if (!name) return;
-            state.names.push({ id: Date.now(), name, gender, votes: 1 });
-            saveState();
-            renderApp();
-            showToast(`"${name}" aggiunto alla bacheca!`);
-        }
-
-        function voteName(id) {
-            const item = state.names.find(n => n.id === id);
-            if (item) {
-                item.votes += 1;
-                saveState();
-                renderApp();
-            }
-        }
-
-        function deleteBabyName(id) {
-            state.names = state.names.filter(n => n.id !== id);
+            state.doctorQuestions = state.doctorQuestions.filter(x => x.id !== id);
             saveState();
             renderApp();
         }
 
         // ==========================================
-        // IMPOSTAZIONI DATA PARTO
+        // MODALE IMPOSTAZIONI (LMP / SETTIMANA / DPP)
         // ==========================================
+        let tempCalcMode = 'lmp';
+
         function openSettingsModal() {
-            document.getElementById('input-partner-name').value = state.partnerName;
-            document.getElementById('input-due-date').value = state.dueDate;
-            document.getElementById('settings-modal').classList.remove('hidden');
-            document.getElementById('settings-modal').classList.add('flex');
+            const modal = document.getElementById('settings-modal');
+            document.getElementById('input-partner-name').value = state.partnerName || '';
+
+            const p = getPregnancyProgress();
+            const dueObj = p.dueDateObj;
+            const lmpObj = new Date(dueObj);
+            lmpObj.setDate(lmpObj.getDate() - 280);
+
+            document.getElementById('input-lmp-date').value = formatDateISO(lmpObj);
+            document.getElementById('input-current-week').value = p.rawWeek > 0 ? p.rawWeek : 1;
+            document.getElementById('input-current-days').value = p.extraDays;
+            document.getElementById('input-due-date').value = formatDateISO(dueObj);
+
+            setSettingsCalcMode(state.calcMode || 'lmp');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeSettingsModal() {
-            document.getElementById('settings-modal').classList.add('hidden');
-            document.getElementById('settings-modal').classList.remove('flex');
+            const modal = document.getElementById('settings-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setSettingsCalcMode(mode) {
+            tempCalcMode = mode;
+            ['lmp', 'week', 'dpp'].forEach(m => {
+                const btn = document.getElementById(`mode-btn-${m}`);
+                const box = document.getElementById(`calc-box-${m}`);
+                if (m === mode) {
+                    btn.className = 'py-2 px-1 rounded-xl text-[11px] font-bold transition bg-purple-600 text-white neon-glow-sm';
+                    box.classList.remove('hidden');
+                } else {
+                    btn.className = 'py-2 px-1 rounded-xl text-[11px] font-bold transition text-zinc-400 hover:text-zinc-200';
+                    box.classList.add('hidden');
+                }
+            });
+            updateSettingsPreview();
+        }
+
+        function computeDueDateFromModal() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (tempCalcMode === 'lmp') {
+                const lmpVal = document.getElementById('input-lmp-date').value;
+                const lmpDate = parseLocalISODate(lmpVal);
+                if (!lmpDate) return null;
+                const due = new Date(lmpDate);
+                due.setDate(due.getDate() + 280);
+                return due;
+            } else if (tempCalcMode === 'week') {
+                const w = Math.min(42, Math.max(0, parseInt(document.getElementById('input-current-week').value, 10) || 0));
+                const d = Math.min(6, Math.max(0, parseInt(document.getElementById('input-current-days').value, 10) || 0));
+                const elapsedDays = (w * 7) + d;
+                const remainingDays = 280 - elapsedDays;
+                const due = new Date(today);
+                due.setDate(due.getDate() + remainingDays);
+                return due;
+            } else {
+                const dppVal = document.getElementById('input-due-date').value;
+                return parseLocalISODate(dppVal);
+            }
+        }
+
+        function updateSettingsPreview() {
+            const preview = document.getElementById('settings-calc-preview');
+            if (!preview) return;
+            const due = computeDueDateFromModal();
+            if (!due) {
+                preview.innerHTML = `<span class="text-zinc-400">Inserisci una data valida per vedere il calcolo.</span>`;
+                return;
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const daysRemaining = Math.round((due - today) / msPerDay);
+            const elapsed = Math.max(0, 280 - daysRemaining);
+            const w = Math.floor(elapsed / 7);
+            const d = elapsed % 7;
+
+            preview.innerHTML = `
+                <div>
+                    <p class="text-[11px] text-purple-300/80 font-semibold">Oggi siete a:</p>
+                    <p class="text-sm font-extrabold text-white">Settimana ${w}+${d}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[11px] text-purple-300/80 font-semibold">Data Presunta Parto</p>
+                    <p class="text-sm font-extrabold text-fuchsia-300">${formatDateIT(formatDateISO(due))}</p>
+                </div>
+            `;
         }
 
         function saveSettings() {
-            const name = document.getElementById('input-partner-name').value.trim();
-            const date = document.getElementById('input-due-date').value;
-            if (name) state.partnerName = name;
-            if (date) {
-                state.dueDate = date;
-                state.viewedWeek = null;
+            const nameVal = document.getElementById('input-partner-name').value.trim();
+            const due = computeDueDateFromModal();
+            if (!due) {
+                showToast('Inserisci una data o settimana valida.');
+                return;
             }
+            state.partnerName = nameVal || 'La tua compagna';
+            state.calcMode = tempCalcMode;
+            state.dueDate = formatDateISO(due);
+            state.viewedWeek = null;
             saveState();
             closeSettingsModal();
             renderApp();
-            showToast('Impostazioni aggiornate!');
+            showToast('Impostazioni salvate! Le settimane avanzeranno in automatico.');
         }
 
         // ==========================================
-        // AVVIO INIZIALE
+        // AVVIO APPLICAZIONE
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
