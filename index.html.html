@@ -1,470 +1,2642 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Noi & Bebè — La vostra guida in gravidanza</title>
+    <title>Copilota Papà — La tua guida in gravidanza</title>
 
     <!-- PWA Manifest & Impostazioni App Android / iPhone -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" id="meta-theme-color" content="#07060d">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#09090b">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Noi & Bebè">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png">
+    <meta name="apple-mobile-web-app-title" content="Copilota Papà">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS v2 (Auth + Sincronizzazione Cloud) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts: Plus Jakarta Sans -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome per le icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <style>
-        /* ==========================================
-           DESIGN SYSTEM LIQUID GLASS / BUBBLE 2027
-           ========================================== */
-        :root,
-        [data-theme="dark"] {
+        :root {
             color-scheme: dark;
-            --bg-base: #07060d;
-            --text-main: #f5f3ff;
-            --text-secondary: #c4b5fd;
-            --text-muted: #94a3b8;
-            --glass-bg: rgba(20, 17, 34, 0.62);
-            --glass-bg-strong: rgba(18, 15, 32, 0.88);
-            --glass-surface: rgba(255, 255, 255, 0.045);
-            --glass-surface-hover: rgba(255, 255, 255, 0.085);
-            --glass-border: rgba(255, 255, 255, 0.11);
-            --glass-highlight: rgba(255, 255, 255, 0.22);
-            --glass-shadow: 0 18px 42px -12px rgba(0, 0, 0, 0.68), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
-            --dock-bg: rgba(17, 14, 30, 0.78);
-            --dock-border: rgba(255, 255, 255, 0.14);
-            --input-bg: rgba(9, 8, 18, 0.75);
-            --input-border: rgba(255, 255, 255, 0.12);
-            --orb-1: rgba(168, 85, 247, 0.34);
-            --orb-2: rgba(236, 72, 153, 0.26);
-            --orb-3: rgba(99, 102, 241, 0.24);
-            --accent-glow: 0 0 28px rgba(168, 85, 247, 0.42);
-            --pill-active-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(217, 70, 239, 0.32));
-            --pill-active-border: rgba(216, 180, 254, 0.45);
         }
-
-        [data-theme="light"] {
-            color-scheme: light;
-            --bg-base: #f5f2ff;
-            --text-main: #1a1230;
-            --text-secondary: #6d28d9;
-            --text-muted: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.72);
-            --glass-bg-strong: rgba(255, 255, 255, 0.92);
-            --glass-surface: rgba(124, 58, 237, 0.06);
-            --glass-surface-hover: rgba(124, 58, 237, 0.11);
-            --glass-border: rgba(139, 92, 246, 0.18);
-            --glass-highlight: rgba(255, 255, 255, 0.95);
-            --glass-shadow: 0 18px 40px -14px rgba(109, 40, 217, 0.14), inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
-            --dock-bg: rgba(255, 255, 255, 0.84);
-            --dock-border: rgba(139, 92, 246, 0.22);
-            --input-bg: rgba(255, 255, 255, 0.9);
-            --input-border: rgba(139, 92, 246, 0.24);
-            --orb-1: rgba(192, 132, 252, 0.38);
-            --orb-2: rgba(244, 114, 182, 0.30);
-            --orb-3: rgba(129, 140, 248, 0.28);
-            --accent-glow: 0 10px 28px -6px rgba(147, 51, 234, 0.38);
-            --pill-active-bg: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(217, 70, 239, 0.16));
-            --pill-active-border: rgba(147, 51, 234, 0.38);
-        }
-
-        * { box-sizing: border-box; }
-
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-            transition: background-color 0.4s ease, color 0.35s ease;
+            background-color: #09090b;
+            background-image: radial-gradient(circle at 50% -10%, rgba(168, 85, 247, 0.16), transparent 55%);
         }
-
-        /* Aurora Living Background Orbs */
-        .aurora-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        .aurora-orb {
-            position: absolute;
-            border-radius: 9999px;
-            filter: blur(78px);
-            opacity: 0.9;
-            will-change: transform;
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .orb-1 {
-            width: 340px; height: 340px; top: -90px; left: -80px;
-            background: var(--orb-1);
-            animation: floatOrb1 16s ease-in-out infinite alternate;
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
         }
-        .orb-2 {
-            width: 310px; height: 310px; top: 32%; right: -110px;
-            background: var(--orb-2);
-            animation: floatOrb2 19s ease-in-out infinite alternate;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .orb-3 {
-            width: 320px; height: 320px; bottom: -90px; left: 18%;
-            background: var(--orb-3);
-            animation: floatOrb3 22s ease-in-out infinite alternate;
+        .neon-glow {
+            box-shadow: 0 0 22px rgba(168, 85, 247, 0.35);
         }
-        @keyframes floatOrb1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(45px, 35px) scale(1.12); } }
-        @keyframes floatOrb2 { 0% { transform: translate(0, 0) scale(1.05); } 100% { transform: translate(-45px, -30px) scale(0.95); } }
-        @keyframes floatOrb3 { 0% { transform: translate(0, 0) scale(0.96); } 100% { transform: translate(35px, -40px) scale(1.1); } }
-
-        /* Liquid Glass Primitives */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(26px) saturate(165%);
-            -webkit-backdrop-filter: blur(26px) saturate(165%);
-            border: 1px solid var(--glass-border);
-            border-top-color: var(--glass-highlight);
-            box-shadow: var(--glass-shadow);
-            border-radius: 28px;
-            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, background 0.35s ease;
+        .neon-glow-sm {
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
         }
-        .glass-strong {
-            background: var(--glass-bg-strong);
-            backdrop-filter: blur(32px) saturate(180%);
-            -webkit-backdrop-filter: blur(32px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-top-color: var(--glass-highlight);
-            box-shadow: var(--glass-shadow);
+        .neon-text {
+            text-shadow: 0 0 14px rgba(192, 132, 252, 0.55);
         }
-        .glass-surface {
-            background: var(--glass-surface);
-            border: 1px solid var(--glass-border);
-            transition: background 0.2s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+        .pulse-ring {
+            animation: pulseRing 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
         }
-        .glass-surface:hover { background: var(--glass-surface-hover); }
-
-        .glass-input {
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            color: var(--text-main);
-            border-radius: 18px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glass-input:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.22);
-            outline: none;
-        }
-        .glass-input::placeholder { color: var(--text-muted); }
-
-        .text-main { color: var(--text-main); }
-        .text-sec { color: var(--text-secondary); }
-        .text-muted { color: var(--text-muted); }
-
-        /* Tactile Bubble Spring Buttons */
-        .bubble-btn {
-            transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, filter 0.2s ease;
-        }
-        .bubble-btn:active { transform: scale(0.92); }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #9333ea 0%, #d946ef 55%, #ec4899 100%);
-            color: #ffffff;
-            box-shadow: var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-        }
-        .btn-primary:hover { filter: brightness(1.08); }
-
-        /* Floating Header Compacting */
-        .glass-header {
-            background: var(--dock-bg);
-            backdrop-filter: blur(26px) saturate(180%);
-            -webkit-backdrop-filter: blur(26px) saturate(180%);
-            border-bottom: 1px solid var(--glass-border);
-            transition: padding 0.28s ease, box-shadow 0.28s ease;
-        }
-        .glass-header.is-compact { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35); }
-        .glass-header.is-compact .header-inner { padding-top: 0.45rem; padding-bottom: 0.45rem; }
-
-        /* Floating Capsule Dock */
-        .floating-dock-wrap {
-            position: fixed;
-            left: 0; right: 0;
-            bottom: max(12px, env(safe-area-inset-bottom));
-            z-index: 40;
-            padding: 0 14px;
-            pointer-events: none;
-        }
-        .floating-dock {
-            pointer-events: auto;
-            max-width: 460px;
-            margin: 0 auto;
-            background: var(--dock-bg);
-            backdrop-filter: blur(30px) saturate(190%);
-            -webkit-backdrop-filter: blur(30px) saturate(190%);
-            border: 1px solid var(--dock-border);
-            border-top-color: var(--glass-highlight);
-            box-shadow: 0 20px 44px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            padding: 7px 8px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            align-items: center;
-            gap: 4px;
-        }
-        .dock-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 7px 2px; border-radius: 22px;
-            color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 3px;
-            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid transparent;
-        }
-        .dock-item:active { transform: scale(0.88); }
-        .dock-item.is-active {
-            background: var(--pill-active-bg);
-            border-color: var(--pill-active-border);
-            color: var(--text-main);
-            transform: translateY(-2px);
-        }
-        .dock-center-btn {
-            margin-top: -22px; width: 58px; height: 58px; justify-self: center;
-            border-radius: 9999px;
-            background: linear-gradient(145deg, #9333ea, #d946ef, #ec4899);
-            color: #ffffff;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 12px 26px -4px rgba(192, 38, 211, 0.65), inset 0 2px 3px rgba(255, 255, 255, 0.45);
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-        }
-        .dock-center-btn:active { transform: scale(0.88); }
-        .dock-center-btn.is-active {
-            transform: translateY(-4px) scale(1.06);
-            box-shadow: 0 16px 32px -4px rgba(217, 70, 239, 0.8), 0 0 0 4px rgba(168, 85, 247, 0.22), inset 0 2px 4px rgba(255, 255, 255, 0.55);
-        }
-
-        /* Dynamic Island Pill */
-        #dynamic-island {
-            position: fixed;
-            top: max(12px, env(safe-area-inset-top));
-            left: 50%;
-            transform: translate(-50%, -140%) scale(0.86);
-            z-index: 70;
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-        }
-        #dynamic-island.show {
-            transform: translate(-50%, 0) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Pull-to-Refresh Bubble */
-        #ptr-indicator {
-            position: fixed;
-            top: 72px; left: 50%;
-            transform: translate(-50%, -40px) scale(0.75);
-            opacity: 0; z-index: 35; pointer-events: none;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-
-        /* Animations */
-        .fade-in { animation: fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        .slide-from-right { animation: slideFromRight 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        .slide-from-left { animation: slideFromLeft 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes slideFromRight { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes slideFromLeft { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: translateX(0); } }
-
-        .breathe-bubble { animation: breathe 3.6s ease-in-out infinite; }
-        @keyframes breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-5px) scale(1.05); } }
-
-        .liquid-bar { position: relative; overflow: hidden; }
-        .liquid-bar::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-            transform: translateX(-100%);
-            animation: shimmer 2.6s infinite;
-        }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-
-        .pulse-ring { animation: pulseRing 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
         @keyframes pulseRing {
-            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.72); }
-            70% { box-shadow: 0 0 0 28px rgba(236, 72, 153, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0.7); }
+            70% { box-shadow: 0 0 0 26px rgba(217, 70, 239, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0); }
         }
-
-        .tap-particle {
-            position: fixed; pointer-events: none; z-index: 90;
-            font-size: 13px; user-select: none;
-            animation: particleFly 0.72s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes particleFly {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-            100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.25); }
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-purple-500/35">
-
-    <!-- Sfere di Luce Aurora -->
-    <div class="aurora-bg" aria-hidden="true">
-        <div class="aurora-orb orb-1"></div>
-        <div class="aurora-orb orb-2"></div>
-        <div class="aurora-orb orb-3"></div>
-    </div>
-
-    <!-- Dynamic Island Notifiche di Coppia -->
-    <div id="dynamic-island" onclick="handleIslandClick()" class="cursor-pointer">
-        <div class="glass-strong rounded-full px-4 py-2.5 flex items-center gap-2.5 max-w-[92vw] sm:max-w-md border border-purple-400/40 shadow-2xl">
-            <span id="island-actor" class="w-6 h-6 rounded-full btn-primary text-[11px] font-extrabold flex items-center justify-center shrink-0">L</span>
-            <p id="island-text" class="text-xs font-bold text-main truncate">Aggiornamento in tempo reale</p>
-            <i class="fa-solid fa-chevron-right text-[10px] text-sec shrink-0"></i>
-        </div>
-    </div>
-
-    <!-- Indicatore Pull-to-Refresh -->
-    <div id="ptr-indicator">
-        <div class="glass-strong rounded-full px-3.5 py-2 flex items-center gap-2 text-xs font-bold text-main shadow-lg">
-            <i id="ptr-icon" class="fa-solid fa-arrow-down text-purple-400 transition-transform"></i>
-            <span id="ptr-label">Tira per sincronizzare</span>
-        </div>
-    </div>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col selection:bg-purple-500/40 selection:text-purple-100">
 
     <!-- SCHERMATA DI ACCESSO / REGISTRAZIONE / CODICE SEGRETO -->
-    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="w-full max-w-sm space-y-6 fade-in my-auto py-6 relative z-10">
-            <div class="text-center space-y-2.5">
-                <div class="w-[72px] h-[72px] rounded-[26px] btn-primary flex items-center justify-center mx-auto text-3xl breathe-bubble">
-                    <i class="fa-solid fa-heart"></i>
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-zinc-950 flex items-center justify-center p-4 overflow-y-auto" style="background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.22), transparent 60%);">
+        <div class="w-full max-w-sm space-y-6 fade-in my-auto py-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center mx-auto neon-glow border border-purple-400/40 text-2xl">
+                    <i class="fa-solid fa-baby-carriage"></i>
                 </div>
-                <h1 class="text-3xl font-extrabold text-main tracking-tight">Noi & Bebè</h1>
-                <p class="text-xs font-medium text-muted">Spazio privato riservato a Francesco & Laura</p>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight neon-text">Copilota Papà</h1>
+                <p class="text-xs text-zinc-400">Area privata riservata a Francesco & Laura</p>
             </div>
 
             <!-- Box 1: Login / Registrazione -->
-            <div id="auth-box-login" class="glass-card p-6 space-y-5">
-                <div class="grid grid-cols-2 gap-1.5 glass-surface p-1.5 rounded-2xl">
-                    <button type="button" id="auth-tab-login" onclick="setAuthMode('login')" class="bubble-btn py-2.5 rounded-xl text-xs font-bold transition btn-primary">
+            <div id="auth-box-login" class="bg-zinc-900/95 border border-purple-500/30 rounded-3xl p-6 shadow-2xl neon-glow space-y-5">
+                <div class="grid grid-cols-2 gap-1.5 bg-zinc-950 p-1 rounded-2xl border border-zinc-800">
+                    <button type="button" id="auth-tab-login" onclick="setAuthMode('login')" class="py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white neon-glow-sm">
                         Accedi
                     </button>
-                    <button type="button" id="auth-tab-signup" onclick="setAuthMode('signup')" class="bubble-btn py-2.5 rounded-xl text-xs font-bold transition text-muted">
+                    <button type="button" id="auth-tab-signup" onclick="setAuthMode('signup')" class="py-2 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-zinc-200">
                         Registrati
                     </button>
                 </div>
 
                 <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Email</label>
-                        <input type="email" id="auth-email" required autocomplete="email" placeholder="nome@esempio.it" class="w-full px-4 py-3 glass-input text-sm">
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1">Email</label>
+                        <input type="email" id="auth-email" required autocomplete="email" placeholder="nome@esempio.it" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Password</label>
-                        <input type="password" id="auth-password" required minlength="6" autocomplete="current-password" placeholder="Minimo 6 caratteri" class="w-full px-4 py-3 glass-input text-sm">
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1">Password</label>
+                        <input type="password" id="auth-password" required minlength="6" autocomplete="current-password" placeholder="Minimo 6 caratteri" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
                     </div>
 
+                    <!-- Campi extra solo per Registrazione -->
                     <div id="signup-extra-fields" class="hidden space-y-3.5 pt-1">
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Chi sei?</label>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Chi sei?</label>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="signup-actor-F" onclick="selectSignupActor('F')" class="bubble-btn py-2.5 px-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition btn-primary">
-                                    <span class="w-5 h-5 rounded-full bg-white/20 text-white text-[11px] font-extrabold flex items-center justify-center">F</span>
+                                <button type="button" id="signup-actor-F" onclick="selectSignupActor('F')" class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-purple-600/25 border-purple-500 text-purple-200">
+                                    <span class="w-5 h-5 rounded-md bg-purple-600 text-white text-[11px] font-extrabold flex items-center justify-center">F</span>
                                     <span>Francesco</span>
                                 </button>
-                                <button type="button" id="signup-actor-L" onclick="selectSignupActor('L')" class="bubble-btn py-2.5 px-3 rounded-2xl glass-surface text-xs font-bold flex items-center justify-center gap-2 text-muted">
-                                    <span class="w-5 h-5 rounded-full glass-surface text-[11px] font-extrabold flex items-center justify-center">L</span>
+                                <button type="button" id="signup-actor-L" onclick="selectSignupActor('L')" class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200">
+                                    <span class="w-5 h-5 rounded-md bg-zinc-800 text-zinc-300 text-[11px] font-extrabold flex items-center justify-center">L</span>
                                     <span>Laura</span>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Codice Segreto Famiglia</label>
-                            <input type="password" inputmode="numeric" id="auth-signup-code" placeholder="Inserisci il codice segreto" class="w-full px-4 py-3 glass-input text-sm tracking-widest font-bold">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1">Codice Segreto Famiglia</label>
+                            <input type="password" inputmode="numeric" id="auth-signup-code" placeholder="Inserisci il codice segreto" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm tracking-widest font-bold">
                         </div>
                     </div>
 
-                    <div id="auth-error-msg" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
-                    <div id="auth-info-msg" class="hidden p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold"></div>
+                    <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs font-medium"></div>
+                    <div id="auth-info-msg" class="hidden p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 text-xs font-medium"></div>
 
-                    <button type="submit" id="auth-submit-btn" class="bubble-btn btn-primary w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2">
+                    <button type="submit" id="auth-submit-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-bold text-sm transition neon-glow-sm flex items-center justify-center gap-2">
                         <span>Accedi</span>
                     </button>
                 </form>
             </div>
 
-            <!-- Box 2: Verifica Codice Segreto al Primo Accesso -->
-            <div id="auth-box-code" class="hidden glass-card p-6 space-y-5">
+            <!-- Box 2: Verifica Codice Segreto al Primo Accesso (post-login) -->
+            <div id="auth-box-code" class="hidden bg-zinc-900/95 border border-purple-500/35 rounded-3xl p-6 shadow-2xl neon-glow space-y-5">
                 <div class="text-center space-y-1">
-                    <div class="w-12 h-12 rounded-2xl btn-primary flex items-center justify-center mx-auto text-lg mb-2">
+                    <div class="w-11 h-11 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center mx-auto text-lg mb-2">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
-                    <h2 class="text-base font-extrabold text-main">Verifica di Sicurezza</h2>
-                    <p class="text-xs text-muted">Inserisci il codice segreto per sbloccare l'app su questo dispositivo.</p>
+                    <h2 class="text-base font-extrabold text-white">Verifica di Sicurezza</h2>
+                    <p class="text-xs text-zinc-400">Inserisci il codice segreto per sbloccare l'app su questo dispositivo.</p>
                 </div>
 
                 <form onsubmit="handleCodeVerify(event)" class="space-y-4">
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Conferma il tuo profilo</label>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Conferma il tuo profilo</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <button type="button" id="gate-actor-F" onclick="selectGateActor('F')" class="bubble-btn py-2.5 px-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 btn-primary">
-                                <span class="w-5 h-5 rounded-full bg-white/20 text-white text-[11px] font-extrabold flex items-center justify-center">F</span>
+                            <button type="button" id="gate-actor-F" onclick="selectGateActor('F')" class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-purple-600/25 border-purple-500 text-purple-200">
+                                <span class="w-5 h-5 rounded-md bg-purple-600 text-white text-[11px] font-extrabold flex items-center justify-center">F</span>
                                 <span>Francesco</span>
                             </button>
-                            <button type="button" id="gate-actor-L" onclick="selectGateActor('L')" class="bubble-btn py-2.5 px-3 rounded-2xl glass-surface text-xs font-bold flex items-center justify-center gap-2 text-muted">
-                                <span class="w-5 h-5 rounded-full glass-surface text-[11px] font-extrabold flex items-center justify-center">L</span>
+                            <button type="button" id="gate-actor-L" onclick="selectGateActor('L')" class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200">
+                                <span class="w-5 h-5 rounded-md bg-zinc-800 text-zinc-300 text-[11px] font-extrabold flex items-center justify-center">L</span>
                                 <span>Laura</span>
                             </button>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Codice Segreto</label>
-                        <input type="password" inputmode="numeric" id="gate-code-input" required placeholder="••••••••" class="w-full px-4 py-3 glass-input text-center text-base tracking-[0.25em] font-extrabold">
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-purple-300/80 mb-1">Codice Segreto</label>
+                        <input type="password" inputmode="numeric" id="gate-code-input" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-center text-base tracking-[0.25em] font-extrabold">
                     </div>
 
-                    <div id="gate-error-msg" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold text-center"></div>
+                    <div id="gate-error-msg" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs font-medium text-center"></div>
 
-                    <button type="submit" class="bubble-btn btn-primary w-full py-3.5 rounded-2xl font-bold text-sm">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-bold text-sm transition neon-glow-sm">
                         Sblocca App
                     </button>
-                    <button type="button" onclick="logoutUser()" class="w-full py-2 text-xs font-semibold text-muted hover:text-main transition">
+                    <button type="button" onclick="logoutUser()" class="w-full py-2 text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition">
                         Esci e cambia account
                     </button>
                 </form>
             </div>
 
-            <!-- Box 3: Caricamento -->
-            <div id="auth-box-loading" class="hidden glass-card p-8 text-center space-y-3">
+            <!-- Box 3: Caricamento iniziale sessione -->
+            <div id="auth-box-loading" class="hidden bg-zinc-900/80 border border-zinc-800 rounded-3xl p-8 text-center space-y-3">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl text-purple-400"></i>
-                <p class="text-xs font-semibold text-muted">Verifica accesso in corso...</p>
+                <p class="text-xs font-semibold text-zinc-300">Verifica accesso in corso...</p>
             </div>
         </div>
     </div>
 
-    <!-- CONTENITORE APP PRINCIPALE -->
-    <div id="app-shell" class="hidden flex-col min-h-screen relative z-10">
-        <!-- Header di Vetro Compattabile -->
-        <header id="main-header" class="glass-header sticky top-0 z-30">
-            <div class="header-inner max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2 transition-all">
+    <!-- CONTENITORE APP PRINCIPALE (nascosto finché non autenticati) -->
+    <div id="app-shell" class="hidden flex-col min-h-screen">
+        <!-- Intestazione fissa in alto -->
+        <header class="sticky top-0 z-30 bg-zinc-950/85 backdrop-blur-xl border-b border-purple-500/20">
+            <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-3 min-w-0">
-                    <div onclick="switchTab('home')" class="bubble-btn cursor-pointer w-10 h-10 rounded-2xl btn-primary flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-heart text-base"></i>
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm border border-purple-400/40 shrink-0">
+                        <i class="fa-solid fa-baby-carriage text-lg"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
-                            <h1 id="header-greeting" class="text-sm sm:text-base font-extrabold tracking-tight text-main leading-tight truncate">Noi & Bebè</h1>
-                            <span id="actor-header-pill" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 border border-purple-400/40 text-sec text-[10px] font-extrabold shrink-0" title="Profilo attivo">F</span>
-                            <span id="cloud-status-badge" class="inline-flex items
+                            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white leading-tight truncate">Copilota Papà</h1>
+                            <span id="actor-header-pill" class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-purple-600/30 border border-purple-400/40 text-purple-200 text-[10px] font-extrabold shrink-0" title="Profilo attivo">F</span>
+                            <span id="cloud-status-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-900 border border-zinc-800 text-zinc-400 shrink-0" title="Stato sincronizzazione Cloud">
+                                <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                                <span>Locale</span>
+                            </span>
+                        </div>
+                        <p id="header-subtitle" class="text-xs font-semibold text-purple-400 truncate">Caricamento...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="hidden px-3 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold items-center gap-1.5 neon-glow-sm transition" title="Installa App sul telefono">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Installa</span>
+                    </button>
+                    <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-zinc-900 hover:bg-purple-950/60 text-purple-300 border border-purple-500/30 hover:border-purple-400/60 transition flex items-center gap-2 text-xs font-semibold" title="Impostazioni">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span class="hidden sm:inline">Impostazioni</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenuto Principale Dinamico -->
+        <main id="app-content" class="flex-1 max-w-3xl w-full mx-auto px-4 pt-5 pb-28"></main>
+
+        <!-- Barra di Navigazione Fissa in Basso -->
+        <nav class="fixed bottom-0 inset-x-0 z-40 bg-zinc-950/90 backdrop-blur-xl border-t border-purple-500/20 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+            <div class="max-w-3xl mx-auto grid grid-cols-5 gap-1.5">
+                <button id="nav-home" onclick="switchTab('home')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-compass text-base mb-0.5"></i>
+                    <span class="text-[10px] font-bold">Guida</span>
+                </button>
+                <button id="nav-agenda" onclick="switchTab('agenda')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-calendar-check text-base mb-0.5"></i>
+                    <span class="text-[10px] font-bold">Agenda</span>
+                </button>
+                <button id="nav-checklist" onclick="switchTab('checklist')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-suitcase-rolling text-base mb-0.5"></i>
+                    <span class="text-[10px] font-bold">Borsa</span>
+                </button>
+                <button id="nav-giornox" onclick="switchTab('giornox')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-stopwatch text-base mb-0.5"></i>
+                    <span class="text-[10px] font-bold">Giorno X</span>
+                </button>
+                <button id="nav-diario" onclick="switchTab('diario')" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-book-open text-base mb-0.5"></i>
+                    <span class="text-[10px] font-bold">Note</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Notifiche Toast -->
+    <div id="toast-container" class="fixed top-20 right-4 z-[60] flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+    <!-- Modale Impostazioni Gravidanza & Account -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Impostazioni</h2>
+                <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <!-- Account attivo -->
+                <div class="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-[11px] text-zinc-400 font-semibold">Accesso effettuato come:</p>
+                        <p id="settings-user-label" class="text-xs font-bold text-white truncate mt-0.5">—</p>
+                    </div>
+                    <button type="button" onclick="logoutUser()" class="px-3 py-1.5 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 border border-rose-500/35 text-rose-300 text-xs font-bold transition shrink-0">
+                        Esci
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Nome della futura mamma</label>
+                    <input type="text" id="input-partner-name" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/25 outline-none text-sm font-medium" placeholder="Es. Laura">
+                </div>
+
+                <!-- Selettore Metodo di Calcolo -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Come vuoi calcolare le settimane?</label>
+                    <div class="grid grid-cols-3 gap-1.5 bg-zinc-950 p-1 rounded-2xl border border-zinc-800">
+                        <button type="button" id="mode-btn-lmp" onclick="setSettingsCalcMode('lmp')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Ultima Mestr.
+                        </button>
+                        <button type="button" id="mode-btn-week" onclick="setSettingsCalcMode('week')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Settimana Oggi
+                        </button>
+                        <button type="button" id="mode-btn-dpp" onclick="setSettingsCalcMode('dpp')" class="py-2 px-1 rounded-xl text-[11px] font-bold transition">
+                            Data Parto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campo 1: Ultima Mestruazione -->
+                <div id="calc-box-lmp" class="hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">1° giorno dell'ultima mestruazione</label>
+                    <input type="date" id="input-lmp-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-medium">
+                    <p class="text-xs text-zinc-400 mt-1.5">È il metodo standard dei ginecologi: aggiungiamo 40 settimane (280 giorni) e aggiorniamo in automatico ogni giorno.</p>
+                </div>
+
+                <!-- Campo 2: Settimana e Giorni Attuali -->
+                <div id="calc-box-week" class="hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">A che settimana siete oggi?</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <span class="block text-[11px] text-zinc-400 mb-1">Settimana (1–40)</span>
+                            <input type="number" id="input-current-week" min="1" max="42" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-bold">
+                        </div>
+                        <div>
+                            <span class="block text-[11px] text-zinc-400 mb-1">+ Giorni (0–6)</span>
+                            <input type="number" id="input-current-days" min="0" max="6" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-bold">
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1.5">Es. se siete a <strong>5+2</strong>, inserisci 5 e 2. Da domani avanzerà da sola!</p>
+                </div>
+
+                <!-- Campo 3: Data Presunta del Parto (DPP) -->
+                <div id="calc-box-dpp" class="hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1.5">Data Presunta del Parto (DPP)</label>
+                    <input type="date" id="input-due-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm font-medium">
+                    <p class="text-xs text-zinc-400 mt-1.5">Utile dopo l'ecografia di datazione se il ginecologo vi ha dato una data precisa.</p>
+                </div>
+
+                <!-- Anteprima Calcolo Live -->
+                <div id="settings-calc-preview" class="p-3.5 rounded-2xl bg-purple-950/35 border border-purple-500/30 text-xs text-purple-200 flex items-center justify-between gap-2">
+                    <span>Calcolo attuale...</span>
+                </div>
+
+                <!-- Backup e Sincronizzazione Cloud -->
+                <div class="pt-4 border-t border-zinc-800 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold uppercase tracking-wider text-purple-300/80">Cloud & Backup</label>
+                        <button type="button" onclick="forceCloudSync()" class="text-[11px] font-semibold text-purple-300 hover:text-purple-200 flex items-center gap-1 transition">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizza ora
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" onclick="exportBackup()" class="py-2.5 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-download"></i> Esporta Backup
+                        </button>
+                        <label class="cursor-pointer py-2.5 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-700 hover:border-purple-500/40 text-zinc-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-upload"></i> Ripristina
+                            <input type="file" accept=".json" onchange="importBackup(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- File PWA da caricare su GitHub per installazione Android/iPhone -->
+                <div class="pt-4 border-t border-zinc-800 space-y-2.5">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-purple-300/80">File Installazione App (Android / iPhone)</label>
+                        <p class="text-[11px] text-zinc-400 mt-0.5">Scarica questi 4 file e caricali su GitHub accanto a <code class="text-purple-300">index.html</code> per sbloccare "Installa app".</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="downloadPwaManifest()" class="py-2 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-800 hover:border-purple-500/40 text-zinc-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-file-code text-purple-400"></i> manifest.json
+                        </button>
+                        <button type="button" onclick="downloadPwaServiceWorker()" class="py-2 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-800 hover:border-purple-500/40 text-zinc-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-gears text-purple-400"></i> sw.js
+                        </button>
+                        <button type="button" onclick="downloadPwaIcon(192)" class="py-2 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-800 hover:border-purple-500/40 text-zinc-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-image text-fuchsia-400"></i> icon-192.png
+                        </button>
+                        <button type="button" onclick="downloadPwaIcon(512)" class="py-2 px-3 rounded-xl bg-zinc-950 hover:bg-purple-950/50 border border-zinc-800 hover:border-purple-500/40 text-zinc-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-image text-fuchsia-400"></i> icon-512.png
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-3">
+                <button onclick="closeSettingsModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                <button onclick="saveSettings()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">Salva</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Nuovo Appuntamento / Promemoria -->
+    <div id="event-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-purple-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Nuovo Promemoria</h2>
+                <button onclick="closeEventModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="event-form" onsubmit="addEvent(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Titolo</label>
+                    <input type="text" id="event-title" required placeholder="Es. Ecografia Morfologica" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Data</label>
+                        <input type="date" id="event-date" required class="w-full px-3 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Ora</label>
+                        <input type="time" id="event-time" required value="09:30" class="w-full px-3 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Categoria</label>
+                    <select id="event-category" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                        <option value="Visita">Visita / Ecografia</option>
+                        <option value="Esame">Esami del Sangue / Analisi</option>
+                        <option value="Burocrazia">Burocrazia / Pratiche</option>
+                        <option value="Promemoria">Promemoria Generico</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Cosa portare / Note</label>
+                    <textarea id="event-notes" rows="2" placeholder="Es. Tessera sanitaria, impegnativa, esami precedenti..." class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm"></textarea>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeEventModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">Aggiungi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale Aggiungi Contatto Emergenza -->
+    <div id="contact-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-fuchsia-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl neon-glow fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white">Aggiungi Contatto Rapido</h2>
+                <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="addContact(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Ruolo / Nome</label>
+                    <input type="text" id="contact-name" required placeholder="Es. Dott.ssa Rossi (Ginecologa)" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Numero di Telefono</label>
+                    <input type="tel" id="contact-phone" required placeholder="Es. +39 333 1234567" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-purple-300/80 mb-1">Tipo</label>
+                    <select id="contact-type" class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 focus:border-purple-500 outline-none text-sm">
+                        <option value="medico">Emergenza / Medico</option>
+                        <option value="famiglia">Chi avvisare al parto</option>
+                    </select>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeContactModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-sm hover:bg-zinc-700 transition">Annulla</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-semibold text-sm hover:from-fuchsia-500 hover:to-purple-500 transition neon-glow-sm">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // PWA: SERVICE WORKER, INSTALL PROMPT & FILE GENERATOR
+        // ==========================================
+        let deferredInstallPrompt = null;
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+            showToast('App installata sul telefono!');
+        });
+
+        async function triggerPwaInstall() {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        function triggerBlobDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadPwaManifest() {
+            const manifest = {
+                name: "Copilota Papà",
+                short_name: "Copilota Papà",
+                description: "La tua guida pratica in gravidanza, sincronizzata in tempo reale",
+                start_url: "/",
+                scope: "/",
+                display: "standalone",
+                orientation: "portrait",
+                background_color: "#09090b",
+                theme_color: "#09090b",
+                icons: [
+                    { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+                    { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+                    { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+                    { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+            triggerBlobDownload(blob, 'manifest.json');
+            showToast('manifest.json scaricato!');
+        }
+
+        function downloadPwaServiceWorker() {
+            const swCode = `const CACHE_NAME = 'copilota-papa-v1';
+
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
+});
+`;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            triggerBlobDownload(blob, 'sw.js');
+            showToast('sw.js scaricato!');
+        }
+
+        function downloadPwaIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Sfondo scuro pieno (perfetto anche per maskable Android)
+            ctx.fillStyle = '#09090b';
+            ctx.fillRect(0, 0, size, size);
+
+            // Bagliore neon viola radiale
+            const rad = ctx.createRadialGradient(size * 0.5, size * 0.45, size * 0.05, size * 0.5, size * 0.5, size * 0.55);
+            rad.addColorStop(0, 'rgba(217, 70, 239, 0.35)');
+            rad.addColorStop(0.6, 'rgba(147, 51, 234, 0.16)');
+            rad.addColorStop(1, 'rgba(9, 9, 11, 0)');
+            ctx.fillStyle = rad;
+            ctx.fillRect(0, 0, size, size);
+
+            // Badge interno centrato dentro la safe-zone (80%)
+            const pad = size * 0.16;
+            const boxSize = size - pad * 2;
+            const r = boxSize * 0.28;
+            const grad = ctx.createLinearGradient(pad, pad, pad + boxSize, pad + boxSize);
+            grad.addColorStop(0, '#9333ea');
+            grad.addColorStop(1, '#d946ef');
+
+            ctx.beginPath();
+            ctx.moveTo(pad + r, pad);
+            ctx.lineTo(pad + boxSize - r, pad);
+            ctx.quadraticCurveTo(pad + boxSize, pad, pad + boxSize, pad + r);
+            ctx.lineTo(pad + boxSize, pad + boxSize - r);
+            ctx.quadraticCurveTo(pad + boxSize, pad + boxSize, pad + boxSize - r, pad + boxSize);
+            ctx.lineTo(pad + r, pad + boxSize);
+            ctx.quadraticCurveTo(pad, pad + boxSize, pad, pad + boxSize - r);
+            ctx.lineTo(pad, pad + r);
+            ctx.quadraticCurveTo(pad, pad, pad + r, pad);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Cuore + sagoma carrozzina stilizzata bianca
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            const cx = size * 0.5;
+            const cy = size * 0.5;
+            const s = size / 512;
+
+            // Culla della carrozzina (semicerchio)
+            ctx.beginPath();
+            ctx.arc(cx, cy + 10 * s, 82 * s, 0, Math.PI, false);
+            ctx.closePath();
+            ctx.fill();
+
+            // Capottina (quarto di cerchio in alto a destra)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 10 * s);
+            ctx.arc(cx, cy + 10 * s, 82 * s, -Math.PI / 2, 0, false);
+            ctx.closePath();
+            ctx.fill();
+
+            // Manico
+            ctx.lineWidth = 18 * s;
+            ctx.beginPath();
+            ctx.moveTo(cx - 82 * s, cy + 10 * s);
+            ctx.lineTo(cx - 108 * s, cy - 38 * s);
+            ctx.lineTo(cx - 134 * s, cy - 38 * s);
+            ctx.stroke();
+
+            // Ruote
+            ctx.beginPath();
+            ctx.arc(cx - 46 * s, cy + 114 * s, 22 * s, 0, Math.PI * 2);
+            ctx.arc(cx + 46 * s, cy + 114 * s, 22 * s, 0, Math.PI * 2);
+            ctx.fill();
+
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    triggerBlobDownload(blob, `icon-${size}.png`);
+                    showToast(`icon-${size}.png scaricata!`);
+                }
+            }, 'image/png');
+        }
+
+        // ==========================================
+        // CONFIGURAZIONE SUPABASE & SICUREZZA
+        // ==========================================
+        const SUPABASE_URL = 'https://gedikicfizogliwrlgrw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_oe3vc88lt54cdOn5DoK2IQ_0WQqlD_E';
+        const FAMILY_SECRET_CODE = '14022019';
+        const SYNC_ROW_ID = 'famiglia_main';
+        const CLIENT_SESSION_ID = 'dev_' + Math.random().toString(36).slice(2, 10);
+
+        let supabaseClient = null;
+        let realtimeChannel = null;
+        let cloudSyncTimeout = null;
+        let isApplyingRemote = false;
+
+        // Stato autenticazione
+        let currentUser = null;
+        let currentActor = 'F'; // 'F' = Francesco, 'L' = Laura
+        let authMode = 'login';
+        let signupActor = 'F';
+        let gateActor = 'F';
+
+        function getActorFullName(code) {
+            return code === 'L' ? 'Laura' : 'Francesco';
+        }
+
+        function nowShortStamp() {
+            const d = new Date();
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const hh = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${dd}/${mm} ${hh}:${min}`;
+        }
+
+        function markCreated(obj) {
+            return {
+                ...obj,
+                createdBy: currentActor,
+                createdAt: nowShortStamp()
+            };
+        }
+
+        function markUpdated(obj) {
+            obj.updatedBy = currentActor;
+            obj.updatedAt = nowShortStamp();
+            return obj;
+        }
+
+        function renderAuditBadge(item) {
+            if (!item) return '';
+            let actor = null;
+            let verb = '';
+            let stamp = '';
+            if (item.updatedBy) {
+                actor = item.updatedBy;
+                verb = 'modificato';
+                stamp = item.updatedAt || '';
+            } else if (item.createdBy) {
+                actor = item.createdBy;
+                verb = 'aggiunto';
+                stamp = item.createdAt || '';
+            } else {
+                return '';
+            }
+            return `
+                <span class="inline-flex items-center gap-1.5 text-[10px] text-zinc-400 font-medium">
+                    <span class="inline-flex items-center justify-center w-4 h-4 rounded bg-zinc-800 border border-zinc-700 text-zinc-100 font-extrabold text-[9px] leading-none">${escapeHtml(actor)}</span>
+                    <span>${verb}${stamp ? ` • ${escapeHtml(stamp)}` : ''}</span>
+                </span>
+            `;
+        }
+
+        function setCloudBadge(status, label) {
+            const badge = document.getElementById('cloud-status-badge');
+            if (!badge) return;
+            const styles = {
+                synced: { wrap: 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300', dot: 'bg-emerald-400' },
+                syncing: { wrap: 'bg-purple-950/60 border-purple-500/40 text-purple-300', dot: 'bg-purple-400 animate-pulse' },
+                offline: { wrap: 'bg-zinc-900 border-zinc-800 text-zinc-400', dot: 'bg-zinc-500' },
+                error: { wrap: 'bg-amber-950/60 border-amber-500/40 text-amber-300', dot: 'bg-amber-400' }
+            };
+            const st = styles[status] || styles.offline;
+            badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border shrink-0 transition ${st.wrap}`;
+            badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${st.dot}"></span><span>${label}</span>`;
+        }
+
+        // ==========================================
+        // GESTIONE SCHERMATA LOGIN / REGISTRAZIONE / CODICE
+        // ==========================================
+        function showAuthBox(which) {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('auth-screen').classList.add('flex');
+            document.getElementById('app-shell').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('flex');
+
+            ['login', 'code', 'loading'].forEach(name => {
+                const el = document.getElementById(`auth-box-${name}`);
+                if (!el) return;
+                if (name === which) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+        }
+
+        function showAppShell() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('flex');
+            document.getElementById('app-shell').classList.remove('hidden');
+            document.getElementById('app-shell').classList.add('flex');
+
+            const pill = document.getElementById('actor-header-pill');
+            if (pill) {
+                pill.textContent = currentActor;
+                pill.title = `Profilo attivo: ${getActorFullName(currentActor)}`;
+            }
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            const loginTab = document.getElementById('auth-tab-login');
+            const signupTab = document.getElementById('auth-tab-signup');
+            const extra = document.getElementById('signup-extra-fields');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const errBox = document.getElementById('auth-error-msg');
+            const infoBox = document.getElementById('auth-info-msg');
+            errBox.classList.add('hidden');
+            infoBox.classList.add('hidden');
+
+            if (mode === 'login') {
+                loginTab.className = 'py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white neon-glow-sm';
+                signupTab.className = 'py-2 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-zinc-200';
+                extra.classList.add('hidden');
+                submitBtn.innerHTML = '<span>Accedi</span>';
+            } else {
+                signupTab.className = 'py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white neon-glow-sm';
+                loginTab.className = 'py-2 rounded-xl text-xs font-bold transition text-zinc-400 hover:text-zinc-200';
+                extra.classList.remove('hidden');
+                submitBtn.innerHTML = '<span>Crea Account</span>';
+            }
+        }
+
+        function selectSignupActor(actor) {
+            signupActor = actor;
+            ['F', 'L'].forEach(a => {
+                const btn = document.getElementById(`signup-actor-${a}`);
+                if (!btn) return;
+                if (a === actor) {
+                    btn.className = 'py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-purple-600/25 border-purple-500 text-purple-200';
+                } else {
+                    btn.className = 'py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200';
+                }
+            });
+        }
+
+        function selectGateActor(actor) {
+            gateActor = actor;
+            ['F', 'L'].forEach(a => {
+                const btn = document.getElementById(`gate-actor-${a}`);
+                if (!btn) return;
+                if (a === actor) {
+                    btn.className = 'py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-purple-600/25 border-purple-500 text-purple-200';
+                } else {
+                    btn.className = 'py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200';
+                }
+            });
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            if (!supabaseClient) return;
+
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errBox = document.getElementById('auth-error-msg');
+            const infoBox = document.getElementById('auth-info-msg');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            errBox.classList.add('hidden');
+            infoBox.classList.add('hidden');
+
+            if (authMode === 'signup') {
+                const code = document.getElementById('auth-signup-code').value.trim();
+                if (code !== FAMILY_SECRET_CODE) {
+                    errBox.textContent = 'Codice segreto errato. Solo Francesco e Laura possono registrarsi.';
+                    errBox.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Attendere...</span>';
+
+            try {
+                if (authMode === 'signup') {
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: {
+                                actor: signupActor,
+                                display_name: getActorFullName(signupActor)
+                            }
+                        }
+                    });
+                    if (error) throw error;
+
+                    if (data.session && data.user) {
+                        localStorage.setItem(`copilota_code_ok_${data.user.id}`, '1');
+                        localStorage.setItem(`copilota_actor_${data.user.id}`, signupActor);
+                        await proceedAfterAuthenticated(data.user);
+                    } else {
+                        infoBox.textContent = 'Account creato! Controlla la tua email per cliccare il link di conferma, poi torna qui e fai Accedi.';
+                        infoBox.classList.remove('hidden');
+                        setAuthMode('login');
+                    }
+                } else {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    if (data.user) {
+                        await proceedAfterAuthenticated(data.user);
+                    }
+                }
+            } catch (err) {
+                let msg = err.message || 'Errore di accesso.';
+                if (msg.includes('Invalid login credentials')) msg = 'Email o password non corretti.';
+                else if (msg.includes('Email not confirmed')) msg = 'Devi prima confermare l\'email cliccando il link che hai ricevuto.';
+                else if (msg.includes('User already registered')) msg = 'Questa email è già registrata. Usa la scheda Accedi.';
+                errBox.textContent = msg;
+                errBox.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = authMode === 'login' ? '<span>Accedi</span>' : '<span>Crea Account</span>';
+            }
+        }
+
+        async function proceedAfterAuthenticated(user) {
+            currentUser = user;
+            const metaActor = user.user_metadata && user.user_metadata.actor;
+            const savedActor = localStorage.getItem(`copilota_actor_${user.id}`);
+            currentActor = (metaActor === 'F' || metaActor === 'L')
+                ? metaActor
+                : ((savedActor === 'F' || savedActor === 'L') ? savedActor : 'F');
+
+            const isCodeVerified = localStorage.getItem(`copilota_code_ok_${user.id}`) === '1';
+            if (!isCodeVerified) {
+                gateActor = currentActor;
+                selectGateActor(gateActor);
+                document.getElementById('gate-code-input').value = '';
+                document.getElementById('gate-error-msg').classList.add('hidden');
+                showAuthBox('code');
+                return;
+            }
+
+            showAppShell();
+            loadLocalState();
+            updateNavUI();
+            renderApp();
+            await startCloudSync();
+        }
+
+        async function handleCodeVerify(e) {
+            e.preventDefault();
+            const code = document.getElementById('gate-code-input').value.trim();
+            const errBox = document.getElementById('gate-error-msg');
+            errBox.classList.add('hidden');
+
+            if (code !== FAMILY_SECRET_CODE) {
+                errBox.textContent = 'Codice segreto errato. Riprova.';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            if (currentUser) {
+                currentActor = gateActor;
+                localStorage.setItem(`copilota_code_ok_${currentUser.id}`, '1');
+                localStorage.setItem(`copilota_actor_${currentUser.id}`, currentActor);
+                try {
+                    await supabaseClient.auth.updateUser({
+                        data: { actor: currentActor, display_name: getActorFullName(currentActor) }
+                    });
+                } catch (_) {}
+                await proceedAfterAuthenticated(currentUser);
+                showToast(`Benvenuto/a ${getActorFullName(currentActor)}!`);
+            }
+        }
+
+        async function logoutUser() {
+            closeSettingsModal();
+            if (realtimeChannel && supabaseClient) {
+                try { await supabaseClient.removeChannel(realtimeChannel); } catch (_) {}
+                realtimeChannel = null;
+            }
+            if (supabaseClient) {
+                try { await supabaseClient.auth.signOut(); } catch (_) {}
+            }
+            currentUser = null;
+            document.getElementById('auth-password').value = '';
+            setAuthMode('login');
+            showAuthBox('login');
+            showToast('Disconnessione effettuata.');
+        }
+
+        // ==========================================
+        // UTILITY DATE & SICUREZZA HTML
+        // ==========================================
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatDateISO(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function parseLocalISODate(isoStr) {
+            if (!isoStr || typeof isoStr !== 'string') return null;
+            const parts = isoStr.split('-').map(Number);
+            if (parts.length !== 3 || parts.some(isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function getOffsetDate(daysOffset) {
+            const d = new Date();
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + daysOffset);
+            return formatDateISO(d);
+        }
+
+        function formatDateIT(isoStr) {
+            const d = parseLocalISODate(isoStr);
+            if (!d) return isoStr || '';
+            return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        const defaultDueDateStr = getOffsetDate(140);
+
+        // ==========================================
+        // DATI SETTIMANA PER SETTIMANA (LATO PAPÀ)
+        // ==========================================
+        const weeklyGuides = [
+            {
+                range: [1, 4],
+                trimester: "1° Trimestre • Inizio",
+                sizeEmoji: "🌱",
+                sizeName: "Un semino di papavero (circa 1-2 mm)",
+                babyInfo: "L'avventura è appena iniziata! L'embrione si sta impiantando e le prime cellule si dividono a ritmo velocissimo.",
+                momSymptoms: "Ritardo del ciclo, test positivo, possibile tensione al seno, leggeri crampetti simili al ciclo e tanta emozione.",
+                dadTips: [
+                    "Festeggiate questo momento (anche in segreto tra voi due) e godetevi la notizia.",
+                    "Ricorda l'acido folico se non lo sta già prendendo e prenotate la prima visita dal ginecologo.",
+                    "Inizia a dare un'occhiata ai cibi da evitare in gravidanza quando fai la spesa."
+                ]
+            },
+            {
+                range: [5, 6],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🫐",
+                sizeName: "Una lenticchia / piccolo mirtillo (4-6 mm)",
+                babyInfo: "Si sta formando il tubicino che diventerà il cuoricino e inizia già a battere! Si abbozzano cervello e colonna vertebrale.",
+                momSymptoms: "Stanchezza improvvisa (molto sonno), olfatto super sensibile, prime nausee e bisogno frequente di andare in bagno.",
+                dadTips: [
+                    "Gestisci tu la cucina se certi odori iniziano a darle fastidio.",
+                    "Tieni sempre in casa snack secchi (cracker, grissini, fette biscottate) e acqua fresca.",
+                    "Non sottovalutare la sua stanchezza: il suo corpo sta lavorando al massimo anche se da fuori non si vede."
+                ]
+            },
+            {
+                range: [7, 8],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🍇",
+                sizeName: "Un lampone / acino d'uva (1,5 cm)",
+                babyInfo: "Spuntano i piccoli abbozzi di braccia, gambe e orecchie. Il cuore batte fortissimo, quasi il doppio del nostro!",
+                momSymptoms: "Le nausee possono raggiungere il picco, possibili sbalzi d'umore e digestione più lenta.",
+                dadTips: [
+                    "Accompagnala alla prima ecografia: vedere quel puntino e sentire il battito cambia tutto.",
+                    "Prepara pasti leggeri e frequenti invece di cene pesanti.",
+                    "Un po' di pazienza extra con gli sbalzi ormonali fa miracoli."
+                ]
+            },
+            {
+                range: [9, 12],
+                trimester: "1° Trimestre",
+                sizeEmoji: "🍋",
+                sizeName: "Una fragola / piccolo lime (3-5 cm)",
+                babyInfo: "Ora è ufficialmente un feto! Ha già tutte le dita di mani e piedi, si muove tantissimo (anche se lei ancora non lo sente) e gli organi principali sono formati.",
+                momSymptoms: "Verso la 12ª settimana le nausee iniziano spesso a calmarsi e torna un po' di energia. Si avvicina l'ecografia del primo trimestre.",
+                dadTips: [
+                    "Segnate in Agenda gli esami del primo trimestre (es. traslucenza nucale / DNA fetale).",
+                    "Iniziate a decidere quando e come dare la bella notizia a parenti e amici.",
+                    "Scrivete nella sezione 'Medico' tutte le domande per la prossima visita."
+                ]
+            },
+            {
+                range: [13, 19],
+                trimester: "2° Trimestre • Energia",
+                sizeEmoji: "🥑",
+                sizeName: "Un avocado / mango (10-15 cm)",
+                babyInfo: "Le ossa si rafforzano, inizia a fare smorfie e presto sentirà la tua voce! Verso la 18ª-19ª settimana lei potrebbe avvertire i primi 'sfarfallii' nella pancia.",
+                momSymptoms: "Spesso è il periodo migliore: meno nausea, più energia, ma potrebbero iniziare piccoli dolori ai legamenti o bruciore di stomaco.",
+                dadTips: [
+                    "Parla vicino al pancione: il bebè inizierà a riconoscere la tua voce.",
+                    "È il momento ideale per una breve vacanza o un weekend di coppia prima dell'ultimo trimestre.",
+                    "Iniziate a guardarvi intorno per passeggino, ovetto e culla senza fretta (usando la scheda Spese)."
+                ]
+            },
+            {
+                range: [20, 27],
+                trimester: "2° Trimestre • Metà Percorso",
+                sizeEmoji: "🍌",
+                sizeName: "Una banana / melanzana (25-35 cm)",
+                babyInfo: "Siete a metà strada! Con l'ecografia morfologica controllate tutti gli organi. Il bebè ora scalcia con decisione e alterna fasi di sonno e veglia.",
+                momSymptoms: "La pancia cresce a vista d'occhio: possibili mal di schiena, crampi ai polpacci di notte e gambe gonfie a fine giornata.",
+                dadTips: [
+                    "Un massaggio serale a piedi, polpacci e zona lombare ti farà guadagnare 1000 punti.",
+                    "Appoggia la mano sulla pancia la sera quando lei è rilassata: presto sentirai i calcetti anche tu!",
+                    "Informatevi sul corso preparto (molti prevedono incontri dedicati anche ai papà)."
+                ]
+            },
+            {
+                range: [28, 35],
+                trimester: "3° Trimestre • Preparazione",
+                sizeEmoji: "🍍",
+                sizeName: "Un ananas / melone (38-45 cm)",
+                babyInfo: "Il bebè mette su peso velocemente, apre gli occhi, fa le prove di respirazione e inizia a posizionarsi a testa in giù per il parto.",
+                momSymptoms: "Stanchezza di ritorno, difficoltà a trovare una posizione comoda per dormire, fiato corto e prime contrazioni preparatorie (Braxton Hicks).",
+                dadTips: [
+                    "Prenditi carico dei lavori pesanti in casa, della spesa e del montaggio di culla e fasciatoio.",
+                    "Inizia a preparare con lei la Borsa dell'Ospedale (e non dimenticare la tua!).",
+                    "Sbriga la burocrazia in anticipo: congedo di paternità, scelta del pediatra e documenti."
+                ]
+            },
+            {
+                range: [36, 42],
+                trimester: "3° Trimestre • Conto alla rovescia!",
+                sizeEmoji: "🍉",
+                sizeName: "Una piccola anguria (48-52 cm)",
+                babyInfo: "Il bebè è pronto per conoscervi! Ogni giorno può essere quello giusto. I polmoni sono maturi e sta solo accumulando le ultime riserve.",
+                momSymptoms: "Pressione pelvica, insonnia, voglia irrefrenabile di sistemare casa ('sindrome del nido') e tanta impazienza.",
+                dadTips: [
+                    "Tieni sempre il serbatoio dell'auto pieno e la base Isofix / ovetto già installati.",
+                    "Salva i numeri del reparto e del ginecologo nella scheda 'Giorno X' e fai una prova del percorso verso l'ospedale.",
+                    "Resta calmo, rassicurala e tieni il telefono sempre carico: sei il suo punto di riferimento!"
+                ]
+            }
+        ];
+
+        // ==========================================
+        // STATO APPLICAZIONE
+        // ==========================================
+        const state = {
+            activeTab: 'home',
+            activeChecklistCat: 'lei',
+            activeNoteTab: 'voglie',
+            partnerName: 'Laura',
+            dueDate: defaultDueDateStr,
+            calcMode: 'lmp',
+            viewedWeek: null,
+
+            events: [],
+
+            checklists: {
+                lei: [],
+                bebe: [],
+                papa: [],
+                casa: [
+                    { id: 401, text: "Installare base Isofix / ovetto in auto e fare una prova di aggancio", done: false },
+                    { id: 402, text: "Montare culla / lettino e preparare materasso con lenzuolini lavati", done: false },
+                    { id: 403, text: "Allestire angolo cambio (fasciatoio, pannolini taglia 1, salviette, crema, mangiapannolini)", done: false },
+                    { id: 404, text: "Lavare tutti i vestitini, body, lenzuola e copertine con detersivo delicato", done: false },
+                    { id: 405, text: "Preparare scorta di pasti pronti in freezer per le prime 2 settimane", done: false },
+                    { id: 406, text: "Fare spesa grossa di scorte casa (acqua, carta igienica, detersivi, snack veloci)", done: false },
+                    { id: 407, text: "Preparare vaschetta bagnetto, termometro acqua, asciugamani morbidi e detergente", done: false },
+                    { id: 408, text: "Kit salute neonato (soluzione fisiologica, garze sterili ombelico, termometro, forbicine)", done: false },
+                    { id: 409, text: "Allestire zona comoda per allattamento / biberon con luce soffusa notturna", done: false },
+                    { id: 410, text: "Montare passeggino / navicella e verificare che entri bene nel bagagliaio", done: false },
+                    { id: 411, text: "Scegliere il pediatra di base e verificare i documenti per l'iscrizione", done: false },
+                    { id: 412, text: "Informarsi su pratiche post-nascita (registrazione, codice fiscale, Assegno Unico, congedo)", done: false },
+                    { id: 413, text: "Pulizia profonda di casa nelle ultime settimane prima della data presunta", done: false },
+                    { id: 414, text: "Fare una prova del percorso verso l'ospedale e controllare dove parcheggiare", done: false },
+                    { id: 415, text: "Tenere il serbatoio dell'auto sempre almeno a metà nell'ultimo mese", done: false }
+                ]
+            },
+
+            contractionActive: false,
+            contractionStartTime: null,
+            contractionIntervalId: null,
+            contractions: [],
+
+            contacts: [],
+            cravings: [],
+            names: [],
+            doctorQuestions: [],
+            budgetItems: []
+        };
+
+        // ==========================================
+        // PERSISTENZA DATI (LOCALSTORAGE + SUPABASE)
+        // ==========================================
+        const STORAGE_KEY = 'copilota_papa_data_v2';
+        const LEGACY_STORAGE_KEY = 'copilota_papa_data_v1';
+
+        function buildPersistPayload() {
+            return {
+                partnerName: state.partnerName,
+                dueDate: state.dueDate,
+                calcMode: state.calcMode,
+                events: state.events,
+                checklists: state.checklists,
+                contractions: state.contractions,
+                contacts: state.contacts,
+                cravings: state.cravings,
+                names: state.names,
+                doctorQuestions: state.doctorQuestions,
+                budgetItems: state.budgetItems,
+                _updatedBy: CLIENT_SESSION_ID,
+                _updatedByActor: currentActor,
+                _updatedAt: Date.now()
+            };
+        }
+
+        function applyLoadedData(saved) {
+            if (!saved || typeof saved !== 'object') return;
+            if (typeof saved.partnerName === 'string') state.partnerName = saved.partnerName;
+            if (typeof saved.dueDate === 'string' && saved.dueDate) state.dueDate = saved.dueDate;
+            if (typeof saved.calcMode === 'string') state.calcMode = saved.calcMode;
+            if (Array.isArray(saved.events)) state.events = saved.events;
+            if (saved.checklists && typeof saved.checklists === 'object') {
+                state.checklists = {
+                    lei: Array.isArray(saved.checklists.lei) ? saved.checklists.lei : [],
+                    bebe: Array.isArray(saved.checklists.bebe) ? saved.checklists.bebe : [],
+                    papa: Array.isArray(saved.checklists.papa) ? saved.checklists.papa : [],
+                    casa: Array.isArray(saved.checklists.casa) ? saved.checklists.casa : state.checklists.casa
+                };
+            }
+            if (Array.isArray(saved.contractions)) state.contractions = saved.contractions;
+            if (Array.isArray(saved.contacts)) state.contacts = saved.contacts;
+            if (Array.isArray(saved.cravings)) state.cravings = saved.cravings;
+            if (Array.isArray(saved.names)) state.names = saved.names;
+            if (Array.isArray(saved.doctorQuestions)) state.doctorQuestions = saved.doctorQuestions;
+            if (Array.isArray(saved.budgetItems)) state.budgetItems = saved.budgetItems;
+        }
+
+        function saveState(skipCloud = false) {
+            const payload = buildPersistPayload();
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            } catch (err) {
+                console.error('Errore salvataggio locale:', err);
+            }
+            if (!skipCloud && !isApplyingRemote && supabaseClient && currentUser) {
+                scheduleCloudPush(payload);
+            }
+        }
+
+        function loadLocalState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+                    if (legacyRaw) {
+                        const legacy = JSON.parse(legacyRaw);
+                        if (legacy && typeof legacy === 'object') {
+                            if (legacy.partnerName) state.partnerName = legacy.partnerName;
+                            if (legacy.dueDate) state.dueDate = legacy.dueDate;
+                            if (legacy.calcMode) state.calcMode = legacy.calcMode;
+                        }
+                    }
+                    saveState(true);
+                    return;
+                }
+                const saved = JSON.parse(raw);
+                applyLoadedData(saved);
+            } catch (err) {
+                console.error('Errore caricamento locale:', err);
+            }
+        }
+
+        function scheduleCloudPush(payload) {
+            setCloudBadge('syncing', 'Salvo...');
+            clearTimeout(cloudSyncTimeout);
+            cloudSyncTimeout = setTimeout(() => {
+                pushToCloud(payload);
+            }, 350);
+        }
+
+        async function pushToCloud(payload) {
+            if (!supabaseClient || !currentUser) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('copilota_state')
+                    .upsert({
+                        id: SYNC_ROW_ID,
+                        data: payload || buildPersistPayload(),
+                        updated_at: new Date().toISOString()
+                    });
+                if (error) {
+                    console.error('Errore push Supabase:', error);
+                    setCloudBadge('error', 'Errore Cloud');
+                } else {
+                    setCloudBadge('synced', 'Cloud');
+                }
+            } catch (err) {
+                console.error('Errore rete Supabase:', err);
+                setCloudBadge('offline', 'Offline');
+            }
+        }
+
+        async function forceCloudSync() {
+            if (!supabaseClient || !currentUser) {
+                showToast('Cloud non disponibile (sei offline).');
+                return;
+            }
+            setCloudBadge('syncing', 'Sincronizzo...');
+            await pushToCloud(buildPersistPayload());
+            showToast('Dati sincronizzati sul Cloud!');
+        }
+
+        async function startCloudSync() {
+            if (!supabaseClient || !currentUser) {
+                setCloudBadge('offline', 'Locale');
+                return;
+            }
+            try {
+                setCloudBadge('syncing', 'Connessione...');
+
+                const { data, error } = await supabaseClient
+                    .from('copilota_state')
+                    .select('data')
+                    .eq('id', SYNC_ROW_ID)
+                    .maybeSingle();
+
+                if (error) {
+                    console.error('Errore lettura Supabase:', error);
+                    setCloudBadge('error', 'Errore Cloud');
+                    return;
+                }
+
+                if (data && data.data && Object.keys(data.data).length > 0) {
+                    isApplyingRemote = true;
+                    applyLoadedData(data.data);
+                    saveState(true);
+                    isApplyingRemote = false;
+                    renderApp();
+                    setCloudBadge('synced', 'Cloud');
+                } else {
+                    await pushToCloud(buildPersistPayload());
+                }
+
+                if (realtimeChannel) {
+                    try { await supabaseClient.removeChannel(realtimeChannel); } catch (_) {}
+                }
+
+                realtimeChannel = supabaseClient
+                    .channel('copilota-realtime')
+                    .on(
+                        'postgres_changes',
+                        { event: '*', schema: 'public', table: 'copilota_state', filter: `id=eq.${SYNC_ROW_ID}` },
+                        (payload) => {
+                            const remote = payload.new && payload.new.data;
+                            if (!remote || remote._updatedBy === CLIENT_SESSION_ID) return;
+                            isApplyingRemote = true;
+                            applyLoadedData(remote);
+                            saveState(true);
+                            isApplyingRemote = false;
+                            renderApp();
+                            setCloudBadge('synced', 'Cloud');
+                            const who = remote._updatedByActor ? getActorFullName(remote._updatedByActor) : 'Cloud';
+                            showToast(`Aggiornato da ${who}!`);
+                        }
+                    )
+                    .subscribe();
+
+            } catch (err) {
+                console.error('Errore init sync:', err);
+                setCloudBadge('offline', 'Offline');
+            }
+        }
+
+        function exportBackup() {
+            const payload = { version: 2, exportedAt: new Date().toISOString(), ...buildPersistPayload() };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            triggerBlobDownload(blob, `copilota-papa-backup-${formatDateISO(new Date())}.json`);
+            showToast('Backup scaricato!');
+        }
+
+        function importBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data || typeof data !== 'object') throw new Error('Formato non valido');
+                    applyLoadedData(data);
+                    state.viewedWeek = null;
+                    saveState();
+                    closeSettingsModal();
+                    renderApp();
+                    showToast('Backup ripristinato e sincronizzato!');
+                } catch (err) {
+                    showToast('File di backup non valido.');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        // ==========================================
+        // CALCOLO SETTIMANE GRAVIDANZA (AUTOMATICO)
+        // ==========================================
+        function getPregnancyProgress() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let due = parseLocalISODate(state.dueDate);
+            if (!due) {
+                due = new Date(today);
+                due.setDate(due.getDate() + 140);
+            }
+            due.setHours(0, 0, 0, 0);
+
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const daysRemaining = Math.round((due - today) / msPerDay);
+            const totalDaysElapsed = Math.max(0, 280 - daysRemaining);
+            const rawWeek = Math.floor(totalDaysElapsed / 7);
+            const extraDays = totalDaysElapsed % 7;
+
+            const currentWeek = Math.min(42, Math.max(1, rawWeek === 0 ? 1 : rawWeek));
+            const progressPct = Math.min(100, Math.max(0, Math.round((totalDaysElapsed / 280) * 100)));
+
+            return {
+                currentWeek,
+                rawWeek,
+                extraDays,
+                daysRemaining,
+                progressPct,
+                dueDateObj: due
+            };
+        }
+
+        function getGuideForWeek(week) {
+            return weeklyGuides.find(g => week >= g.range[0] && week <= g.range[1]) || weeklyGuides[weeklyGuides.length - 1];
+        }
+
+        // ==========================================
+        // NOTIFICHE TOAST & NAVIGAZIONE
+        // ==========================================
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'pointer-events-auto bg-zinc-900 border border-purple-500/50 text-purple-100 px-4 py-3 rounded-2xl shadow-xl neon-glow-sm text-xs font-semibold flex items-center gap-2.5 fade-in';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-purple-400"></i><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-6px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 250);
+            }, 2600);
+        }
+
+        function switchTab(tab) {
+            state.activeTab = tab;
+            updateNavUI();
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavUI() {
+            const tabs = ['home', 'agenda', 'checklist', 'giornox', 'diario'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (!btn) return;
+                if (t === state.activeTab) {
+                    btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition bg-purple-600/20 text-purple-300 border border-purple-500/40 neon-glow-sm';
+                } else {
+                    btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition text-zinc-500 hover:text-zinc-300 border border-transparent';
+                }
+            });
+        }
+
+        function updateHeader() {
+            const p = getPregnancyProgress();
+            const sub = document.getElementById('header-subtitle');
+            if (!sub) return;
+            const weekLabel = p.rawWeek > 0 ? `Settimana ${p.rawWeek}+${p.extraDays}` : `Settimana 1`;
+            const daysText = p.daysRemaining > 0
+                ? `-${p.daysRemaining} giorni al parto`
+                : (p.daysRemaining === 0 ? 'È il giorno presunto!' : `+${Math.abs(p.daysRemaining)} giorni oltre il termine`);
+            sub.textContent = `${weekLabel} • ${daysText}`;
+        }
+
+        function renderApp() {
+            updateHeader();
+            const main = document.getElementById('app-content');
+            if (!main) return;
+
+            if (state.activeTab === 'home') {
+                main.innerHTML = renderHome();
+            } else if (state.activeTab === 'agenda') {
+                main.innerHTML = renderAgenda();
+            } else if (state.activeTab === 'checklist') {
+                main.innerHTML = renderChecklist();
+            } else if (state.activeTab === 'giornox') {
+                main.innerHTML = renderGiornoX();
+                if (state.contractionActive) updateContractionTimerDisplay();
+            } else if (state.activeTab === 'diario') {
+                main.innerHTML = renderDiario();
+            }
+        }
+
+        // ==========================================
+        // 1. SEZIONE GUIDA (HOME)
+        // ==========================================
+        function renderHome() {
+            const p = getPregnancyProgress();
+            const activeWeek = state.viewedWeek !== null ? state.viewedWeek : p.currentWeek;
+            const guide = getGuideForWeek(activeWeek);
+            const isCurrent = activeWeek === p.currentWeek;
+
+            const upcomingEvents = state.events
+                .filter(e => !e.done)
+                .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+                .slice(0, 2);
+
+            return `
+            <div class="space-y-5 fade-in">
+                <!-- Hero Card Settimana -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-950/80 via-zinc-900 to-zinc-950 border border-purple-500/35 p-5 sm:p-6 neon-glow">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-[11px] font-bold uppercase tracking-wider text-purple-300">
+                                ${guide.trimester}
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2.5 tracking-tight neon-text">
+                                Settimana ${activeWeek}${isCurrent && p.rawWeek > 0 ? `<span class="text-lg font-bold text-purple-300">+${p.extraDays}</span>` : ''}
+                            </h2>
+                            <p class="text-xs sm:text-sm text-purple-200/80 mt-1">${guide.sizeName}</p>
+                            ${!isCurrent ? `
+                                <button onclick="resetViewedWeek()" class="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-fuchsia-300 hover:text-fuchsia-200 transition">
+                                    <i class="fa-solid fa-rotate-left"></i> Torna alla tua settimana (${p.currentWeek})
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col items-end gap-2.5 shrink-0">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="changeViewedWeek(-1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 hover:text-white flex items-center justify-center transition" title="Settimana precedente">
+                                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                                </button>
+                                <button onclick="changeViewedWeek(1)" class="w-8 h-8 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 hover:text-white flex items-center justify-center transition" title="Settimana successiva">
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="w-16 h-16 rounded-2xl bg-zinc-950/80 border border-purple-500/30 flex items-center justify-center text-4xl shadow-inner">
+                                ${guide.sizeEmoji}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra di Avanzamento -->
+                    <div class="mt-5 pt-4 border-t border-purple-500/20">
+                        <div class="flex justify-between items-center text-xs font-semibold mb-2">
+                            <span class="text-zinc-300">Percorso completato: <strong class="text-purple-300">${p.progressPct}%</strong></span>
+                            <span class="text-zinc-400">${p.daysRemaining > 0 ? `Mancano ${p.daysRemaining} giorni` : `DPP: ${formatDateIT(state.dueDate)}`}</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
+                            <div class="h-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-purple-400 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(192,132,252,0.8)]" style="width: ${p.progressPct}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cosa succede al bebè e a lei -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 hover:border-purple-500/30 transition">
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center">
+                                <i class="fa-solid fa-baby text-sm"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Il Bebè questa settimana</h3>
+                        </div>
+                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">${guide.babyInfo}</p>
+                    </div>
+
+                    <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 hover:border-fuchsia-500/30 transition">
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-fuchsia-500/15 text-fuchsia-400 flex items-center justify-center">
+                                <i class="fa-solid fa-heart-pulse text-sm"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Come può sentirsi ${escapeHtml(state.partnerName)}</h3>
+                        </div>
+                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">${guide.momSymptoms}</p>
+                    </div>
+                </div>
+
+                <!-- Missioni Pratiche per il Papà -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-purple-500/25">
+                    <div class="flex items-center gap-2.5 mb-3.5">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white flex items-center justify-center neon-glow-sm">
+                            <i class="fa-solid fa-bolt text-xs"></i>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-white">Consigli Pratici per Te (Papà)</h3>
+                    </div>
+                    <ul class="space-y-2.5">
+                        ${guide.dadTips.map(tip => `
+                            <li class="flex items-start gap-3 text-xs sm:text-sm text-zinc-200 bg-zinc-950/70 p-3 rounded-2xl border border-zinc-800/80">
+                                <i class="fa-solid fa-check text-purple-400 mt-1 shrink-0 text-xs"></i>
+                                <span class="leading-relaxed">${tip}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <!-- Prossimi Appuntamenti -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-day text-purple-400"></i> Prossimi Promemoria
+                        </h3>
+                        <button onclick="switchTab('agenda')" class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition">
+                            Vedi Agenda →
+                        </button>
+                    </div>
+                    ${upcomingEvents.length === 0 ? `
+                        <div class="p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 text-center">
+                            <p class="text-xs text-zinc-400">Nessun appuntamento in agenda.</p>
+                            <button onclick="switchTab('agenda'); openEventModal();" class="mt-2 px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 border border-purple-500/30 text-xs font-bold hover:bg-purple-600/30 transition">
+                                + Aggiungi la prima visita
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="space-y-2">
+                            ${upcomingEvents.map(ev => `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 border border-zinc-800/80 gap-2">
+                                    <div class="min-w-0">
+                                        <p class="text-xs sm:text-sm font-bold text-zinc-100 truncate">${escapeHtml(ev.title)}</p>
+                                        <p class="text-[11px] text-purple-300 mt-0.5">${formatDateIT(ev.date)} • ore ${escapeHtml(ev.time)}</p>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 text-[10px] font-bold border border-purple-500/30 shrink-0">${escapeHtml(ev.category)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            </div>`;
+        }
+
+        function changeViewedWeek(delta) {
+            const p = getPregnancyProgress();
+            const current = state.viewedWeek !== null ? state.viewedWeek : p.currentWeek;
+            state.viewedWeek = Math.min(42, Math.max(1, current + delta));
+            renderApp();
+        }
+
+        function resetViewedWeek() {
+            state.viewedWeek = null;
+            renderApp();
+        }
+
+        // ==========================================
+        // 2. SEZIONE AGENDA & PROMEMORIA (.ICS)
+        // ==========================================
+        function renderAgenda() {
+            const sorted = [...state.events].sort((a, b) => {
+                if (a.done !== b.done) return a.done ? 1 : -1;
+                return (a.date + a.time).localeCompare(b.date + b.time);
+            });
+
+            const catColors = {
+                Visita: 'bg-purple-500/20 text-purple-300 border-purple-500/35',
+                Esame: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35',
+                Burocrazia: 'bg-amber-500/20 text-amber-300 border-amber-500/35',
+                Promemoria: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/35'
+            };
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white">Agenda & Promemoria</h2>
+                        <p class="text-xs text-zinc-400">Visite, esami e scadenze con esportazione calendario</p>
+                    </div>
+                    <button onclick="openEventModal()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold flex items-center gap-1.5 transition neon-glow-sm shrink-0">
+                        <i class="fa-solid fa-plus"></i> Nuovo
+                    </button>
+                </div>
+
+                ${sorted.length === 0 ? `
+                    <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 p-10 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-regular fa-calendar-plus"></i>
+                        </div>
+                        <p class="text-sm font-bold text-white">Agenda vuota</p>
+                        <p class="text-xs text-zinc-400 max-w-xs mx-auto">Aggiungi visite ginecologiche, ecografie, analisi del sangue o scadenze burocratiche. Potrai esportarle sul calendario del telefono con un tocco.</p>
+                        <button onclick="openEventModal()" class="px-5 py-2.5 rounded-xl bg-purple-600/25 hover:bg-purple-600/40 border border-purple-500/40 text-purple-200 text-xs font-bold transition">
+                            + Aggiungi Primo Appuntamento
+                        </button>
+                    </div>
+                ` : `
+                    <div class="space-y-3">
+                        ${sorted.map(ev => {
+                            const badge = catColors[ev.category] || catColors.Promemoria;
+                            const audit = renderAuditBadge(ev);
+                            return `
+                            <div class="bg-zinc-900/90 rounded-3xl p-4 border ${ev.done ? 'border-zinc-800/60 opacity-65' : 'border-zinc-800 hover:border-purple-500/35'} transition">
+                                <div class="flex items-start gap-3">
+                                    <button onclick="toggleEventDone(${ev.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${ev.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                        ${ev.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                    </button>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-sm font-bold ${ev.done ? 'line-through text-zinc-500' : 'text-white'}">${escapeHtml(ev.title)}</h3>
+                                            <span class="px-2 py-0.5 rounded-lg border text-[10px] font-bold ${badge}">${escapeHtml(ev.category)}</span>
+                                        </div>
+                                        <p class="text-xs font-semibold text-purple-300 mt-1 flex items-center gap-2">
+                                            <span><i class="fa-regular fa-calendar mr-1"></i>${formatDateIT(ev.date)}</span>
+                                            <span><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(ev.time)}</span>
+                                        </p>
+                                        ${ev.notes ? `<p class="text-xs text-zinc-400 mt-2 bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-800/80">${escapeHtml(ev.notes)}</p>` : ''}
+                                        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="downloadICS(${ev.id})" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 border border-purple-500/35 text-purple-200 text-[11px] font-bold flex items-center gap-1.5 transition">
+                                                    <i class="fa-solid fa-bell"></i> Avviso (.ics)
+                                                </button>
+                                                <button onclick="deleteEvent(${ev.id})" class="px-3 py-1.5 rounded-xl bg-zinc-950 hover:bg-rose-950/50 border border-zinc-800 hover:border-rose-500/40 text-zinc-400 hover:text-rose-300 text-[11px] font-semibold transition">
+                                                    <i class="fa-solid fa-trash-can"></i> Elimina
+                                                </button>
+                                            </div>
+                                            ${audit}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `}
+            </div>`;
+        }
+
+        function openEventModal() {
+            const modal = document.getElementById('event-modal');
+            const dateInput = document.getElementById('event-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = formatDateISO(new Date());
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('event-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function addEvent(e) {
+            e.preventDefault();
+            const title = document.getElementById('event-title').value.trim();
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value || '09:00';
+            const category = document.getElementById('event-category').value;
+            const notes = document.getElementById('event-notes').value.trim();
+            if (!title || !date) return;
+
+            state.events.push(markCreated({
+                id: Date.now(),
+                title,
+                date,
+                time,
+                category,
+                notes,
+                done: false
+            }));
+            document.getElementById('event-form').reset();
+            saveState();
+            closeEventModal();
+            renderApp();
+            showToast('Appuntamento aggiunto in Agenda!');
+        }
+
+        function toggleEventDone(id) {
+            const ev = state.events.find(x => x.id === id);
+            if (ev) {
+                ev.done = !ev.done;
+                markUpdated(ev);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteEvent(id) {
+            state.events = state.events.filter(x => x.id !== id);
+            saveState();
+            renderApp();
+            showToast('Appuntamento rimosso.');
+        }
+
+        function downloadICS(id) {
+            const ev = state.events.find(x => x.id === id);
+            if (!ev) return;
+
+            const dtParts = ev.date.split('-');
+            const tmParts = (ev.time || '09:00').split(':');
+            const start = `${dtParts[0]}${dtParts[1]}${dtParts[2]}T${tmParts[0]}${tmParts[1]}00`;
+            const endHour = String((parseInt(tmParts[0], 10) + 1) % 24).padStart(2, '0');
+            const end = `${dtParts[0]}${dtParts[1]}${dtParts[2]}T${endHour}${tmParts[1]}00`;
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Copilota Papa//IT',
+                'BEGIN:VEVENT',
+                `UID:${ev.id}@copilota-papa`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `SUMMARY:${ev.title} (${ev.category})`,
+                `DESCRIPTION:${(ev.notes || 'Promemoria Copilota Papà').replace(/\n/g, '\\n')}`,
+                'BEGIN:VALARM',
+                'TRIGGER:-PT2H',
+                'ACTION:DISPLAY',
+                `DESCRIPTION:Promemoria: ${ev.title}`,
+                'END:VALARM',
+                'BEGIN:VALARM',
+                'TRIGGER:-P1D',
+                'ACTION:DISPLAY',
+                `DESCRIPTION:Domani: ${ev.title}`,
+                'END:VALARM',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            triggerBlobDownload(blob, `${ev.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.ics`);
+            showToast('File calendario (.ics) scaricato!');
+        }
+
+        // ==========================================
+        // 3. SEZIONE CHECKLIST (BORSA OSPEDALE, CASA & BUDGET)
+        // ==========================================
+        function renderChecklist() {
+            const categories = [
+                { key: 'lei', label: 'Lei', icon: 'fa-person-pregnant', title: 'Borsa Ospedale • Per Lei', desc: 'Tutto ciò che serve alla mamma per il travaglio, il parto e i giorni di ricovero.' },
+                { key: 'bebe', label: 'Bebè', icon: 'fa-baby', title: 'Borsa Ospedale • Bebè (per quando nasce)', desc: 'I primi cambi, body, tutine, cappellino e pannolini da portare in ospedale per la nascita.' },
+                { key: 'papa', label: 'Papà', icon: 'fa-suitcase', title: 'Borsa Ospedale • Per il Papà', desc: 'Caricabatterie lungo, snack, acqua, cambio comodo e l\'occorrente per stare con lei.' },
+                { key: 'casa', label: 'Casa', icon: 'fa-house-chimney', title: 'Preparazione Casa (prima e dopo la nascita)', desc: 'Tutte le cose pratiche da montare, sistemare e preparare prima dell\'arrivo del bebè.' },
+                { key: 'spese', label: 'Spese', icon: 'fa-wallet', title: 'Acquisti & Budget', desc: 'Tieni traccia di cosa comprare, quanto hai speso e cosa hai trovato gratis o in regalo.' }
+            ];
+
+            const activeCatInfo = categories.find(c => c.key === state.activeChecklistCat) || categories[0];
+            const isBudget = state.activeChecklistCat === 'spese';
+            const items = state.checklists[state.activeChecklistCat] || [];
+            const doneCount = items.filter(i => i.done).length;
+            const pct = items.length ? Math.round((doneCount / items.length) * 100) : 0;
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Borsa, Casa & Acquisti</h2>
+                    <p class="text-xs text-zinc-400">Liste per l'ospedale, preparazione casa e tracker spese</p>
+                </div>
+
+                <!-- Selettore Categorie -->
+                <div class="grid grid-cols-5 gap-1.5 sm:gap-2">
+                    ${categories.map(cat => `
+                        <button onclick="switchChecklistCat('${cat.key}')" class="py-2.5 px-1 sm:px-2 rounded-2xl text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1.5 transition border ${state.activeChecklistCat === cat.key ? 'bg-purple-600/25 text-purple-300 border-purple-500 neon-glow-sm' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'}">
+                            <i class="fa-solid ${cat.icon} text-sm"></i>
+                            <span>${cat.label}</span>
+                        </button>
+                    `).join('')}
+                </div>
+
+                <!-- Spiegazione Categoria Attiva -->
+                <div class="bg-purple-950/25 border border-purple-500/25 rounded-2xl px-4 py-3 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid ${activeCatInfo.icon} text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-purple-200">${activeCatInfo.title}</p>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">${activeCatInfo.desc}</p>
+                    </div>
+                </div>
+
+                ${isBudget ? renderBudgetSection() : `
+                <!-- Progresso Categoria -->
+                <div class="bg-zinc-900/90 rounded-3xl p-4 border border-zinc-800">
+                    <div class="flex justify-between items-center text-xs font-bold mb-2">
+                        <span class="text-zinc-300">Completamento lista</span>
+                        <span class="text-purple-400">${doneCount} / ${items.length} (${pct}%)</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
+                        <div class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(168,85,247,0.7)]" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+
+                <!-- Aggiungi nuovo elemento -->
+                <form onsubmit="addChecklistItem(event)" class="flex gap-2">
+                    <input type="text" id="new-checklist-input" placeholder="Aggiungi qualcosa alla lista..." class="flex-1 px-4 py-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <button type="submit" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-semibold text-sm transition neon-glow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+
+                <!-- Lista elementi -->
+                <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
+                    ${items.length === 0 ? `
+                        <div class="p-8 text-center text-xs text-zinc-400">
+                            Lista vuota. Scrivi sopra il primo elemento da aggiungere!
+                        </div>
+                    ` : items.map(item => {
+                        const audit = renderAuditBadge(item);
+                        return `
+                        <div class="p-4 flex items-start gap-3 hover:bg-purple-500/5 transition">
+                            <button onclick="toggleChecklistItem(${item.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${item.done ? 'bg-purple-500 border-purple-500 text-white neon-glow-sm' : 'border-zinc-600 hover:border-purple-400'}">
+                                ${item.done ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                            </button>
+                            <div onclick="toggleChecklistItem(${item.id})" class="flex-1 min-w-0 cursor-pointer space-y-1">
+                                <p class="text-sm ${item.done ? 'line-through text-zinc-500' : 'text-zinc-200 font-medium'}">${escapeHtml(item.text)}</p>
+                                ${audit ? `<div>${audit}</div>` : ''}
+                            </div>
+                            <button onclick="deleteChecklistItem(${item.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition shrink-0">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}
+                </div>
+                `}
+            </div>`;
+        }
+
+        function switchChecklistCat(cat) {
+            state.activeChecklistCat = cat;
+            renderApp();
+        }
+
+        function addChecklistItem(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-checklist-input');
+            const text = input.value.trim();
+            if (!text) return;
+            if (!state.checklists[state.activeChecklistCat]) {
+                state.checklists[state.activeChecklistCat] = [];
+            }
+            state.checklists[state.activeChecklistCat].unshift(markCreated({ id: Date.now(), text, done: false }));
+            saveState();
+            renderApp();
+        }
+
+        function toggleChecklistItem(id) {
+            const list = state.checklists[state.activeChecklistCat] || [];
+            const item = list.find(i => i.id === id);
+            if (item) {
+                item.done = !item.done;
+                markUpdated(item);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteChecklistItem(id) {
+            if (!state.checklists[state.activeChecklistCat]) return;
+            state.checklists[state.activeChecklistCat] = state.checklists[state.activeChecklistCat].filter(i => i.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function renderBudgetSection() {
+            const totalEstimated = state.budgetItems.filter(i => i.status === 'da_comprare' || i.status === 'comprato').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalSpent = state.budgetItems.filter(i => i.status === 'comprato').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const totalToBuy = state.budgetItems.filter(i => i.status === 'da_comprare').reduce((sum, i) => sum + Number(i.price || 0), 0);
+            const freeAndGiftedItems = state.budgetItems.filter(i => i.status === 'regalato' || i.status === 'gratis');
+            const totalSavedValue = freeAndGiftedItems.reduce((sum, i) => sum + Number(i.price || 0), 0);
+
+            const statusConfig = {
+                da_comprare: { label: 'Da comprare', cls: 'bg-amber-500/15 text-amber-300 border-amber-500/35' },
+                comprato: { label: 'Comprato ✓', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35' },
+                regalato: { label: 'Regalato 🎁', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' },
+                gratis: { label: 'Gratis 🎉', cls: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' }
+            };
+
+            return `
+            <div class="space-y-4">
+                <!-- Riepilogo Budget -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="bg-zinc-900/90 p-3.5 rounded-2xl border border-zinc-800">
+                        <p class="text-[11px] font-semibold text-zinc-400">Budget Spese</p>
+                        <p class="text-lg font-extrabold text-white mt-0.5">€ ${totalEstimated}</p>
+                    </div>
+                    <div class="bg-emerald-950/30 p-3.5 rounded-2xl border border-emerald-500/25">
+                        <p class="text-[11px] font-semibold text-emerald-300/80">Già Speso</p>
+                        <p class="text-lg font-extrabold text-emerald-300 mt-0.5">€ ${totalSpent}</p>
+                    </div>
+                    <div class="bg-amber-950/30 p-3.5 rounded-2xl border border-amber-500/25">
+                        <p class="text-[11px] font-semibold text-amber-300/80">Restante</p>
+                        <p class="text-lg font-extrabold text-amber-300 mt-0.5">€ ${totalToBuy}</p>
+                    </div>
+                    <div class="bg-cyan-950/30 p-3.5 rounded-2xl border border-cyan-500/25">
+                        <p class="text-[11px] font-semibold text-cyan-300/80">Gratis & Regali</p>
+                        <p class="text-lg font-extrabold text-cyan-300 mt-0.5">${freeAndGiftedItems.length} pz${totalSavedValue > 0 ? ` <span class="text-xs font-semibold text-cyan-200/80">(€ ${totalSavedValue})</span>` : ''}</p>
+                    </div>
+                </div>
+
+                <!-- Form Aggiungi Spesa -->
+                <form onsubmit="addBudgetItem(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
+                    <div class="flex gap-2">
+                        <input type="text" id="budget-name-input" required placeholder="Es. Passeggino, culla, vestiti FB..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                        <input type="number" id="budget-price-input" min="0" step="1" placeholder="€ (opz.)" class="w-28 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm font-semibold">
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="budget-status-input" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                            <option value="da_comprare">Da comprare</option>
+                            <option value="comprato">Già comprato</option>
+                            <option value="regalato">Regalato</option>
+                            <option value="gratis">Gratis (FB, parenti, siti...)</option>
+                        </select>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:from-purple-500 hover:to-fuchsia-500 transition neon-glow-sm">
+                            + Aggiungi
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Lista Acquisti -->
+                <div class="bg-zinc-900/90 rounded-3xl border border-zinc-800 divide-y divide-zinc-800/80 overflow-hidden">
+                    ${state.budgetItems.length === 0 ? `
+                        <div class="p-8 text-center text-xs text-zinc-400">Nessun articolo inserito. Aggiungi sopra una spesa o qualcosa preso gratis!</div>
+                    ` : state.budgetItems.map(item => {
+                        const st = statusConfig[item.status] || statusConfig.da_comprare;
+                        const priceText = item.status === 'gratis'
+                            ? (item.price > 0 ? `Gratis (valore € ${item.price})` : '€ 0 • Preso gratis')
+                            : `€ ${item.price}`;
+                        const audit = renderAuditBadge(item);
+                        return `
+                        <div class="p-4 flex items-center justify-between gap-3 hover:bg-purple-500/5 transition">
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <p class="text-sm font-bold text-zinc-100 truncate">${escapeHtml(item.name)}</p>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs font-semibold ${item.status === 'gratis' ? 'text-cyan-300' : 'text-purple-300'}">${priceText}</span>
+                                    ${audit}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button onclick="cycleBudgetStatus(${item.id})" title="Tocca per cambiare stato" class="px-3 py-1.5 rounded-xl border text-[11px] font-bold transition ${st.cls}">
+                                    ${st.label}
+                                </button>
+                                <button onclick="deleteBudgetItem(${item.id})" class="text-zinc-600 hover:text-rose-400 p-1 transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <p class="text-[11px] text-center text-zinc-500">Suggerimento: tocca lo stato di un articolo per cambiarlo tra <em>Da comprare</em>, <em>Comprato</em>, <em>Regalato</em> e <em>Gratis</em>.</p>
+            </div>`;
+        }
+
+        function addBudgetItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('budget-name-input').value.trim();
+            const rawPrice = document.getElementById('budget-price-input').value;
+            const price = rawPrice === '' ? 0 : Math.max(0, Number(rawPrice) || 0);
+            const status = document.getElementById('budget-status-input').value;
+            if (!name) return;
+            state.budgetItems.unshift(markCreated({ id: Date.now(), name, price, status }));
+            saveState();
+            renderApp();
+            showToast(status === 'gratis' ? 'Articolo gratis aggiunto!' : 'Articolo aggiunto al budget!');
+        }
+
+        function cycleBudgetStatus(id) {
+            const order = ['da_comprare', 'comprato', 'regalato', 'gratis'];
+            const item = state.budgetItems.find(i => i.id === id);
+            if (item) {
+                const nextIdx = (order.indexOf(item.status) + 1) % order.length;
+                item.status = order[nextIdx];
+                markUpdated(item);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteBudgetItem(id) {
+            state.budgetItems = state.budgetItems.filter(i => i.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // 4. SEZIONE GIORNO X (TIMER CONTRAZIONI & EMERGENZE)
+        // ==========================================
+        function formatSeconds(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function renderGiornoX() {
+            let showHospitalAlert = false;
+            if (state.contractions.length >= 3) {
+                const recent = state.contractions.slice(0, 3);
+                const avgDur = recent.reduce((acc, c) => acc + c.durationSec, 0) / recent.length;
+                const intervals = [];
+                for (let i = 0; i < recent.length - 1; i++) {
+                    intervals.push((recent[i].startMs - recent[i + 1].startMs) / 60000);
+                }
+                const avgInt = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                if (avgDur >= 45 && avgInt <= 6) {
+                    showHospitalAlert = true;
+                }
+            }
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Strumenti Giorno X</h2>
+                    <p class="text-xs text-zinc-400">Timer contrazioni e contatti rapidi per il parto</p>
+                </div>
+
+                ${showHospitalAlert ? `
+                    <div class="p-4 rounded-3xl bg-fuchsia-950/60 border border-fuchsia-500 text-fuchsia-100 flex items-start gap-3 neon-glow">
+                        <i class="fa-solid fa-triangle-exclamation text-fuchsia-400 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-extrabold">Contrazioni frequenti e regolari!</p>
+                            <p class="text-xs text-fuchsia-200/90 mt-0.5">Le ultime contrazioni sono ravvicinate (≤ 6 min) e durano almeno 45 secondi. Valutate di chiamare l'ostetrica o andare in ospedale!</p>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Timer Contrazioni -->
+                <div class="bg-zinc-900/90 rounded-3xl p-6 border border-purple-500/30 text-center space-y-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-purple-300 uppercase tracking-wider">Timer Contrazioni</span>
+                        ${state.contractions.length > 0 ? `
+                            <button onclick="clearContractions()" class="text-zinc-500 hover:text-rose-400 font-semibold transition">
+                                <i class="fa-solid fa-trash-can mr-1"></i>Azzera storico
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div id="contraction-timer-display" class="text-5xl font-extrabold tracking-tight font-mono ${state.contractionActive ? 'text-fuchsia-400 neon-text' : 'text-zinc-200'}">
+                        00:00
+                    </div>
+
+                    <div class="py-2 flex justify-center">
+                        <button onclick="toggleContraction()" class="w-36 h-36 rounded-full font-extrabold text-sm tracking-wide uppercase flex flex-col items-center justify-center gap-1.5 transition ${state.contractionActive ? 'bg-gradient-to-br from-fuchsia-600 to-rose-600 text-white pulse-ring' : 'bg-gradient-to-br from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white neon-glow'}">
+                            <i class="fa-solid ${state.contractionActive ? 'fa-stop' : 'fa-play'} text-2xl"></i>
+                            <span>${state.contractionActive ? 'Stop' : 'Inizia'}</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-zinc-400">Premi <strong>Inizia</strong> appena parte una contrazione e <strong>Stop</strong> quando finisce.</p>
+
+                    ${state.contractions.length > 0 ? `
+                        <div class="pt-4 border-t border-zinc-800 text-left space-y-2 max-h-60 overflow-y-auto">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Ultime contrazioni (${state.contractions.length})</p>
+                            ${state.contractions.map((c, idx) => {
+                                const prev = state.contractions[idx + 1];
+                                let intervalTxt = '—';
+                                if (prev) {
+                                    const diffMin = Math.round((c.startMs - prev.startMs) / 60000);
+                                    intervalTxt = `ogni ${diffMin} min`;
+                                }
+                                return `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800 text-xs gap-2">
+                                    <div class="flex items-center gap-2">
+                                        ${c.createdBy ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded bg-zinc-800 border border-zinc-700 text-zinc-100 font-extrabold text-[9px]">${escapeHtml(c.createdBy)}</span>` : ''}
+                                        <span class="font-semibold text-zinc-400">${escapeHtml(c.timeStr)}</span>
+                                    </div>
+                                    <span class="font-bold text-purple-300">Durata: ${formatSeconds(c.durationSec)}</span>
+                                    <span class="font-semibold text-fuchsia-300">${intervalTxt}</span>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Contatti Rapidi -->
+                <div class="bg-zinc-900/90 rounded-3xl p-5 border border-zinc-800 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-white">Contatti Emergenza & Famiglia</h3>
+                            <p class="text-[11px] text-zinc-400">Chiamata rapida con un tocco</p>
+                        </div>
+                        <button onclick="openContactModal()" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 border border-purple-500/35 text-purple-200 text-xs font-bold transition">
+                            + Aggiungi
+                        </button>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        ${state.contacts.length === 0 ? `
+                            <div class="p-6 text-center text-xs text-zinc-400 bg-zinc-950/60 rounded-2xl border border-zinc-800/80">
+                                Nessun contatto salvato. Tocca <strong>+ Aggiungi</strong> per inserire ospedale, ginecologo e familiari.
+                            </div>
+                        ` : state.contacts.map(c => {
+                            const audit = renderAuditBadge(c);
+                            return `
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-950/80 border border-zinc-800/90 gap-3">
+                                <div class="min-w-0 space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full ${c.type === 'medico' ? 'bg-fuchsia-500' : 'bg-purple-400'}"></span>
+                                        <p class="text-sm font-bold text-zinc-100 truncate">${escapeHtml(c.name)}</p>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-2 pl-4">
+                                        <span class="text-xs text-zinc-400">${escapeHtml(c.phone)}</span>
+                                        ${audit}
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <a href="tel:${encodeURIComponent(c.phone)}" class="w-10 h-10 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-500/40 text-emerald-300 flex items-center justify-center transition" title="Chiama">
+                                        <i class="fa-solid fa-phone text-sm"></i>
+                                    </a>
+                                    <button onclick="deleteContact(${c.id})" class="w-8 h-8 rounded-xl text-zinc-600 hover:text-rose-400 flex items-center justify-center transition">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function updateContractionTimerDisplay() {
+            const el = document.getElementById('contraction-timer-display');
+            if (!el || !state.contractionStartTime) return;
+            const elapsedSec = Math.max(0, Math.floor((Date.now() - state.contractionStartTime) / 1000));
+            el.textContent = formatSeconds(elapsedSec);
+        }
+
+        function toggleContraction() {
+            if (!state.contractionActive) {
+                state.contractionActive = true;
+                state.contractionStartTime = Date.now();
+                state.contractionIntervalId = setInterval(updateContractionTimerDisplay, 500);
+                renderApp();
+            } else {
+                const durationSec = Math.max(1, Math.round((Date.now() - state.contractionStartTime) / 1000));
+                const startDate = new Date(state.contractionStartTime);
+                const timeStr = startDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                state.contractions.unshift(markCreated({
+                    id: Date.now(),
+                    startMs: state.contractionStartTime,
+                    timeStr,
+                    durationSec
+                }));
+
+                clearInterval(state.contractionIntervalId);
+                state.contractionIntervalId = null;
+                state.contractionActive = false;
+                state.contractionStartTime = null;
+                saveState();
+                renderApp();
+                showToast(`Contrazione registrata (${formatSeconds(durationSec)})`);
+            }
+        }
+
+        function clearContractions() {
+            state.contractions = [];
+            saveState();
+            renderApp();
+            showToast('Storico contrazioni azzerato.');
+        }
+
+        function openContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function addContact(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const type = document.getElementById('contact-type').value;
+            if (!name || !phone) return;
+            state.contacts.push(markCreated({ id: Date.now(), name, phone, type }));
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            saveState();
+            closeContactModal();
+            renderApp();
+            showToast('Contatto salvato!');
+        }
+
+        function deleteContact(id) {
+            state.contacts = state.contacts.filter(c => c.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // 5. SEZIONE NOTE (VOGLIE, NOMI & DOMANDE MEDICO)
+        // ==========================================
+        function renderDiario() {
+            const tabs = [
+                { key: 'voglie', label: 'Voglie & Divieti', icon: 'fa-utensils' },
+                { key: 'nomi', label: 'Nomi', icon: 'fa-star' },
+                { key: 'medico', label: 'Medico', icon: 'fa-stethoscope' }
+            ];
+
+            return `
+            <div class="space-y-5 fade-in">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Note, Nomi & Ginecologo</h2>
+                    <p class="text-xs text-zinc-400">Voglie alimentari, bacheca nomi e domande per le visite</p>
+                </div>
+
+                <!-- Sub-tab -->
+                <div class="grid grid-cols-3 gap-2">
+                    ${tabs.map(t => `
+                        <button onclick="switchNoteTab('${t.key}')" class="py-2.5 px-2 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 transition border ${state.activeNoteTab === t.key ? 'bg-purple-600/25 text-purple-300 border-purple-500 neon-glow-sm' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'}">
+                            <i class="fa-solid ${t.icon}"></i>
+                            <span>${t.label}</span>
+                        </button>
+                    `).join('')}
+                </div>
+
+                ${state.activeNoteTab === 'voglie' ? renderCravingsTab() : ''}
+                ${state.activeNoteTab === 'nomi' ? renderNamesTab() : ''}
+                ${state.activeNoteTab === 'medico' ? renderDoctorTab() : ''}
+            </div>`;
+        }
+
+        function switchNoteTab(tab) {
+            state.activeNoteTab = tab;
+            renderApp();
+        }
+
+        function renderCravingsTab() {
+            const typeStyle = {
+                voglia: { label: 'Voglia 😍', cls: 'bg-purple-500/20 text-purple-300 border-purple-500/35' },
+                fastidio: { label: 'Fastidio / Odore 🤢', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/35' },
+                divieto: { label: 'Da Evitare 🚫', cls: 'bg-rose-500/20 text-rose-300 border-rose-500/35' }
+            };
+
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addCraving(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 space-y-2.5">
+                    <input type="text" id="craving-text" required placeholder="Es. Gelato al pistacchio, odore di caffè, pesce crudo..." class="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <div class="flex gap-2">
+                        <select id="craving-type" class="flex-1 px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                            <option value="voglia">Voglia 😍 (cosa le piace)</option>
+                            <option value="fastidio">Fastidio 🤢 (odori / cibi no)</option>
+                            <option value="divieto">Divieto 🚫 (alimenti da evitare)</option>
+                        </select>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">Salva</button>
+                    </div>
+                </form>
+
+                <div class="space-y-2.5">
+                    ${state.cravings.length === 0 ? `
+                        <div class="bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Nessuna nota salvata. Segna qui voglie, odori fastidiosi o divieti alimentari!
+                        </div>
+                    ` : state.cravings.map(c => {
+                        const st = typeStyle[c.type] || typeStyle.voglia;
+                        const audit = renderAuditBadge(c);
+                        return `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between gap-3">
+                            <div class="space-y-1.5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-block px-2 py-0.5 rounded-lg border text-[10px] font-bold ${st.cls}">${st.label}</span>
+                                    ${audit}
+                                </div>
+                                <p class="text-sm font-medium text-zinc-100">${escapeHtml(c.text)}</p>
+                            </div>
+                            <button onclick="deleteCraving(${c.id})" class="text-zinc-600 hover:text-rose-400 p-1.5 transition shrink-0">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }
+
+        function addCraving(e) {
+            e.preventDefault();
+            const text = document.getElementById('craving-text').value.trim();
+            const type = document.getElementById('craving-type').value;
+            if (!text) return;
+            state.cravings.unshift(markCreated({ id: Date.now(), text, type }));
+            saveState();
+            renderApp();
+            showToast('Nota aggiunta!');
+        }
+
+        function deleteCraving(id) {
+            state.cravings = state.cravings.filter(c => c.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function renderNamesTab() {
+            const sortedNames = [...state.names].sort((a, b) => b.votes - a.votes);
+            const genderBadge = {
+                M: 'bg-sky-500/20 text-sky-300 border-sky-500/35',
+                F: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/35',
+                N: 'bg-purple-500/20 text-purple-300 border-purple-500/35'
+            };
+
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addName(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex flex-wrap sm:flex-nowrap gap-2">
+                    <input type="text" id="name-input" required placeholder="Proponi un nome..." class="flex-1 min-w-[140px] px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <select id="name-gender" class="px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold outline-none">
+                        <option value="M">Maschio</option>
+                        <option value="F">Femmina</option>
+                        <option value="N">Unisex</option>
+                    </select>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">Aggiungi</button>
+                </form>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${sortedNames.length === 0 ? `
+                        <div class="sm:col-span-2 bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Bacheca nomi vuota. Aggiungi sopra le vostre prime idee e votatele insieme!
+                        </div>
+                    ` : sortedNames.map(n => {
+                        const audit = renderAuditBadge(n);
+                        return `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="px-2 py-0.5 rounded-lg border text-[10px] font-bold ${genderBadge[n.gender] || genderBadge.N}">${escapeHtml(n.gender)}</span>
+                                    <span class="text-sm font-extrabold text-white truncate">${escapeHtml(n.name)}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button onclick="voteName(${n.id}, -1)" class="w-7 h-7 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center text-xs">-</button>
+                                    <span class="w-6 text-center text-xs font-extrabold text-purple-300">${n.votes}</span>
+                                    <button onclick="voteName(${n.id}, 1)" class="w-7 h-7 rounded-lg bg-purple-600/25 border border-purple-500/40 text-purple-200 hover:bg-purple-600/40 flex items-center justify-center text-xs">+</button>
+                                    <button onclick="deleteName(${n.id})" class="ml-1 text-zinc-600 hover:text-rose-400 p-1 text-xs">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ${audit ? `<div>${audit}</div>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }
+
+        function addName(e) {
+            e.preventDefault();
+            const name = document.getElementById('name-input').value.trim();
+            const gender = document.getElementById('name-gender').value;
+            if (!name) return;
+            state.names.push(markCreated({ id: Date.now(), name, gender, votes: 1 }));
+            saveState();
+            renderApp();
+            showToast(`"${name}" aggiunto alla bacheca!`);
+        }
+
+        function voteName(id, delta) {
+            const item = state.names.find(n => n.id === id);
+            if (item) {
+                item.votes = Math.max(0, item.votes + delta);
+                markUpdated(item);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteName(id) {
+            state.names = state.names.filter(n => n.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        function renderDoctorTab() {
+            return `
+            <div class="space-y-4">
+                <form onsubmit="addDoctorQuestion(event)" class="bg-zinc-900/90 p-4 rounded-3xl border border-zinc-800 flex gap-2">
+                    <input type="text" id="doctor-q-input" required placeholder="Scrivi una domanda per il ginecologo..." class="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-purple-500 outline-none text-sm">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold transition neon-glow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+
+                <div class="space-y-3">
+                    ${state.doctorQuestions.length === 0 ? `
+                        <div class="bg-zinc-900/90 p-8 rounded-3xl border border-zinc-800 text-center text-xs text-zinc-400">
+                            Nessuna domanda salvata. Segna qui i dubbi che vi vengono tra una visita e l'altra per non dimenticarli davanti al medico!
+                        </div>
+                    ` : state.doctorQuestions.map(q => {
+                        const audit = renderAuditBadge(q);
+                        return `
+                        <div class="bg-zinc-900/90 p-4 rounded-2xl border ${q.asked ? 'border-emerald-500/25 opacity-80' : 'border-zinc-800'} space-y-2.5">
+                            <div class="flex items-start gap-3">
+                                <button onclick="toggleDoctorQuestion(${q.id})" class="mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${q.asked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-600 hover:border-purple-400'}">
+                                    ${q.asked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                </button>
+                                <div class="flex-1 min-w-0 space-y-1">
+                                    <p class="text-sm font-semibold ${q.asked ? 'line-through text-zinc-400' : 'text-zinc-100'}">${escapeHtml(q.question)}</p>
+                                    ${audit ? `<div>${audit}</div>` : ''}
+                                </div>
+                                <button onclick="deleteDoctorQuestion(${q.id})" class="text-zinc-600 hover:text-rose-400 p-1 transition shrink-0">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="pl-9">
+                                <input type="text" id="answer-input-${q.id}" value="${escapeHtml(q.answer || '')}" onchange="saveDoctorAnswer(${q.id})" placeholder="Appunta qui la risposta del medico..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-purple-200 placeholder-zinc-600 focus:border-purple-500 outline-none">
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }
+
+        function addDoctorQuestion(e) {
+            e.preventDefault();
+            const input = document.getElementById('doctor-q-input');
+            const question = input.value.trim();
+            if (!question) return;
+            state.doctorQuestions.unshift(markCreated({ id: Date.now(), question, answer: '', asked: false }));
+            saveState();
+            renderApp();
+            showToast('Domanda salvata!');
+        }
+
+        function toggleDoctorQuestion(id) {
+            const q = state.doctorQuestions.find(x => x.id === id);
+            if (q) {
+                q.asked = !q.asked;
+                markUpdated(q);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function saveDoctorAnswer(id) {
+            const q = state.doctorQuestions.find(x => x.id === id);
+            const inp = document.getElementById(`answer-input-${id}`);
+            if (q && inp) {
+                q.answer = inp.value.trim();
+                markUpdated(q);
+                saveState();
+                renderApp();
+            }
+        }
+
+        function deleteDoctorQuestion(id) {
+            state.doctorQuestions = state.doctorQuestions.filter(x => x.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ==========================================
+        // MODALE IMPOSTAZIONI (LMP / SETTIMANA / DPP)
+        // ==========================================
+        let tempCalcMode = 'lmp';
+
+        function openSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            const userLabel = document.getElementById('settings-user-label');
+            if (userLabel && currentUser) {
+                userLabel.textContent = `${getActorFullName(currentActor)} (${currentActor}) • ${currentUser.email || ''}`;
+            }
+
+            document.getElementById('input-partner-name').value = state.partnerName || '';
+
+            const p = getPregnancyProgress();
+            const dueObj = p.dueDateObj;
+            const lmpObj = new Date(dueObj);
+            lmpObj.setDate(lmpObj.getDate() - 280);
+
+            document.getElementById('input-lmp-date').value = formatDateISO(lmpObj);
+            document.getElementById('input-current-week').value = p.rawWeek > 0 ? p.rawWeek : 1;
+            document.getElementById('input-current-days').value = p.extraDays;
+            document.getElementById('input-due-date').value = formatDateISO(dueObj);
+
+            setSettingsCalcMode(state.calcMode || 'lmp');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setSettingsCalcMode(mode) {
+            tempCalcMode = mode;
+            ['lmp', 'week', 'dpp'].forEach(m => {
+                const btn = document.getElementById(`mode-btn-${m}`);
+                const box = document.getElementById(`calc-box-${m}`);
+                if (m === mode) {
+                    btn.className = 'py-2 px-1 rounded-xl text-[11px] font-bold transition bg-purple-600 text-white neon-glow-sm';
+                    box.classList.remove('hidden');
+                } else {
+                    btn.className = 'py-2 px-1 rounded-xl text-[11px] font-bold transition text-zinc-400 hover:text-zinc-200';
+                    box.classList.add('hidden');
+                }
+            });
+            updateSettingsPreview();
+        }
+
+        function computeDueDateFromModal() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (tempCalcMode === 'lmp') {
+                const lmpVal = document.getElementById('input-lmp-date').value;
+                const lmpDate = parseLocalISODate(lmpVal);
+                if (!lmpDate) return null;
+                const due = new Date(lmpDate);
+                due.setDate(due.getDate() + 280);
+                return due;
+            } else if (tempCalcMode === 'week') {
+                const w = Math.min(42, Math.max(0, parseInt(document.getElementById('input-current-week').value, 10) || 0));
+                const d = Math.min(6, Math.max(0, parseInt(document.getElementById('input-current-days').value, 10) || 0));
+                const elapsedDays = (w * 7) + d;
+                const remainingDays = 280 - elapsedDays;
+                const due = new Date(today);
+                due.setDate(due.getDate() + remainingDays);
+                return due;
+            } else {
+                const dppVal = document.getElementById('input-due-date').value;
+                return parseLocalISODate(dppVal);
+            }
+        }
+
+        function updateSettingsPreview() {
+            const preview = document.getElementById('settings-calc-preview');
+            if (!preview) return;
+            const due = computeDueDateFromModal();
+            if (!due) {
+                preview.innerHTML = `<span class="text-zinc-400">Inserisci una data valida per vedere il calcolo.</span>`;
+                return;
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const daysRemaining = Math.round((due - today) / msPerDay);
+            const elapsed = Math.max(0, 280 - daysRemaining);
+            const w = Math.floor(elapsed / 7);
+            const d = elapsed % 7;
+
+            preview.innerHTML = `
+                <div>
+                    <p class="text-[11px] text-purple-300/80 font-semibold">Oggi siete a:</p>
+                    <p class="text-sm font-extrabold text-white">Settimana ${w}+${d}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[11px] text-purple-300/80 font-semibold">Data Presunta Parto</p>
+                    <p class="text-sm font-extrabold text-fuchsia-300">${formatDateIT(formatDateISO(due))}</p>
+                </div>
+            `;
+        }
+
+        function saveSettings() {
+            const nameVal = document.getElementById('input-partner-name').value.trim();
+            const due = computeDueDateFromModal();
+            if (!due) {
+                showToast('Inserisci una data o settimana valida.');
+                return;
+            }
+            state.partnerName = nameVal || 'Laura';
+            state.calcMode = tempCalcMode;
+            state.dueDate = formatDateISO(due);
+            state.viewedWeek = null;
+            saveState();
+            closeSettingsModal();
+            renderApp();
+            showToast('Impostazioni salvate e sincronizzate!');
+        }
+
+        // ==========================================
+        // AVVIO APPLICAZIONE + VERIFICA SESSIONE
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            showAuthBox('loading');
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                showAuthBox('login');
+                return;
+            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            try {
+                const { data } = await supabaseClient.auth.getSession();
+                if (data && data.session && data.session.user) {
+                    await proceedAfterAuthenticated(data.session.user);
+                } else {
+                    setAuthMode('login');
+                    showAuthBox('login');
+                }
+            } catch (err) {
+                console.error('Errore controllo sessione:', err);
+                setAuthMode('login');
+                showAuthBox('login');
+            }
+        });
+    </script>
+</body>
+</html>
