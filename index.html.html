@@ -17,12 +17,12 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS v2 (Auth + Sincronizzazione Cloud + Storage) -->
+    <!-- Supabase JS v2 (Auth + Sincronizzazione Cloud) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts: Plus Jakarta Sans + Playfair Display (per il Diario Libro) -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -91,8 +91,6 @@
             overflow-x: hidden;
             transition: background-color 0.4s ease, color 0.35s ease;
         }
-
-        .font-serif-book { font-family: 'Playfair Display', Georgia, serif; }
 
         /* Aurora Living Background Orbs */
         .aurora-bg {
@@ -318,25 +316,6 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Foglio di Stampa / Esporta PDF */
-        #print-sheet { display: none; }
-        @media print {
-            body { background: #ffffff !important; color: #111827 !important; }
-            body > *:not(#print-sheet) { display: none !important; }
-            #print-sheet {
-                display: block !important;
-                position: static !important;
-                width: 100% !important;
-                background: #ffffff !important;
-                color: #111827 !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .book-cover-page { page-break-after: always; break-after: page; }
-            .book-entry-card { page-break-inside: avoid; break-inside: avoid; }
-            .no-print { display: none !important; }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-purple-500/35">
@@ -369,21 +348,8 @@
     <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div class="w-full max-w-sm space-y-6 fade-in my-auto py-6 relative z-10">
             <div class="text-center space-y-2.5">
-                <div class="w-[78px] h-[78px] rounded-[26px] btn-primary flex items-center justify-center mx-auto breathe-bubble shadow-2xl">
-                    <svg viewBox="0 0 64 64" class="w-12 h-12 drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <g transform="rotate(24 32 32)">
-                            <path d="M27.5 11.5C27.5 8.4 29.5 6 32 6C34.5 6 36.5 8.4 36.5 11.5V15H27.5V11.5Z" fill="#FFFFFF" fill-opacity="0.95"/>
-                            <rect x="22" y="15" width="20" height="6.5" rx="3.2" fill="#F5D0FE"/>
-                            <rect x="20" y="21.5" width="24" height="33.5" rx="9" fill="#FFFFFF" fill-opacity="0.24" stroke="#FFFFFF" stroke-width="2.6"/>
-                            <path d="M22.5 36.5H41.5V46C41.5 49.8 38.4 52.8 34.6 52.8H29.4C25.6 52.8 22.5 49.8 22.5 46V36.5Z" fill="#FFFFFF" fill-opacity="0.82"/>
-                            <line x1="25" y1="28" x2="31" y2="28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="25" y1="33" x2="29.5" y2="33" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="25" y1="38" x2="31" y2="38" stroke="#C026D3" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M36.5 25.5V34" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2.2" stroke-linecap="round"/>
-                        </g>
-                        <circle cx="48" cy="16" r="2.2" fill="#FFFFFF" fill-opacity="0.9"/>
-                        <circle cx="15" cy="46" r="1.8" fill="#F5D0FE" fill-opacity="0.85"/>
-                    </svg>
+                <div class="w-[72px] h-[72px] rounded-[26px] btn-primary flex items-center justify-center mx-auto text-3xl breathe-bubble">
+                    <i class="fa-solid fa-heart"></i>
                 </div>
                 <h1 class="text-3xl font-extrabold text-main tracking-tight">Noi & Bebè</h1>
                 <p class="text-xs font-medium text-muted">Spazio privato riservato a Francesco & Laura</p>
@@ -406,18 +372,8 @@
                         <input type="email" id="auth-email" required autocomplete="email" placeholder="nome@esempio.it" class="w-full px-4 py-3 glass-input text-sm">
                     </div>
                     <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-sec">Password</label>
-                            <button type="button" id="auth-forgot-link" onclick="openForgotPassword()" class="text-[11px] font-bold text-sec hover:opacity-80 transition">
-                                Password dimenticata?
-                            </button>
-                        </div>
-                        <div class="relative flex items-center">
-                            <input type="password" id="auth-password" required minlength="6" autocomplete="current-password" placeholder="Minimo 6 caratteri" class="w-full px-4 pr-11 py-3 glass-input text-sm">
-                            <button type="button" onclick="togglePasswordVisibility('auth-password', 'auth-pw-eye')" class="absolute right-3 w-7 h-7 rounded-full glass-surface text-muted hover:text-main flex items-center justify-center text-xs" title="Mostra/Nascondi password">
-                                <i id="auth-pw-eye" class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Password</label>
+                        <input type="password" id="auth-password" required minlength="6" autocomplete="current-password" placeholder="Minimo 6 caratteri" class="w-full px-4 py-3 glass-input text-sm">
                     </div>
 
                     <div id="signup-extra-fields" class="hidden space-y-3.5 pt-1">
@@ -490,68 +446,6 @@
                 </form>
             </div>
 
-            <!-- Box 2B: Recupera Password (invio email) -->
-            <div id="auth-box-forgot" class="hidden glass-card p-6 space-y-5">
-                <div class="text-center space-y-1">
-                    <div class="w-12 h-12 rounded-2xl btn-primary flex items-center justify-center mx-auto text-lg mb-2">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                    <h2 class="text-base font-extrabold text-main">Recupera Password</h2>
-                    <p class="text-xs text-muted">Inserisci la tua email: ti invieremo un link per impostare una nuova password.</p>
-                </div>
-
-                <form onsubmit="handleForgotSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Email registrata</label>
-                        <input type="email" id="forgot-email" required autocomplete="email" placeholder="nome@esempio.it" class="w-full px-4 py-3 glass-input text-sm">
-                    </div>
-
-                    <div id="forgot-error-msg" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
-                    <div id="forgot-info-msg" class="hidden p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold"></div>
-
-                    <button type="submit" id="forgot-submit-btn" class="bubble-btn btn-primary w-full py-3.5 rounded-2xl font-bold text-sm">
-                        Invia link di recupero
-                    </button>
-                    <button type="button" onclick="backToLogin()" class="w-full py-2 text-xs font-semibold text-muted hover:text-main transition">
-                        ← Torna al Login
-                    </button>
-                </form>
-            </div>
-
-            <!-- Box 2C: Imposta Nuova Password (dal link email) -->
-            <div id="auth-box-reset" class="hidden glass-card p-6 space-y-5">
-                <div class="text-center space-y-1">
-                    <div class="w-12 h-12 rounded-2xl btn-primary flex items-center justify-center mx-auto text-lg mb-2">
-                        <i class="fa-solid fa-lock-open"></i>
-                    </div>
-                    <h2 class="text-base font-extrabold text-main">Nuova Password</h2>
-                    <p class="text-xs text-muted">Scegli la nuova password per il tuo account.</p>
-                </div>
-
-                <form onsubmit="handleResetPasswordSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Nuova Password</label>
-                        <div class="relative flex items-center">
-                            <input type="password" id="reset-password" required minlength="6" autocomplete="new-password" placeholder="Minimo 6 caratteri" class="w-full px-4 pr-11 py-3 glass-input text-sm">
-                            <button type="button" onclick="togglePasswordVisibility('reset-password', 'reset-pw-eye')" class="absolute right-3 w-7 h-7 rounded-full glass-surface text-muted hover:text-main flex items-center justify-center text-xs">
-                                <i id="reset-pw-eye" class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Conferma Password</label>
-                        <input type="password" id="reset-password-confirm" required minlength="6" autocomplete="new-password" placeholder="Ripeti la nuova password" class="w-full px-4 py-3 glass-input text-sm">
-                    </div>
-
-                    <div id="reset-error-msg" class="hidden p-3 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
-                    <div id="reset-info-msg" class="hidden p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold"></div>
-
-                    <button type="submit" id="reset-submit-btn" class="bubble-btn btn-primary w-full py-3.5 rounded-2xl font-bold text-sm">
-                        Aggiorna Password
-                    </button>
-                </form>
-            </div>
-
             <!-- Box 3: Caricamento -->
             <div id="auth-box-loading" class="hidden glass-card p-8 text-center space-y-3">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl text-purple-400"></i>
@@ -567,223 +461,10 @@
             <div class="header-inner max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2 transition-all">
                 <div class="flex items-center gap-3 min-w-0">
                     <div onclick="switchTab('home')" class="bubble-btn cursor-pointer w-10 h-10 rounded-2xl btn-primary flex items-center justify-center shrink-0">
-                        <svg viewBox="0 0 64 64" class="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <g transform="rotate(24 32 32)">
-                                <path d="M27.5 11.5C27.5 8.4 29.5 6 32 6C34.5 6 36.5 8.4 36.5 11.5V15H27.5V11.5Z" fill="#FFFFFF" fill-opacity="0.95"/>
-                                <rect x="22" y="15" width="20" height="6.5" rx="3.2" fill="#F5D0FE"/>
-                                <rect x="20" y="21.5" width="24" height="33.5" rx="9" fill="#FFFFFF" fill-opacity="0.24" stroke="#FFFFFF" stroke-width="2.8"/>
-                                <path d="M22.5 37H41.5V46C41.5 49.8 38.4 52.8 34.6 52.8H29.4C25.6 52.8 22.5 49.8 22.5 46V37Z" fill="#FFFFFF" fill-opacity="0.85"/>
-                                <line x1="25" y1="28.5" x2="31" y2="28.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-                                <line x1="25" y1="33.5" x2="29.5" y2="33.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-                            </g>
-                        </svg>
+                        <i class="fa-solid fa-heart text-base"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
                             <h1 id="header-greeting" class="text-sm sm:text-base font-extrabold tracking-tight text-main leading-tight truncate">Noi & Bebè</h1>
                             <span id="actor-header-pill" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 border border-purple-400/40 text-sec text-[10px] font-extrabold shrink-0" title="Profilo attivo">F</span>
-                            <span id="cloud-status-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold glass-surface text-muted shrink-0" title="Stato Cloud">
-                                <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                                <span>Locale</span>
-                            </span>
-                        </div>
-                        <p id="header-subtitle" class="text-[11px] font-bold text-sec truncate">Caricamento...</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="hidden bubble-btn btn-primary px-3 py-2 rounded-2xl text-xs font-bold items-center gap-1.5" title="Installa App">
-                        <i class="fa-solid fa-download"></i>
-                        <span class="hidden sm:inline">Installa</span>
-                    </button>
-
-                    <!-- Campanella Notifiche di Coppia -->
-                    <button onclick="openActivityDrawer()" class="bubble-btn relative w-10 h-10 rounded-2xl glass-surface text-main flex items-center justify-center" title="Attività di coppia">
-                        <i class="fa-regular fa-bell text-sm"></i>
-                        <span id="notif-badge-count" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full btn-primary text-[10px] font-extrabold flex items-center justify-center shadow-lg">0</span>
-                    </button>
-
-                    <!-- Impostazioni -->
-                    <button onclick="openSettingsModal()" class="bubble-btn w-10 h-10 rounded-2xl glass-surface text-main flex items-center justify-center" title="Impostazioni">
-                        <i class="fa-solid fa-sliders text-sm"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Contenuto Dinamico (con supporto Swipe Orizzontale) -->
-        <main id="app-content" class="flex-1 max-w-3xl w-full mx-auto px-4 pt-4 pb-32 touch-pan-y"></main>
-
-        <!-- Floating Glass Dock a 5 Tasti (NOI al centro) -->
-        <nav class="floating-dock-wrap" aria-label="Navigazione principale">
-            <div class="floating-dock">
-                <button id="nav-mamma" onclick="switchTab('mamma', event)" class="dock-item">
-                    <i class="fa-solid fa-person-pregnant text-base"></i>
-                    <span>Mamma</span>
-                </button>
-                <button id="nav-agenda" onclick="switchTab('agenda', event)" class="dock-item">
-                    <i class="fa-solid fa-calendar-check text-base"></i>
-                    <span>Agenda</span>
-                </button>
-                <button id="nav-home" onclick="switchTab('home', event)" class="dock-center-btn" aria-label="Noi">
-                    <i class="fa-solid fa-heart text-lg"></i>
-                    <span class="text-[9px] font-extrabold tracking-wide leading-none mt-0.5">NOI</span>
-                </button>
-                <button id="nav-checklist" onclick="switchTab('checklist', event)" class="dock-item">
-                    <i class="fa-solid fa-suitcase-rolling text-base"></i>
-                    <span>Borsa</span>
-                </button>
-                <button id="nav-altro" onclick="switchTab('altro', event)" class="dock-item">
-                    <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
-                    <span>Altro</span>
-                </button>
-            </div>
-        </nav>
-    </div>
-
-    <!-- Pannello Notifiche di Coppia (Campanella) -->
-    <div id="activity-drawer" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-md hidden items-start justify-center p-4 pt-16" onclick="if(event.target===this) closeActivityDrawer()">
-        <div class="glass-strong rounded-[30px] w-full max-w-md p-5 fade-in max-h-[78vh] flex flex-col">
-            <div class="flex items-center justify-between mb-3.5">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-2xl btn-primary flex items-center justify-center text-sm">
-                        <i class="fa-solid fa-bell"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-extrabold text-main leading-tight">Attività di Coppia</h2>
-                        <p class="text-[11px] text-muted">Tocca una notifica per aprire la sezione</p>
-                    </div>
-                </div>
-                <button onclick="closeActivityDrawer()" class="bubble-btn w-8 h-8 rounded-full glass-surface text-muted hover:text-main flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div id="activity-list" class="space-y-2 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
-        </div>
-    </div>
-
-    <!-- Lightbox Visualizzazione Foto a Schermo Intero -->
-    <div id="media-lightbox" class="fixed inset-0 z-[75] bg-black/90 backdrop-blur-lg hidden items-center justify-center p-4" onclick="closeMediaLightbox()">
-        <div class="relative max-w-3xl w-full flex flex-col items-center gap-3" onclick="event.stopPropagation()">
-            <button onclick="closeMediaLightbox()" class="bubble-btn self-end w-10 h-10 rounded-full bg-white/15 text-white flex items-center justify-center text-base">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <img id="lightbox-img" src="" alt="Anteprima foto" class="max-h-[75vh] max-w-full rounded-3xl shadow-2xl object-contain">
-            <p id="lightbox-caption" class="text-xs font-bold text-white/90 text-center max-w-md"></p>
-        </div>
-    </div>
-
-    <!-- Notifiche Toast -->
-    <div id="toast-container" class="fixed bottom-28 left-1/2 -translate-x-1/2 z-[60] flex flex-col items-center gap-2 max-w-xs w-full pointer-events-none px-4"></div>
-
-    <!-- Modale Anteprima Stampa / Esporta PDF -->
-    <div id="print-preview-modal" class="fixed inset-0 z-[65] bg-black/70 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5" onclick="if(event.target===this) closePrintPreview()">
-        <div class="glass-strong rounded-[30px] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden fade-in">
-            <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-2 shrink-0">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="w-8 h-8 rounded-xl btn-primary flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-file-pdf"></i></span>
-                    <div class="min-w-0">
-                        <h2 id="print-modal-title" class="text-sm font-extrabold text-main truncate">Anteprima Stampa PDF</h2>
-                        <p class="text-[11px] text-muted">Scegli "Salva come PDF" nella finestra di stampa</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button onclick="executePrintDocument()" class="bubble-btn btn-primary px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5">
-                        <i class="fa-solid fa-print"></i> Stampa / PDF
-                    </button>
-                    <button onclick="closePrintPreview()" class="bubble-btn w-8 h-8 rounded-full glass-surface text-muted hover:text-main flex items-center justify-center">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-4 sm:p-6 overflow-y-auto bg-zinc-200/90 flex-1">
-                <div id="print-preview-content" class="bg-white text-zinc-900 rounded-2xl shadow-xl p-6 sm:p-8 max-w-xl mx-auto text-left"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Foglio dedicato alla stampa reale (@media print) -->
-    <div id="print-sheet"></div>
-
-    <!-- Modale Impostazioni Gravidanza, Tema & Account -->
-    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-4" onclick="if(event.target===this) closeSettingsModal()">
-        <div class="glass-strong rounded-[30px] w-full max-w-md p-6 fade-in max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-extrabold text-main">Impostazioni</h2>
-                <button onclick="closeSettingsModal()" class="bubble-btn w-8 h-8 rounded-full glass-surface text-muted hover:text-main flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <!-- Switch Tema Chiaro / Scuro -->
-                <div class="p-3.5 rounded-2xl glass-surface flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-9 h-9 rounded-xl btn-primary flex items-center justify-center text-sm">
-                            <i id="theme-icon-preview" class="fa-solid fa-moon"></i>
-                        </span>
-                        <div>
-                            <p class="text-xs font-extrabold text-main">Aspetto 2027</p>
-                            <p id="theme-desc-label" class="text-[11px] text-muted">Dark Aurora Glass</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-1 glass-surface p-1 rounded-xl">
-                        <button type="button" id="theme-btn-dark" onclick="setTheme('dark')" class="bubble-btn px-2.5 py-1.5 rounded-lg text-[11px] font-bold">
-                            <i class="fa-solid fa-moon mr-1"></i>Scuro
-                        </button>
-                        <button type="button" id="theme-btn-light" onclick="setTheme('light')" class="bubble-btn px-2.5 py-1.5 rounded-lg text-[11px] font-bold">
-                            <i class="fa-solid fa-sun mr-1"></i>Chiaro
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Account attivo -->
-                <div class="p-3.5 rounded-2xl glass-surface flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-[11px] text-muted font-semibold">Accesso effettuato come:</p>
-                        <p id="settings-user-label" class="text-xs font-bold text-main truncate mt-0.5">—</p>
-                    </div>
-                    <button type="button" onclick="logoutUser()" class="bubble-btn px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/35 text-rose-400 text-xs font-bold shrink-0">
-                        Esci
-                    </button>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Nome della futura mamma</label>
-                    <input type="text" id="input-partner-name" class="w-full px-4 py-3 glass-input text-sm font-medium" placeholder="Es. Laura">
-                </div>
-
-                <!-- Metodo di Calcolo -->
-                <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Calcolo settimane</label>
-                    <div class="grid grid-cols-3 gap-1.5 glass-surface p-1 rounded-2xl">
-                        <button type="button" id="mode-btn-lmp" onclick="setSettingsCalcMode('lmp')" class="bubble-btn py-2 px-1 rounded-xl text-[11px] font-bold">Ultima Mestr.</button>
-                        <button type="button" id="mode-btn-week" onclick="setSettingsCalcMode('week')" class="bubble-btn py-2 px-1 rounded-xl text-[11px] font-bold">Settimana Oggi</button>
-                        <button type="button" id="mode-btn-dpp" onclick="setSettingsCalcMode('dpp')" class="bubble-btn py-2 px-1 rounded-xl text-[11px] font-bold">Data Parto</button>
-                    </div>
-                </div>
-
-                <div id="calc-box-lmp" class="hidden">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">1° giorno dell'ultima mestruazione</label>
-                    <input type="date" id="input-lmp-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 glass-input text-sm font-medium">
-                </div>
-
-                <div id="calc-box-week" class="hidden">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">A che settimana siete oggi?</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <span class="block text-[11px] text-muted mb-1">Settimana (1–40)</span>
-                            <input type="number" id="input-current-week" min="1" max="42" oninput="updateSettingsPreview()" class="w-full px-4 py-3 glass-input text-sm font-bold">
-                        </div>
-                        <div>
-                            <span class="block text-[11px] text-muted mb-1">+ Giorni (0–6)</span>
-                            <input type="number" id="input-current-days" min="0" max="6" oninput="updateSettingsPreview()" class="w-full px-4 py-3 glass-input text-sm font-bold">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="calc-box-dpp" class="hidden">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-sec mb-1.5">Data Presunta del Parto (DPP)</label>
-                    <input type="date" id="input-due-date" oninput="updateSettingsPreview()" class="w-full px-4 py-3 glass-input text-sm font-medium">
-                </div>
-
-                <div id
+                            <span id="cloud-status-badge" class="inline-flex items
