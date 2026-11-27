@@ -198,6 +198,11 @@
         #dynamic-island.show { transform: translate(-50%, 0) scale(1); opacity: 1; pointer-events: auto; }
 
         .fade-in { animation: fadeInUp 0.26s ease forwards; }
+        @keyframes nbCuore { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-75vh) scale(1.2); opacity: 0; } }
+        @keyframes nbFestaBox { 0% { transform: scale(.7); opacity: 0; } 15% { transform: scale(1.06); opacity: 1; } 85% { transform: scale(1); opacity: 1; } 100% { transform: scale(.95); opacity: 0; } }
+        .nb-festa-cuore { position: absolute; bottom: 8vh; font-size: 26px; animation: nbCuore 2.2s ease-out forwards; opacity: 0; }
+        .nb-festa-box { animation: nbFestaBox 2.5s ease forwards; }
+        @media (prefers-reduced-motion: reduce) { .nb-festa-cuore { display: none; } .nb-festa-box { animation: none; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .breathe-bubble { animation: breathe 3.6s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-5px) scale(1.04); } }
@@ -997,11 +1002,8 @@ function getDefaultState() {
                 { id: 33, text: 'Preparare scorta pasti pronti in freezer', done: false }
             ]
         },
-        budgetItems: [
-            { id: 101, name: 'Trio / Passeggino + Ovetto', price: 650, status: 'da_comprare' },
-            { id: 102, name: 'Culla Next2Me / Lettino', price: 220, status: 'da_comprare' },
-            { id: 103, name: 'Fasciatoio & Bagnetto', price: 120, status: 'da_comprare' }
-        ],
+        budgetItems: [],
+        suggerimentiNascosti: [],
         names: [],
         cravings: [],
         contacts: [],
@@ -1303,7 +1305,7 @@ async function fetchMyRoom() {
 }
 // Se su questo telefono c'erano i dati di un'ALTRA stanza, li tolgo (restano sul Cloud della loro stanza).
 function resetLocalRoomData() {
-    try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(SYNC_BASE_KEY); } catch (_) {}
+    try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(SYNC_BASE_KEY); localStorage.removeItem(MATCH_VISTI_KEY); } catch (_) {}
     state = getDefaultState();
 }
 function useRoom(room, user) {
@@ -1507,6 +1509,7 @@ function mergeRemoteState(remoteData) {  // applica un oggetto di stato completo
             showDynamicIsland(newest.actor, newest.text, newest.tab, newest.sub);
         }
         renderApp();
+        try { checkNewMatches(true); } catch (_) {}
         try { if (window.NoiBebe && window.NoiBebe.sincronizzaEventi) window.NoiBebe.sincronizzaEventi(state.events); } catch (_) {}
     } finally {
         isApplyingRemote = false;
@@ -1690,6 +1693,7 @@ async function enterApp() {
         appBootstrapped = true;
         loadLocalState();
     }
+    initMatchVisti();   // i match già presenti su questo telefono non fanno festa
     renderApp();
     setCloudBadge('sync', 'Sync...');
     const ok = await pullStateFromCloud(true);
@@ -2393,10 +2397,6 @@ function downloadEventIcs(id) {
 // ======================================================
 function renderChecklist() {
     const b = state.budgetItems || [];
-    const totPrevisto = b.reduce((s, x) => s + (Number(x.price) || 0), 0);
-    const totSpeso = b.filter(x => x.status === 'comprato').reduce((s, x) => s + (Number(x.price) || 0), 0);
-    const totRegali = b.filter(x => x.status === 'regalato').reduce((s, x) => s + (Number(x.price) || 0), 0);
-    const totDaSpendere = b.filter(x => x.status === 'da_comprare').reduce((s, x) => s + (Number(x.price) || 0), 0);
 
     const listKey = activeChecklistSub === 'casa' ? 'casa' : activeBorsaGroup;
     const items = state.checklists[listKey] || [];
@@ -2452,49 +2452,7 @@ function renderChecklist() {
                     : `<button onclick="addSuggestedBorsa(${jsArg(listKey)},${jsArg(t)})" class="w-full p-2.5 rounded-xl glass-surface flex items-center justify-between text-xs text-left"><span class="text-main">${esc(t)}</span><span class="text-sec font-bold text-[11px]">+ Aggiungi</span></button>`).join('')}</div>
             </div>`; })() : ''}
         ` : activeChecklistSub === 'spese' ? `
-            <!-- 4 BOX SPESE COME RICHIESTO -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <div class="glass-card p-3.5 text-center">
-                    <p class="text-[10px] font-bold uppercase text-muted">Previsto</p>
-                    <p class="text-base font-extrabold text-main mt-0.5">€${totPrevisto.toFixed(0)}</p>
-                </div>
-                <div class="glass-card p-3.5 text-center">
-                    <p class="text-[10px] font-bold uppercase text-emerald-400">Già Speso</p>
-                    <p class="text-base font-extrabold text-emerald-300 mt-0.5">€${totSpeso.toFixed(0)}</p>
-                </div>
-                <div class="glass-card p-3.5 text-center">
-                    <p class="text-[10px] font-bold uppercase text-amber-400">Da Spendere</p>
-                    <p class="text-base font-extrabold text-amber-300 mt-0.5">€${totDaSpendere.toFixed(0)}</p>
-                </div>
-                <div class="glass-card p-3.5 text-center">
-                    <p class="text-[10px] font-bold uppercase text-fuchsia-400">Regali</p>
-                    <p class="text-base font-extrabold text-fuchsia-300 mt-0.5">€${totRegali.toFixed(0)}</p>
-                </div>
-            </div>
-            <div class="glass-card p-5 space-y-3">
-                <div class="grid grid-cols-12 gap-2">
-                    <input id="budget-name" type="text" placeholder="Articolo (es. Passeggino)" class="col-span-6 px-3 py-2.5 glass-input text-xs">
-                    <input id="budget-price" type="number" step="1" placeholder="€" class="col-span-3 px-3 py-2.5 glass-input text-xs font-bold">
-                    <button onclick="addBudgetItem()" class="col-span-3 bubble-btn btn-primary rounded-2xl text-xs font-bold">+ Aggiungi</button>
-                </div>
-                <div class="space-y-2">
-                    ${b.map(x => `
-                        <div class="p-3 rounded-2xl glass-surface flex items-center justify-between gap-2">
-                            <div class="min-w-0">
-                                <p class="text-xs font-extrabold text-main truncate">${esc(x.name)}</p>
-                                <p class="text-[11px] font-bold text-sec">€${Number(x.price||0).toFixed(0)}</p>
-                            </div>
-                            <div class="flex items-center gap-1.5 shrink-0">
-                                <select onchange="setBudgetStatus(${x.id}, this.value)" class="px-2.5 py-1.5 glass-input text-[11px] font-bold">
-                                    <option value="da_comprare" ${x.status==='da_comprare'?'selected':''}>Da comprare</option>
-                                    <option value="comprato" ${x.status==='comprato'?'selected':''}>Comprato</option>
-                                    <option value="regalato" ${x.status==='regalato'?'selected':''}>Regalato 🎁</option>
-                                </select>
-                                <button onclick="deleteBudgetItem(${x.id})" class="text-muted hover:text-rose-400 px-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                            </div>
-                        </div>`).join('')}
-                </div>
-            </div>
+            ${renderSpese()}
         ` : `
             <div class="glass-card p-5 space-y-3">
                 <h3 class="text-sm font-extrabold text-main">Guida Taglie Bebè (0–12 mesi)</h3>
@@ -2530,19 +2488,241 @@ function deleteCheckItem(key, id) {
     state.checklists[key] = (state.checklists[key] || []).filter(x => x.id !== id);
     saveState(); renderApp();
 }
+// --- SPESE: stato di ogni spesa ---
+// Campo status (come prima): 'comprato' = Pagato (valore della v1, così le versioni vecchie lo capiscono),
+// 'da_comprare' = Da comprare, 'preventivo' = Preventivo (nuovo), 'gratis' = Gratis (nuovo).
+// Le spese salvate prima: 'regalato' si legge come Gratis; senza stato (o con uno sconosciuto) contano come Pagato.
+// Campo nuovo facoltativo prezzoPrima: l'importo che c'era prima di mettere Gratis, per rimetterlo se si cambia idea.
+const SPESE_STATI = [
+    { k: 'comprato',    l: 'Pagato',      i: 'fa-circle-check', c: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40' },
+    { k: 'preventivo',  l: 'Preventivo',  i: 'fa-file-invoice', c: 'bg-sky-500/20 text-sky-300 border-sky-400/40' },
+    { k: 'da_comprare', l: 'Da comprare', i: 'fa-cart-shopping', c: 'bg-amber-500/20 text-amber-300 border-amber-400/40' },
+    { k: 'gratis',      l: 'Gratis',      i: 'fa-gift', c: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-400/40' }
+];
+let speseFiltro = 'tutte';
+// Suggerimenti: le idee che prima stavano nella lista predefinita delle spese (v2/v3). Non sono spese vere.
+const SPESE_SUGGERITE = [
+    { id: 101, name: 'Trio / Passeggino + Ovetto', price: 650 },
+    { id: 102, name: 'Culla Next2Me / Lettino', price: 220 },
+    { id: 103, name: 'Fasciatoio & Bagnetto', price: 120 }
+];
+let speseSuggAperti = true;   // blocco Suggerimenti aperto/chiuso (solo su questo telefono)
+let speseSuggScelta = null;   // suggerimento con la scelta dello stato aperta
+const normNomeSpesa = t => String(t || '').trim().toLowerCase().replace(/\s+/g, ' ');
+// Una voce di budgetItems è un suggerimento (non una spesa vera) se arriva dalla lista predefinita:
+// id 101-103 o stesso nome, nessun autore (le spese a mano hanno sempre actor), mai spostata tra le spese
+// (daSuggerimento) e ancora «da comprare». Se era già comprata o regalata resta una spesa vera.
+function suggerimentoDi(x) {
+    if (!x || x.actor || x.daSuggerimento) return null;
+    if (x.status !== 'da_comprare') return null;
+    return SPESE_SUGGERITE.find(g => String(g.id) === String(x.id)) || SPESE_SUGGERITE.find(g => normNomeSpesa(g.name) === normNomeSpesa(x.name)) || null;
+}
+function speseVere() { return (state.budgetItems || []).filter(x => !suggerimentoDi(x)); }
+function suggNascosto(id) { return (state.suggerimentiNascosti || []).some(t => String(t.id) === String(id)); }
+// Elenco dei suggerimenti da mostrare: quelli della lista, con l'eventuale voce vecchia (per il suo importo),
+// tolti quelli già portati tra le spese vere e quelli segnati «Non mi serve».
+function speseSuggerimenti(nascosti = false) {
+    const items = state.budgetItems || [];
+    return SPESE_SUGGERITE.map(g => {
+        const vecchia = items.find(x => suggerimentoDi(x) === g);
+        const giaVera = items.some(x => !suggerimentoDi(x) && (String(x.id) === String(g.id) || (x.daSuggerimento && String(x.daSuggerimento) === String(g.id))));
+        return { ...g, price: vecchia ? (Number(vecchia.price) || 0) : g.price, vecchiaId: vecchia ? vecchia.id : null, giaVera };
+    }).filter(g => !g.giaVera && suggNascosto(g.id) === nascosti);
+}
+function apriSuggerimento(id) { speseSuggScelta = String(speseSuggScelta) === String(id) ? null : id; renderApp(); }
+function aggiungiSuggerimento(id) {
+    const g = speseSuggerimenti().find(x => String(x.id) === String(id));
+    if (!g) return;
+    let price = parseFloat(String(document.getElementById('sugg-prezzo')?.value ?? g.price).replace(',', '.'));
+    if (!(price >= 0)) price = g.price;
+    const st = document.getElementById('sugg-stato')?.value || 'da_comprare';
+    let x = g.vecchiaId !== null ? state.budgetItems.find(i => String(i.id) === String(g.vecchiaId)) : null;
+    if (!x) { x = { id: g.id, name: g.name }; state.budgetItems.unshift(x); }
+    x.actor = currentActor;
+    x.daSuggerimento = g.id;      // campo nuovo: da quale suggerimento arriva (così non torna tra i suggerimenti)
+    x.price = price;
+    x.status = 'da_comprare';
+    applicaStatoSpesa(x, st);
+    speseSuggScelta = null;
+    saveState(`Spesa aggiunta: ${x.name} (${spesaInfo(st).l}${st === 'gratis' ? '' : ', ' + euro(x.price)})`, 'checklist', 'spese');
+    renderApp();
+}
+function nascondiSuggerimento(id) {
+    if (suggNascosto(id)) return;
+    if (!Array.isArray(state.suggerimentiNascosti)) state.suggerimentiNascosti = [];
+    state.suggerimentiNascosti.push({ id: String(id), actor: currentActor, ts: Date.now() });   // «tombstone»: si sincronizza come le altre voci
+    speseSuggScelta = null;
+    saveState(); renderApp();
+}
+function ripristinaSuggerimento(id) {
+    state.suggerimentiNascosti = (state.suggerimentiNascosti || []).filter(t => String(t.id) !== String(id));
+    saveState(); renderApp();
+}
+function renderSuggerimenti() {
+    const lista = speseSuggerimenti(), nascosti = speseSuggerimenti(true);
+    if (!lista.length && !nascosti.length) return '';
+    const riga = g => `
+        <div class="sugg p-3 rounded-2xl glass-surface space-y-2" data-id="${esc(String(g.id))}">
+            <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <p class="text-xs font-extrabold text-main truncate">${esc(g.name)}</p>
+                    <p class="text-[11px] text-muted">Idea · circa ${euro(g.price)}</p>
+                </div>
+                <button onclick="nascondiSuggerimento('${esc(String(g.id))}')" class="sugg-no bubble-btn shrink-0 px-2.5 py-1.5 rounded-full glass-surface text-[11px] font-bold text-muted">Non mi serve</button>
+            </div>
+            ${String(speseSuggScelta) === String(g.id) ? `
+            <div class="sugg-scelta space-y-2">
+                <div class="grid grid-cols-12 gap-2">
+                    <input id="sugg-prezzo" type="number" step="0.01" min="0" inputmode="decimal" value="${g.price}" class="col-span-4 px-3 py-2.5 glass-input text-xs font-bold" aria-label="Importo">
+                    <div class="col-span-8 grid">${spesaSelectHtml('sugg-stato', 'da_comprare')}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="speseSuggScelta=null;renderApp()" class="bubble-btn py-2.5 rounded-2xl glass-surface text-xs font-bold text-muted">Annulla</button>
+                    <button onclick="aggiungiSuggerimento('${esc(String(g.id))}')" class="sugg-conferma bubble-btn py-2.5 rounded-2xl btn-primary text-xs font-bold">Conferma</button>
+                </div>
+            </div>` : `<button onclick="apriSuggerimento('${esc(String(g.id))}')" class="sugg-aggiungi w-full bubble-btn py-2.5 rounded-2xl btn-primary text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i>Aggiungi alle spese</button>`}
+        </div>`;
+    return `<div id="spese-suggerimenti" class="glass-card p-4 space-y-3">
+        <button onclick="speseSuggAperti=!speseSuggAperti;renderApp()" class="w-full flex items-center justify-between gap-2 text-left" aria-expanded="${speseSuggAperti}">
+            <span class="text-sm font-extrabold text-main"><i class="fa-solid fa-lightbulb mr-1.5 text-amber-300"></i>Suggerimenti (${lista.length})</span>
+            <i class="fa-solid ${speseSuggAperti ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs text-muted"></i>
+        </button>
+        ${speseSuggAperti ? `
+        <p class="text-[11px] text-muted">Idee di cose che di solito servono. Non sono spese e non contano nei totali.</p>
+        <div id="sugg-lista" class="space-y-2">${lista.length ? lista.map(riga).join('') : '<p class="text-[11px] text-muted text-center py-2">Nessun suggerimento rimasto.</p>'}</div>
+        ${nascosti.length ? `<div id="sugg-nascosti" class="space-y-1.5 pt-1">
+            <p class="text-[11px] font-bold text-sec">Non mi servono (${nascosti.length})</p>
+            ${nascosti.map(g => `<div class="sugg-nascosto flex items-center justify-between gap-2 p-2.5 rounded-xl glass-surface opacity-70" data-id="${esc(String(g.id))}"><span class="text-[11px] text-main truncate">${esc(g.name)}</span><button onclick="ripristinaSuggerimento('${esc(String(g.id))}')" class="sugg-ripristina bubble-btn shrink-0 px-2.5 py-1 rounded-full glass-surface text-[11px] font-bold text-sec">Ripristina</button></div>`).join('')}
+        </div>` : ''}` : ''}
+    </div>`;
+}
+let speseScelta = null;    // spesa con la scelta dello stato aperta
+let speseModifica = null;  // spesa in modifica
+function spesaStato(x) {
+    const st = x && x.status;
+    if (st === 'regalato') return 'gratis';
+    return SPESE_STATI.some(s => s.k === st) ? st : 'comprato';
+}
+function spesaInfo(k) { return SPESE_STATI.find(s => s.k === k) || SPESE_STATI[0]; }
+function spesaImporto(x) { return spesaStato(x) === 'gratis' ? 0 : (Number(x.price) || 0); }
+function euro(n) { const v = Math.round((Number(n) || 0) * 100) / 100; const d = Number.isInteger(v) ? 0 : 2; return '€' + v.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+function speseTotali() {
+    const t = { comprato: 0, preventivo: 0, da_comprare: 0, gratis: 0, n: { comprato: 0, preventivo: 0, da_comprare: 0, gratis: 0 } };
+    speseVere().forEach(x => { const k = spesaStato(x); t[k] += spesaImporto(x); t.n[k]++; });
+    return t;
+}
+function spesaSelectHtml(id, val) {
+    return `<select id="${id}" class="px-2.5 py-2.5 glass-input text-xs font-bold">${SPESE_STATI.map(s => `<option value="${s.k}" ${val===s.k?'selected':''}>${s.l}</option>`).join('')}</select>`;
+}
+function renderSpese() {
+    const b = speseVere();
+    const t = speseTotali();
+    const lista = speseFiltro === 'tutte' ? b : b.filter(x => spesaStato(x) === speseFiltro);
+    const box = (k, l, col) => `<div id="spese-tot-${k}" class="glass-card p-3 text-center">
+            <p class="text-[10px] font-bold uppercase ${col}">${l}</p>
+            <p class="text-base font-extrabold text-main mt-0.5">${euro(t[k])}</p>
+            <p class="text-[10px] text-muted">${t.n[k]} ${t.n[k] === 1 ? 'voce' : 'voci'}</p></div>`;
+    const chip = (k, l, n) => `<button onclick="speseFiltro='${k}';renderApp()" class="spese-filtro bubble-btn shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold ${speseFiltro===k?'btn-primary':'glass-surface text-muted'}" data-filtro="${k}">${l}${n !== null ? ` (${n})` : ''}</button>`;
+    const riga = x => {
+        const k = spesaStato(x), inf = spesaInfo(k), id = esc(String(x.id));
+        if (String(speseModifica) === String(x.id)) return `
+        <div class="spesa p-3 rounded-2xl glass-surface space-y-2" data-id="${id}">
+            <input id="spesa-mod-nome" type="text" value="${esc(x.name)}" class="w-full px-3 py-2.5 glass-input text-xs">
+            <div class="grid grid-cols-2 gap-2">
+                <input id="spesa-mod-prezzo" type="number" step="0.01" min="0" inputmode="decimal" value="${k==='gratis' ? 0 : (Number(x.price)||0)}" class="px-3 py-2.5 glass-input text-xs font-bold">
+                ${spesaSelectHtml('spesa-mod-stato', k)}
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="speseModifica=null;renderApp()" class="bubble-btn py-2.5 rounded-2xl glass-surface text-xs font-bold text-muted">Annulla</button>
+                <button onclick="saveBudgetEdit('${id}')" class="bubble-btn py-2.5 rounded-2xl btn-primary text-xs font-bold">Salva</button>
+            </div>
+        </div>`;
+        return `
+        <div class="spesa p-3 rounded-2xl glass-surface space-y-2" data-id="${id}" data-stato="${k}">
+            <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <p class="text-xs font-extrabold text-main truncate">${esc(x.name)}</p>
+                    <p class="text-[11px] font-bold text-sec">${k==='gratis' ? 'Gratis' : (k==='preventivo' ? '≈ ' : '') + euro(Number(x.price)||0)}</p>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="speseScelta=(String(speseScelta)==='${id}'?null:'${id}');renderApp()" class="spesa-etichetta bubble-btn px-2.5 py-1.5 rounded-full border text-[11px] font-extrabold ${inf.c}" aria-label="Stato: ${inf.l}. Tocca per cambiarlo"><i class="fa-solid ${inf.i} mr-1"></i>${inf.l}</button>
+                    <button onclick="speseModifica='${id}';speseScelta=null;renderApp()" class="spesa-modifica w-8 h-8 rounded-full text-muted hover:text-main flex items-center justify-center" aria-label="Modifica"><i class="fa-solid fa-pen text-xs"></i></button>
+                    <button onclick="deleteBudgetItem('${id}')" class="w-8 h-8 rounded-full text-muted hover:text-rose-400 flex items-center justify-center" aria-label="Elimina"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            </div>
+            ${String(speseScelta) === String(x.id) ? `<div class="spesa-scelta grid grid-cols-2 gap-1.5">${SPESE_STATI.map(s => `<button onclick="setBudgetStatus('${id}','${s.k}')" data-stato="${s.k}" class="bubble-btn py-2.5 rounded-xl border text-[11px] font-extrabold ${s.k===k ? s.c : 'glass-surface text-muted border-transparent'}"><i class="fa-solid ${s.i} mr-1"></i>${s.l}</button>`).join('')}</div>` : ''}
+        </div>`;
+    };
+    return `<div id="spese" class="space-y-4">
+        <div class="grid grid-cols-3 gap-2">
+            ${box('comprato', 'Pagato', 'text-emerald-400')}${box('preventivo', 'Preventivi', 'text-sky-400')}${box('da_comprare', 'Da comprare', 'text-amber-400')}
+        </div>
+        ${t.n.gratis ? `<p id="spese-gratis-nota" class="text-[11px] text-muted text-center -mt-2"><i class="fa-solid fa-gift mr-1 text-fuchsia-300"></i>${t.n.gratis} ${t.n.gratis === 1 ? 'cosa avuta gratis' : 'cose avute gratis'} (regali o prestiti): non contano nei totali</p>` : ''}
+        <div class="glass-card p-5 space-y-3">
+            <h3 class="text-sm font-extrabold text-main">Nuova spesa</h3>
+            <input id="budget-name" type="text" placeholder="Articolo (es. Passeggino)" class="w-full px-3 py-2.5 glass-input text-xs">
+            <div class="grid grid-cols-12 gap-2">
+                <input id="budget-price" type="number" step="0.01" min="0" inputmode="decimal" placeholder="€" class="col-span-4 px-3 py-2.5 glass-input text-xs font-bold">
+                <div class="col-span-8 grid">${spesaSelectHtml('budget-status', 'da_comprare')}</div>
+            </div>
+            <button onclick="addBudgetItem()" class="w-full bubble-btn btn-primary rounded-2xl text-xs font-bold py-3">+ Aggiungi</button>
+            <p class="text-[11px] text-muted leading-relaxed">Gratis: regalo o prestito, non conta. Preventivo: prezzo stimato, conta a parte.</p>
+        </div>
+        <div id="spese-filtri" class="flex gap-1.5 overflow-x-auto pb-1">
+            ${chip('tutte', 'Tutte', b.length)}${SPESE_STATI.map(s => chip(s.k, s.l, t.n[s.k])).join('')}
+        </div>
+        <div id="spese-lista" class="space-y-2">
+            ${lista.length ? lista.map(riga).join('') : `<div class="glass-card p-5 text-center text-xs text-muted">${b.length ? 'Nessuna spesa con questo stato.' : 'Nessuna spesa ancora.'}</div>`}
+        </div>
+        ${renderSuggerimenti()}
+    </div>`;
+}
+function applicaStatoSpesa(x, st) {
+    if (st === 'gratis') {
+        if (spesaStato(x) !== 'gratis' && Number(x.price)) x.prezzoPrima = Number(x.price);
+        x.price = 0;
+    } else if (spesaStato(x) === 'gratis' && !Number(x.price) && x.prezzoPrima) {
+        x.price = x.prezzoPrima;   // tolto Gratis: torna l'importo di prima
+    }
+    x.status = st;
+}
 function addBudgetItem() {
     const name = (document.getElementById('budget-name')?.value || '').trim();
-    const price = parseFloat(document.getElementById('budget-price')?.value || '0') || 0;
+    let price = parseFloat(String(document.getElementById('budget-price')?.value || '0').replace(',', '.')) || 0;
+    const st = document.getElementById('budget-status')?.value || 'da_comprare';
     if (!name) return;
-    state.budgetItems.unshift({ id: uid(), name, price, status: 'da_comprare', actor: currentActor });
-    saveState(`Spesa aggiunta: ${name} (€${price})`, 'checklist', 'spese');
+    if (price < 0) price = 0;
+    const x = { id: uid(), name, price: st === 'gratis' ? 0 : price, status: st, actor: currentActor };
+    if (st === 'gratis' && price) x.prezzoPrima = price;
+    state.budgetItems.unshift(x);
+    saveState(`Spesa aggiunta: ${name} (${spesaInfo(st).l}${st === 'gratis' ? '' : ', ' + euro(x.price)})`, 'checklist', 'spese');
     renderApp();
 }
 function setBudgetStatus(id, st) {
-    const x = state.budgetItems.find(i => i.id === id);
-    if (x) { x.status = st; saveState(`Aggiornata spesa: ${x.name}`, 'checklist', 'spese'); renderApp(); }
+    const x = (state.budgetItems || []).find(i => String(i.id) === String(id));
+    if (!x || !SPESE_STATI.some(s => s.k === st)) return;
+    speseScelta = null;
+    if (spesaStato(x) === st && x.status === st) { renderApp(); return; }
+    if (!x.actor) x.actor = currentActor;
+    applicaStatoSpesa(x, st);
+    saveState(`Spesa ${x.name}: ${spesaInfo(st).l}`, 'checklist', 'spese');
+    renderApp();
 }
-function deleteBudgetItem(id) { state.budgetItems = state.budgetItems.filter(i => i.id !== id); saveState(); renderApp(); }
+function saveBudgetEdit(id) {
+    const x = (state.budgetItems || []).find(i => String(i.id) === String(id));
+    if (!x) return;
+    const name = (document.getElementById('spesa-mod-nome')?.value || '').trim();
+    let price = parseFloat(String(document.getElementById('spesa-mod-prezzo')?.value || '0').replace(',', '.')) || 0;
+    const st = document.getElementById('spesa-mod-stato')?.value || spesaStato(x);
+    if (name) x.name = name;
+    if (price < 0) price = 0;
+    if (st === 'gratis') { if (price) x.prezzoPrima = price; x.price = 0; x.status = 'gratis'; }
+    else { x.price = price; x.status = st; }
+    speseModifica = null;
+    saveState(`Spesa modificata: ${x.name}`, 'checklist', 'spese');
+    renderApp();
+}
+function deleteBudgetItem(id) { state.budgetItems = state.budgetItems.filter(i => String(i.id) !== String(id)); saveState(); renderApp(); }
 
 // ======================================================
 // TAB 5: ALTRO (DIARIO & FOTO, GIORNO X, SI PUO?, NOMI, VOGLIE & MEDICO)
@@ -2552,7 +2732,7 @@ function renderAltro() {
         { k:'diario', l:'Diario & Foto', i:'fa-book-open' },
         { k:'giornox', l:'Giorno X', i:'fa-hospital' },
         { k:'sipuo', l:'Si può?', i:'fa-utensils' },
-        { k:'nomi', l:'Nomi Match', i:'fa-heart' },
+        { k:'nomi', l:'Nomi', i:'fa-heart' },
         { k:'medico', l:'Voglie & Medico', i:'fa-stethoscope' }
     ];
     return `<div class="space-y-4 fade-in">
@@ -3007,72 +3187,212 @@ function askDoctorAbout(topic) {
     showToast('Aggiunta alle domande per il medico!');
 }
 
-// --- MATCH NOMI DI COPPIA ---
-// Compatibilità: i voti della versione precedente stanno in votesBy {F,L} con 'like'/'dislike'
+// --- NOMI: tre schede (Aggiungi / Vota / Match) ---
+// Ogni nome resta una voce di state.names (stessa lista di prima). Campi usati:
+//   addedBy  'F' (papà) | 'L' (mamma)  → nuovo campo facoltativo: chi l'ha proposto
+//   voteF / voteL  'yes' | 'no' | null  → il voto di ciascuno (come prima)
+//   votesBy {F,L} 'like'/'dislike'      → formato della v1, letto e tenuto allineato
+// I nomi vecchi senza addedBy (né actor) sono "neutri": li votano tutti e due.
+// Chi propone un nome conta come un suo Sì. L'interfaccia mostra solo i voti di chi usa il telefono e i Match.
+let activeNomiSub = 'aggiungi';
+let nomiFiltro = 'tutti';
+const MATCH_VISTI_KEY = 'noi_e_bebe_match_visti_v1';   // solo su questo telefono: per la festa al nuovo match
 function nameVote(n, who) {
     const v = n['vote' + who];
     if (v !== undefined && v !== null) return v;
     const old = n.votesBy && n.votesBy[who];
     return old === 'like' ? 'yes' : (old === 'dislike' ? 'no' : null);
 }
+function nameAdder(n) {
+    if (n.addedBy === 'F' || n.addedBy === 'L') return n.addedBy;
+    if (n.actor === 'F' || n.actor === 'L') return n.actor;
+    return null;
+}
+function nameVoteEff(n, who) { return nameVote(n, who) || (nameAdder(n) === who ? 'yes' : null); }
+function isNameMatch(n) { return nameVoteEff(n, 'F') === 'yes' && nameVoteEff(n, 'L') === 'yes'; }
+function meWho() { return currentActor === 'L' ? 'L' : 'F'; }
+function otherWho() { return meWho() === 'F' ? 'L' : 'F'; }
+function whoName(w) { return w === 'F' ? dadName() : momName(); }
+function nameGenderIcon(g) { return g === 'M' ? '♂️' : g === 'F' ? '♀️' : '✨'; }
+function nameFilterOk(n) { return nomiFiltro === 'tutti' || n.gender === nomiFiltro || !n.gender || n.gender === 'U'; }
+function nomiDaVotare() { const me = meWho(); return (state.names || []).filter(n => nameAdder(n) !== me && !nameVote(n, me) && nameFilterOk(n)); }
+function nomiVotati() { const me = meWho(); return (state.names || []).filter(n => nameAdder(n) !== me && nameVote(n, me) && nameFilterOk(n)); }
+function nomiMatch() { return (state.names || []).filter(isNameMatch); }
+function nomiFiltroHtml() {
+    const b = (k, l) => `<button onclick="nomiFiltro='${k}';renderApp()" class="bubble-btn px-3 py-1.5 rounded-full text-[11px] font-bold ${nomiFiltro===k?'btn-primary':'glass-surface text-muted'}">${l}</button>`;
+    return `<div id="nomi-filtro" class="flex items-center gap-1.5">${b('tutti','Tutti')}${b('M','♂️ Maschio')}${b('F','♀️ Femmina')}</div>`;
+}
 function renderNomi() {
-    const names = (state.names || []).map(n => ({ ...n, voteF: nameVote(n, 'F'), voteL: nameVote(n, 'L') }));
-    const matches = names.filter(n => n.voteF === 'yes' && n.voteL === 'yes');
-    return `<div class="space-y-4">
+    const me = meWho(), other = otherWho();
+    const daVotare = nomiDaVotare().length;
+    const nMatch = nomiMatch().length;
+    const tab = (k, l, badge) => `<button id="nomi-tab-${k}" onclick="activeNomiSub='${k}';renderApp()" class="bubble-btn py-2.5 rounded-xl text-xs font-bold ${activeNomiSub===k?'btn-primary':'text-muted'}">${l}${badge ? ` <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${activeNomiSub===k?'bg-white/25':'bg-fuchsia-500/30 text-fuchsia-200'}">${badge}</span>` : ''}</button>`;
+    const body = activeNomiSub === 'vota' ? renderNomiVota(me, other) : activeNomiSub === 'match' ? renderNomiMatch() : renderNomiAggiungi(me, other);
+    return `<div class="space-y-4 fade-in">
+        <div class="grid grid-cols-3 gap-1.5 glass-surface p-1.5 rounded-2xl">
+            ${tab('aggiungi', 'Aggiungi', 0)}${tab('vota', 'Vota', daVotare)}${tab('match', 'Match', nMatch)}
+        </div>
+        ${body}
+    </div>`;
+}
+function renderNomiAggiungi(me, other) {
+    const miei = (state.names || []).filter(n => nameAdder(n) === me);
+    const vecchi = (state.names || []).filter(n => nameAdder(n) === null);
+    const riga = n => `
+        <div class="glass-card p-3.5 flex items-center justify-between gap-2" data-nome="${esc(n.name)}">
+            <p class="text-sm font-extrabold text-main">${esc(n.name)} <span class="text-[10px] font-bold text-sec ml-1">${nameGenderIcon(n.gender)}</span>
+                ${isNameMatch(n) ? '<span class="ml-1 px-2 py-0.5 rounded-full btn-primary text-[10px] font-extrabold">❤️ Match</span>' : ''}</p>
+            <button onclick="deleteName('${esc(String(n.id))}')" aria-label="Togli ${esc(n.name)}" class="nome-togli w-10 h-10 rounded-full glass-surface text-muted hover:text-rose-400 flex items-center justify-center text-sm"><i class="fa-solid fa-trash-can"></i></button>
+        </div>`;
+    return `<div id="nomi-aggiungi" class="space-y-4">
         <div class="glass-card p-5 space-y-3">
-            <h3 class="text-sm font-extrabold text-main">Match dei Nomi</h3>
+            <h3 class="text-sm font-extrabold text-main">Proponi un nome</h3>
+            <input id="new-name-input" type="text" placeholder="Scrivi un nome..." autocomplete="off" onkeydown="if(event.key==='Enter')addName()" class="w-full px-3.5 py-3 glass-input text-sm">
             <div class="grid grid-cols-12 gap-2">
-                <input id="new-name-input" type="text" placeholder="Proponi un nome..." onkeydown="if(event.key==='Enter')addName()" class="col-span-6 px-3.5 py-2.5 glass-input text-xs">
-                <select id="new-name-gender" class="col-span-3 px-2 py-2.5 glass-input text-xs font-bold">
+                <select id="new-name-gender" class="col-span-5 px-2 py-3 glass-input text-xs font-bold">
                     <option value="U">Unisex</option><option value="M">Maschio</option><option value="F">Femmina</option>
                 </select>
-                <button onclick="addName()" class="col-span-3 bubble-btn btn-primary rounded-2xl text-xs font-bold">Aggiungi</button>
+                <button onclick="addName()" class="col-span-7 bubble-btn btn-primary rounded-2xl text-sm font-bold py-3"><i class="fa-solid fa-plus mr-1.5"></i>Aggiungi</button>
+            </div>
+            <p class="text-[11px] text-muted leading-relaxed">Ogni nome che aggiungi conta già come un tuo Sì. ${esc(whoName(other))} lo troverà nella scheda Vota.</p>
+        </div>
+        <div class="space-y-2">
+            <p class="text-xs font-extrabold text-sec px-1">I tuoi nomi (${miei.length})</p>
+            <div id="nomi-miei" class="space-y-2">
+                ${miei.length ? miei.map(riga).join('') : `<div class="glass-card p-5 text-center text-xs text-muted">Non hai ancora proposto nomi.</div>`}
             </div>
         </div>
-        ${matches.length ? `
-            <div class="glass-card p-4 border border-fuchsia-400/40 space-y-2">
-                <p class="text-xs font-extrabold text-fuchsia-300"><i class="fa-solid fa-sparkles mr-1.5"></i>Match Perfetti (${matches.length})</p>
-                <div class="flex flex-wrap gap-2">${matches.map(m => `<span class="px-3 py-1.5 rounded-full btn-primary text-xs font-extrabold">❤️ ${esc(m.name)}</span>`).join('')}</div>
-            </div>` : ''}
+        ${vecchi.length ? `
         <div class="space-y-2">
-            ${names.length ? names.map(n => `
-                <div class="glass-card p-3.5 flex items-center justify-between gap-2">
-                    <div>
-                        <p class="text-sm font-extrabold text-main">${esc(n.name)} <span class="text-[10px] font-bold text-sec ml-1">${n.gender==='M'?'♂️':n.gender==='F'?'♀️':'✨'}</span></p>
-                        <p class="text-[11px] text-muted">F: ${n.voteF==='yes'?'❤️':n.voteF==='no'?'❌':'—'} &nbsp;•&nbsp; L: ${n.voteL==='yes'?'❤️':n.voteL==='no'?'❌':'—'}</p>
-                    </div>
+            <p class="text-xs font-extrabold text-sec px-1">Nomi salvati prima (${vecchi.length})</p>
+            <p class="text-[11px] text-muted px-1">Non si sa chi li ha proposti: li votate tutti e due nella scheda Vota.</p>
+            <div id="nomi-vecchi" class="space-y-2">${vecchi.map(riga).join('')}</div>
+        </div>` : ''}
+    </div>`;
+}
+function renderNomiVota(me, other) {
+    const coda = nomiDaVotare();
+    const fatti = nomiVotati();
+    const n = coda[0];
+    const card = n ? `
+        <div id="nomi-vota-card" class="glass-card p-6 text-center space-y-4" data-id="${esc(String(n.id))}">
+            <p class="text-[11px] font-bold text-sec">${nameAdder(n) ? 'Proposto da ' + esc(whoName(nameAdder(n))) : 'Nome salvato prima'}</p>
+            <p id="nomi-vota-nome" class="text-3xl font-extrabold text-main break-words">${esc(n.name)} <span class="text-lg">${nameGenderIcon(n.gender)}</span></p>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="nomi-vota-no" onclick="voteName('${esc(String(n.id))}','no')" class="bubble-btn h-16 rounded-2xl glass-surface text-base font-extrabold text-main">✖ No</button>
+                <button id="nomi-vota-si" onclick="voteName('${esc(String(n.id))}','yes')" class="bubble-btn h-16 rounded-2xl btn-primary text-base font-extrabold">❤️ Sì</button>
+            </div>
+            <p class="text-[11px] text-muted">${coda.length === 1 ? 'È l\'ultimo da votare' : 'Ne restano ' + coda.length}</p>
+        </div>` : `
+        <div id="nomi-vota-vuoto" class="glass-card p-6 text-center space-y-1">
+            <p class="text-2xl">🎉</p>
+            <p class="text-sm font-extrabold text-main">Hai votato tutti i nomi</p>
+            <p class="text-xs text-muted">Quando ${esc(whoName(other))} ne aggiunge altri, li trovi qui.</p>
+        </div>`;
+    return `<div id="nomi-vota" class="space-y-4">
+        ${nomiFiltroHtml()}
+        ${card}
+        ${fatti.length ? `
+        <div class="space-y-2">
+            <p class="text-xs font-extrabold text-sec px-1">Già votati (${fatti.length}) <span class="font-semibold text-muted">· puoi cambiare idea</span></p>
+            <div id="nomi-votati" class="space-y-2">
+                ${fatti.map(x => { const v = nameVote(x, me); return `
+                <div class="glass-card p-3 flex items-center justify-between gap-2" data-nome="${esc(x.name)}">
+                    <p class="text-sm font-extrabold text-main">${esc(x.name)} <span class="text-[10px] font-bold text-sec ml-1">${nameGenderIcon(x.gender)}</span></p>
                     <div class="flex items-center gap-1.5">
-                        <button onclick="voteName(${n.id},'yes')" class="bubble-btn w-9 h-9 rounded-full ${(currentActor==='F'?n.voteF:n.voteL)==='yes'?'btn-primary':'glass-surface'} flex items-center justify-center text-xs">❤️</button>
-                        <button onclick="voteName(${n.id},'no')" class="bubble-btn w-9 h-9 rounded-full ${(currentActor==='F'?n.voteF:n.voteL)==='no'?'bg-rose-600 text-white':'glass-surface'} flex items-center justify-center text-xs">❌</button>
-                        <button onclick="deleteName(${n.id})" class="w-8 h-8 rounded-full glass-surface text-muted hover:text-rose-400 flex items-center justify-center text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="voteName('${esc(String(x.id))}','yes')" class="voto-si bubble-btn h-10 px-3 rounded-full text-xs font-bold ${v==='yes'?'btn-primary':'glass-surface text-muted'}">❤️ Sì</button>
+                        <button onclick="voteName('${esc(String(x.id))}','no')" class="voto-no bubble-btn h-10 px-3 rounded-full text-xs font-bold ${v==='no'?'bg-rose-600 text-white':'glass-surface text-muted'}">✖ No</button>
                     </div>
-                </div>`).join('') : `<div class="glass-card p-6 text-center text-xs text-muted">Proponete i vostri nomi preferiti e votateli separatamente!</div>`}
+                </div>`; }).join('')}
+            </div>
+        </div>` : ''}
+        <p class="text-[11px] text-muted text-center px-2">${esc(whoName(other))} non vede i tuoi No: vede solo i nomi che piacciono a tutti e due.</p>
+    </div>`;
+}
+function renderNomiMatch() {
+    const m = nomiMatch().filter(nameFilterOk);
+    const tot = nomiMatch().length;
+    return `<div id="nomi-match" class="space-y-4">
+        <div class="glass-card p-5 text-center border border-fuchsia-400/40">
+            <p id="nomi-match-conta" class="text-4xl font-extrabold text-main">${tot}</p>
+            <p class="text-xs font-bold text-fuchsia-300">${tot === 1 ? 'nome piace a tutti e due' : 'nomi piacciono a tutti e due'}</p>
         </div>
+        ${nomiFiltroHtml()}
+        ${m.length ? `<div id="nomi-match-lista" class="flex flex-wrap gap-2">${m.map(x => `<span class="px-4 py-2.5 rounded-full btn-primary text-sm font-extrabold">❤️ ${esc(x.name)} <span class="text-[11px]">${nameGenderIcon(x.gender)}</span></span>`).join('')}</div>`
+            : `<div id="nomi-match-vuoto" class="glass-card p-6 text-center text-xs text-muted">${tot ? 'Nessun match con questo filtro.' : 'Ancora nessun match. Un nome arriva qui quando piace a tutti e due.'}</div>`}
     </div>`;
 }
 function addName() {
-    const name = (document.getElementById('new-name-input')?.value || '').trim();
+    const input = document.getElementById('new-name-input');
+    const name = (input?.value || '').trim().replace(/\s+/g, ' ');
     const gender = document.getElementById('new-name-gender')?.value || 'U';
     if (!name) return;
-    state.names.unshift({ id: uid(), name, gender, voteF: currentActor==='F'?'yes':null, voteL: currentActor==='L'?'yes':null });
-    saveState(`Nuovo nome proposto: ${name}`, 'altro', 'nomi');
+    const me = meWho();
+    const gia = (state.names || []).find(n => n.name.trim().toLowerCase() === name.toLowerCase());
+    if (gia) {
+        if (nameAdder(gia) === me) { showToast(`Hai già proposto ${gia.name}`); return; }
+        if (input) input.value = '';
+        voteName(gia.id, 'yes', true);
+        showToast(`${gia.name} c'era già: conta come un tuo Sì`);
+        return;
+    }
+    state.names.unshift({ id: uid(), name, gender, addedBy: me, voteF: me === 'F' ? 'yes' : null, voteL: me === 'L' ? 'yes' : null });
+    saveState(`Nuovo nome da votare: ${name}`, 'altro', 'nomi');
     renderApp();
+    setTimeout(() => document.getElementById('new-name-input')?.focus(), 0);
 }
-function voteName(id, val) {
-    const n = state.names.find(x => x.id === id);
-    if (!n) return;
-    const key = currentActor === 'F' ? 'voteF' : 'voteL';
-    n[key] = (nameVote(n, currentActor === 'F' ? 'F' : 'L') === val ? null : val);
-    if (n.votesBy && typeof n.votesBy === 'object') {   // tiene allineato anche il formato precedente
-        n.votesBy[currentActor] = n[key] === 'yes' ? 'like' : (n[key] === 'no' ? 'dislike' : null);
+function voteName(id, val, quiet = false) {
+    const n = (state.names || []).find(x => String(x.id) === String(id));
+    if (!n || (val !== 'yes' && val !== 'no')) return;
+    const me = meWho();
+    const prima = isNameMatch(n);
+    n['vote' + me] = val;
+    if (n.votesBy && typeof n.votesBy === 'object') {   // tiene allineato anche il formato della v1
+        n.votesBy[me] = val === 'yes' ? 'like' : 'dislike';
         n.votes = (n.votesBy.F === 'like' ? 1 : 0) + (n.votesBy.L === 'like' ? 1 : 0);
     }
-    const isMatch = nameVote(n, 'F') === 'yes' && nameVote(n, 'L') === 'yes';
-    saveState(isMatch ? `✨ MATCH PERFETTO sul nome ${n.name}!` : `Voto aggiornato per ${n.name}`, 'altro', 'nomi');
+    const ora = isNameMatch(n);
+    // Nel diario attività finisce solo il nuovo match: un No non deve arrivare all'altro.
+    saveState(ora && !prima ? `✨ Nuovo match sul nome ${n.name}!` : null, 'altro', 'nomi');
     renderApp();
-    if (isMatch) showToast(`✨ Match Perfetto: ${n.name}!`);
+    checkNewMatches(true);
 }
-function deleteName(id) { state.names = state.names.filter(x => x.id !== id); saveState(); renderApp(); }
+function deleteName(id) {
+    const n = (state.names || []).find(x => String(x.id) === String(id));
+    if (!n) return;
+    const a = nameAdder(n);
+    if (a && a !== meWho()) return;   // si tolgono solo i propri nomi (o quelli vecchi senza autore)
+    state.names = state.names.filter(x => String(x.id) !== String(id));
+    saveState();
+    renderApp();
+    checkNewMatches(false);
+}
+function getMatchVisti() { try { const r = safeGet(MATCH_VISTI_KEY); return r ? JSON.parse(r) : null; } catch (_) { return null; } }
+function initMatchVisti() { if (!getMatchVisti()) safeSet(MATCH_VISTI_KEY, JSON.stringify(nomiMatch().map(n => String(n.id)))); }
+function checkNewMatches(festeggia) {
+    const ora = nomiMatch();
+    const visti = getMatchVisti();
+    safeSet(MATCH_VISTI_KEY, JSON.stringify(ora.map(n => String(n.id))));
+    if (!visti || !festeggia) return;
+    const nuovi = ora.filter(n => !visti.includes(String(n.id)));
+    if (nuovi.length) festaMatch(nuovi.map(n => n.name));
+}
+function festaMatch(nomi) {
+    try {
+        document.getElementById('nomi-festa')?.remove();
+        const d = document.createElement('div');
+        d.id = 'nomi-festa';
+        d.setAttribute('role', 'status');
+        d.className = 'fixed inset-0 z-[90] flex items-center justify-center pointer-events-none';
+        const cuori = Array.from({ length: 16 }, (_, i) => `<span class="nb-festa-cuore" style="left:${(i * 6.2 + 3) % 96}%;animation-delay:${(i % 5) * 0.12}s">${i % 3 ? '❤️' : '✨'}</span>`).join('');
+        d.innerHTML = `${cuori}<div class="nb-festa-box glass-card px-6 py-5 text-center border border-fuchsia-400/50">
+            <p class="text-3xl">💞</p><p class="text-xs font-bold text-fuchsia-300">Nuovo match!</p>
+            <p class="text-xl font-extrabold text-main">${nomi.map(esc).join(', ')}</p></div>`;
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 2600);
+    } catch (_) {}
+    showToast(`✨ Nuovo match: ${nomi.join(', ')}!`);
+}
 
 // --- VOGLIE & DOMANDE AL MEDICO ---
 function renderVoglieMedico() {
